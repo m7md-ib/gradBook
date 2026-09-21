@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Env files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Uploaded/local storage (dev + test)
+apps/api/storage/uploads/*
+!apps/api/storage/uploads/.gitkeep
+apps/api/storage/test-uploads/
+
+# Misc
+*.pem
+.turbo/

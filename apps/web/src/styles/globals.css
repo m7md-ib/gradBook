@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  @apply bg-paper text-ink font-body antialiased;
+  font-feature-settings: 'ss01' 1;
+}
+
+html[lang='en'] body {
+  font-family: 'Inter', 'Playfair Display', system-ui, sans-serif;
+}
+
+::selection {
+  @apply bg-gold-300/60 text-ink;
+}
+
+*:focus-visible {
+  outline: 2px solid theme('colors.maroon.500');
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.font-heading-auto {
+  @apply font-heading;
+}
+html[lang='en'] .font-heading-auto {
+  @apply font-heading-en;
+}
+
+.paper-texture {
+  position: relative;
+}
+.paper-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: theme('backgroundImage.paper-texture');
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: theme('colors.gold.300');
+  border-radius: 999px;
+}
+
+.rtl-flip {
+  transform: scaleX(1);
+}
+html[dir='rtl'] .rtl-flip-x {
+  transform: scaleX(-1);
+}
