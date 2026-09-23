@@ -1,4 +1,6 @@
+import crypto from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
+import { env, isProduction } from '../config/env.js';
 import { ApiError } from '../lib/errors.js';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
@@ -23,11 +25,15 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction) 
 
 export function issueCsrfCookie(req: Request, res: Response, next: NextFunction) {
   if (!req.cookies?.daftar_csrf) {
-    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const token = crypto.randomBytes(32).toString('hex');
     res.cookie('daftar_csrf', token, {
       httpOnly: false,
-      sameSite: 'lax',
-      secure: req.secure,
+      // Must match the SameSite policy of the auth cookies (see
+      // apps/api/src/auth/cookies.ts) — otherwise the browser drops this
+      // cookie on cross-site requests and every mutating request fails
+      // CSRF validation in production.
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: env.COOKIE_SECURE,
       path: '/',
     });
   }
