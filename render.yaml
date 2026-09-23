@@ -16,7 +16,12 @@ services:
     # No `corepack enable` here: Render's Node build image already ships a
     # working pnpm binary, and corepack tries to relink it in a read-only
     # location on that image, which fails the build.
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/api run build
+    #
+    # NODE_ENV=development for just the install step: with NODE_ENV=production
+    # (set below, needed at runtime) pnpm skips devDependencies, but the build
+    # step (tsc) needs typescript/vitest/@types/* to type-check the project —
+    # the compiled output that actually ships doesn't include any of them.
+    buildCommand: NODE_ENV=development pnpm install --frozen-lockfile && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/api run build
     startCommand: node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
