@@ -13,7 +13,10 @@ services:
     region: oregon
     plan: free
     rootDir: .
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/api run build
+    # No `corepack enable` here: Render's Node build image already ships a
+    # working pnpm binary, and corepack tries to relink it in a read-only
+    # location on that image, which fails the build.
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/api run build
     startCommand: node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
