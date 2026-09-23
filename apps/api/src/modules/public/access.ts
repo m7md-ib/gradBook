@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { env } from '../../config/env.js';
+import { env, isProduction } from '../../config/env.js';
 import { ApiError } from '../../lib/errors.js';
 import type { Notebook } from '../../db/schema/notebooks.js';
 
@@ -8,7 +8,9 @@ const ACCESS_COOKIE_PREFIX = 'nb_access_';
 export function grantAccessCookie(res: Response, notebookId: string) {
   res.cookie(`${ACCESS_COOKIE_PREFIX}${notebookId}`, '1', {
     httpOnly: true,
-    sameSite: 'lax',
+    // See apps/api/src/auth/cookies.ts for why this must be 'none' in
+    // production when the frontend and API are on different domains.
+    sameSite: isProduction ? 'none' : 'lax',
     secure: env.COOKIE_SECURE,
     maxAge: 90 * 24 * 60 * 60 * 1000,
     path: '/',

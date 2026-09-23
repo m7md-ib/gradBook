@@ -1,14 +1,25 @@
 import type { CookieOptions, Request, Response } from 'express';
-import { env } from '../config/env.js';
+import { env, isProduction } from '../config/env.js';
 
 const ACCESS_COOKIE = 'daftar_access';
 const REFRESH_COOKIE = 'daftar_refresh';
 
+// The frontend and API are typically deployed on different registrable
+// domains (e.g. a Vercel app and a Render service). `SameSite=Lax` cookies
+// are not sent on cross-site XHR/fetch requests, so auth would silently
+// break after deployment unless the two share a root domain. `None`
+// (which requires `Secure`) works in both the shared-domain and
+// separate-domain cases, so it's the safer production default; CSRF is
+// still enforced independently via the double-submit cookie above.
 const baseCookieOptions: CookieOptions = {
   httpOnly: true,
   secure: env.COOKIE_SECURE,
-  sameSite: 'lax',
-  domain: env.NODE_ENV === 'production' ? env.COOKIE_DOMAIN : undefined,
+  sameSite: isProduction ? 'none' : 'lax',
+  // Only set an explicit Domain when one was actually configured for a
+  // shared-root-domain deployment; otherwise let the browser default to
+  // the exact API host (setting a mismatched Domain makes the browser
+  // reject the cookie entirely).
+  domain: isProduction && env.COOKIE_DOMAIN !== 'localhost' ? env.COOKIE_DOMAIN : undefined,
   path: '/',
 };
 
