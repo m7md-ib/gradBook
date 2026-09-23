@@ -22,7 +22,10 @@ services:
     # step (tsc) needs typescript/vitest/@types/* to type-check the project —
     # the compiled output that actually ships doesn't include any of them.
     buildCommand: NODE_ENV=development pnpm install --frozen-lockfile && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/api run build
-    startCommand: node apps/api/dist/server.js
+    # Runs migrations before every boot (including restarts/redeploys) since
+    # the Free plan has no Shell to run them by hand. Safe to repeat: Drizzle
+    # tracks applied migrations and only runs new ones.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
