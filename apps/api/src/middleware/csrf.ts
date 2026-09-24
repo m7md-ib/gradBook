@@ -24,8 +24,9 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction) 
 }
 
 export function issueCsrfCookie(req: Request, res: Response, next: NextFunction) {
-  if (!req.cookies?.daftar_csrf) {
-    const token = crypto.randomBytes(32).toString('hex');
+  let token = req.cookies?.daftar_csrf as string | undefined;
+  if (!token) {
+    token = crypto.randomBytes(32).toString('hex');
     res.cookie('daftar_csrf', token, {
       httpOnly: false,
       // Must match the SameSite policy of the auth cookies (see
@@ -37,5 +38,10 @@ export function issueCsrfCookie(req: Request, res: Response, next: NextFunction)
       path: '/',
     });
   }
+  // Exposed so GET /api/csrf-token can hand it to the frontend: when the
+  // frontend and API are on different origins, page JS cannot read this
+  // cookie itself (document.cookie only exposes cookies of the page's own
+  // origin), so it has to fetch the value from the API instead.
+  req.csrfToken = token;
   next();
 }
