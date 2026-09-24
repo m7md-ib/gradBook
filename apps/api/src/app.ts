@@ -48,6 +48,12 @@ export function createApp() {
 
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
+  // The frontend can't read the daftar_csrf cookie via document.cookie when
+  // it's on a different origin from the API (cross-site cookies aren't
+  // visible to page JS), so it fetches the value here instead and echoes it
+  // back as the x-csrf-token header on mutating requests.
+  app.get('/api/csrf-token', (req, res) => res.json({ csrfToken: req.csrfToken }));
+
   app.use('/api/auth', authRouter);
   app.use('/api/catalog', catalogRouter);
   app.use('/api/notebooks/:id/messages', messagesRouter);
