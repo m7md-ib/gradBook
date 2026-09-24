@@ -5,18 +5,29 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
-function getCookie(name: string): string | undefined {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match?.[1] ? decodeURIComponent(match[1]) : undefined;
+// The API and the frontend can be on different origins in production, and
+// page JS can only read cookies set for its own origin — so the CSRF token
+// (set on the API's origin) has to come from a JSON response instead of
+// document.cookie. Fetched once and cached; the underlying cookie doesn't
+// change for the life of the session.
+let csrfTokenPromise: Promise<string> | null = null;
+
+function fetchCsrfToken(): Promise<string> {
+  csrfTokenPromise ??= apiClient
+    .get<{ csrfToken: string }>('/api/csrf-token')
+    .then((res) => res.data.csrfToken)
+    .catch((error) => {
+      csrfTokenPromise = null;
+      throw error;
+    });
+  return csrfTokenPromise;
 }
 
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(async (config) => {
   const method = (config.method ?? 'get').toLowerCase();
   if (!['get', 'head', 'options'].includes(method)) {
-    const csrf = getCookie('daftar_csrf');
-    if (csrf) {
-      config.headers.set('x-csrf-token', csrf);
-    }
+    const csrf = await fetchCsrfToken();
+    config.headers.set('x-csrf-token', csrf);
   }
   return config;
 });
