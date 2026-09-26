@@ -25,12 +25,14 @@ services:
     # Runs migrations before every boot (including restarts/redeploys) since
     # the Free plan has no Shell to run them by hand. Safe to repeat: Drizzle
     # tracks applied migrations and only runs new ones.
-    # TEMPORARY: seeds the theme/package/cover-template catalog (and a demo
-    # notebook + demo/admin accounts) once, since the DB is otherwise empty
-    # and there's no Shell on the Free plan to run this by hand. Revert this
-    # line back to just migrate+server right after this deploy succeeds —
-    # re-running the seed script on a non-empty DB fails on duplicate keys.
-    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/seed.js && node apps/api/dist/server.js
+    # TEMPORARY: the previous seed attempt crashed partway through (storage
+    # config bug, fixed below) after inserting themes/packages but before
+    # reaching cover templates or the demo notebook. clear-partial-catalog
+    # wipes just those two tables so seed.js can run cleanly from scratch.
+    # Revert this line back to just migrate+server right after this deploy
+    # succeeds — re-running seed.js against a fully-seeded DB fails on
+    # duplicate keys.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/clear-partial-catalog.js && node apps/api/dist/db/seed.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
@@ -67,8 +69,12 @@ services:
         sync: false
       - key: STORAGE_S3_SECRET_ACCESS_KEY
         sync: false
+      # Supabase Storage's S3-compatible endpoint requires path-style
+      # addressing (bucket in the URL path, not as a subdomain) — the
+      # virtual-hosted-style requests this defaults to fail TLS handshake
+      # against it. Set to "false" instead if you switch to AWS S3 or R2.
       - key: STORAGE_S3_FORCE_PATH_STYLE
-        value: "false"
+        value: "true"
       - key: STORAGE_PUBLIC_BASE_URL
         sync: false
       - key: PAYMENT_PROVIDER
