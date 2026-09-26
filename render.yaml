@@ -25,7 +25,12 @@ services:
     # Runs migrations before every boot (including restarts/redeploys) since
     # the Free plan has no Shell to run them by hand. Safe to repeat: Drizzle
     # tracks applied migrations and only runs new ones.
-    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/server.js
+    # TEMPORARY: seeds the theme/package/cover-template catalog (and a demo
+    # notebook + demo/admin accounts) once, since the DB is otherwise empty
+    # and there's no Shell on the Free plan to run this by hand. Revert this
+    # line back to just migrate+server right after this deploy succeeds —
+    # re-running the seed script on a non-empty DB fails on duplicate keys.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/seed.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
