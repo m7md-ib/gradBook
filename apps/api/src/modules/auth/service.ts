@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import type { LoginInput, SignupInput } from '@daftar/shared';
+import type { ChangePasswordInput, LoginInput, SignupInput } from '@daftar/shared';
 import { db } from '../../db/client.js';
 import { users, refreshTokens } from '../../db/schema/index.js';
 import { hashPassword, verifyPassword } from '../../auth/password.js';
@@ -86,4 +86,28 @@ export async function revokeRefreshToken(rawToken: string): Promise<void> {
 
 export async function getUserById(id: string): Promise<User | undefined> {
   return db.query.users.findFirst({ where: eq(users.id, id) });
+}
+
+export async function changePassword(
+  userId: string,
+  input: ChangePasswordInput,
+): Promise<{ user: User; tokens: IssuedTokens }> {
+  const user = await db.query.users.findFirst({ where: eq(users.id, userId) });
+  if (!user) throw ApiError.unauthorized();
+
+  const valid = await verifyPassword(input.currentPassword, user.passwordHash);
+  if (!valid) throw ApiError.badRequest('كلمة المرور الحالية غير صحيحة');
+
+  const passwordHash = await hashPassword(input.newPassword);
+  const [updated] = await db.update(users).set({ passwordHash }).where(eq(users.id, userId)).returning();
+  if (!updated) throw ApiError.internal();
+
+  // Revoke every existing refresh token (this session included) so other
+  // devices/browsers are signed out, then issue a fresh pair for the
+  // session that just changed the password — no reason to force a
+  // re-login here when the caller already proved they know the new one.
+  await db.update(refreshTokens).set({ revokedAt: new Date() }).where(eq(refreshTokens.userId, userId));
+  const tokens = await issueTokens(updated);
+
+  return { user: updated, tokens };
 }

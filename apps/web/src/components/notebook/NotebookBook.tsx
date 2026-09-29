@@ -17,7 +17,7 @@ export interface NotebookBookProps {
 
 type FlipState = { direction: 'forward' | 'backward'; outgoing: NotebookPageContent | null } | null;
 
-const FLIP_DURATION = 0.62;
+const FLIP_DURATION = 0.4;
 
 export function NotebookBook({ theme = FALLBACK_THEME, pages, currentIndex, onIndexChange, onWriteClick, className }: NotebookBookProps) {
   const { t, i18n } = useTranslation();
@@ -112,7 +112,7 @@ export function NotebookBook({ theme = FALLBACK_THEME, pages, currentIndex, onIn
                 style={{ transformStyle: 'preserve-3d', transformOrigin: flip.direction === 'forward' ? startEdgeOrigin : endEdgeOrigin }}
                 initial={{ rotateY: 0 }}
                 animate={{ rotateY: flip.direction === 'forward' ? -180 : 180 }}
-                transition={{ duration: FLIP_DURATION, ease: [0.45, 0, 0.55, 1] }}
+                transition={{ duration: FLIP_DURATION, ease: [0.34, 0, 0.18, 1] }}
                 onAnimationComplete={() => setFlip(null)}
               >
                 <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
@@ -142,7 +142,7 @@ export function NotebookBook({ theme = FALLBACK_THEME, pages, currentIndex, onIn
               style={{ transformStyle: 'preserve-3d', transformOrigin: flip.direction === 'forward' ? startEdgeOrigin : endEdgeOrigin }}
               initial={{ rotateY: 0 }}
               animate={{ rotateY: flip.direction === 'forward' ? -180 : 180 }}
-              transition={{ duration: FLIP_DURATION, ease: [0.45, 0, 0.55, 1] }}
+              transition={{ duration: FLIP_DURATION, ease: [0.34, 0, 0.18, 1] }}
               onAnimationComplete={() => setFlip(null)}
             >
               <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>

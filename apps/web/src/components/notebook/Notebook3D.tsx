@@ -52,7 +52,7 @@ export function Notebook3D({ cover, book, onOpen, className, autoOpenLabel }: No
             />
             <motion.div
               animate={stage === 'opening' ? { rotateY: isRtl ? 115 : -115, opacity: 0.4 } : { rotateY: 0, opacity: 1 }}
-              transition={{ duration: 0.9, ease: [0.6, 0.02, 0.2, 1] }}
+              transition={{ duration: 0.55, ease: [0.32, 0, 0.15, 1] }}
               onAnimationComplete={() => {
                 if (stage === 'opening') setStage('open');
               }}

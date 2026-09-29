@@ -1,4 +1,4 @@
-import { authEndpoints, type LoginPayload, type SignupPayload } from '@/api/endpoints/auth';
+import { authEndpoints, type ChangePasswordPayload, type LoginPayload, type SignupPayload } from '@/api/endpoints/auth';
 import type { AuthUser } from '@/types/api';
 
 export const authService = {
@@ -6,5 +6,6 @@ export const authService = {
   login: (payload: LoginPayload): Promise<AuthUser> => authEndpoints.login(payload),
   logout: (): Promise<void> => authEndpoints.logout(),
   currentUser: (): Promise<AuthUser> => authEndpoints.me(),
+  changePassword: (payload: ChangePasswordPayload): Promise<AuthUser> => authEndpoints.changePassword(payload),
   isAdmin: (user: AuthUser | null | undefined): boolean => user?.role === 'admin',
 };

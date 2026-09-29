@@ -11,6 +11,10 @@ export interface LoginPayload {
   email: string;
   password: string;
 }
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
 
 export const authEndpoints = {
   async signup(payload: SignupPayload): Promise<AuthUser> {
@@ -26,6 +30,10 @@ export const authEndpoints = {
   },
   async me(): Promise<AuthUser> {
     const { data } = await apiClient.get<{ user: AuthUser }>('/api/auth/me');
+    return data.user;
+  },
+  async changePassword(payload: ChangePasswordPayload): Promise<AuthUser> {
+    const { data } = await apiClient.post<{ user: AuthUser }>('/api/auth/change-password', payload);
     return data.user;
   },
 };

@@ -29,6 +29,13 @@
     "no": "No",
     "page": "Page"
   },
+  "account": {
+    "changePasswordTitle": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePasswordButton": "Update password",
+    "changePasswordSuccess": "Password changed successfully"
+  },
   "nav": {
     "howItWorks": "How it works",
     "pricing": "Pricing",
@@ -83,7 +90,8 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
     "createOne": "Create one",
-    "loginInstead": "Log in"
+    "loginInstead": "Log in",
+    "contactHint": "Need help or a custom notebook? Contact us"
   },
   "wizard": {
     "title": "Create your graduation notebook",

@@ -5,6 +5,7 @@ import { useAdminSettings, useUpdateAdminSetting } from '@/hooks/useAdmin';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { PageSpinner } from '@/components/ui/Spinner';
+import { ChangePasswordCard } from '@/components/ChangePasswordCard';
 import { getApiErrorMessage } from '@/api/client';
 
 export default function AdminSettingsPage() {
@@ -28,6 +29,9 @@ export default function AdminSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('admin.settings')}</h1>
+
+      <ChangePasswordCard />
+
       <div className="flex flex-col gap-3">
         {data?.map((setting) => (
           <SettingRow key={setting.key} settingKey={setting.key} value={setting.value} onSave={save} />

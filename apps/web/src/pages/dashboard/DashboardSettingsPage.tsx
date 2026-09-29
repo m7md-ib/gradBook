@@ -7,6 +7,7 @@ import { useUpdateSettings, useUpdateSlug } from '@/hooks/useNotebook';
 import { useOwnerReports, useResolveOwnerReport } from '@/hooks/useModeration';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Input';
+import { ChangePasswordCard } from '@/components/ChangePasswordCard';
 import { getApiErrorMessage } from '@/api/client';
 import type { NotebookDto } from '@/types/api';
 
@@ -115,6 +116,10 @@ export default function DashboardSettingsPage() {
       <Button loading={updateSettings.isPending} onClick={saveSettings} className="self-start">
         {t('common.save')}
       </Button>
+
+      <section className="border-t border-ink/10 pt-6">
+        <ChangePasswordCard />
+      </section>
 
       <section className="flex flex-col gap-3 border-t border-ink/10 pt-6">
         <h2 className="font-heading-auto text-lg font-bold text-ink">{t('dashboard.reportsTitle')}</h2>
