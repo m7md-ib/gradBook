@@ -68,6 +68,17 @@ export default function LoginPage() {
             {t('auth.createOne')}
           </Link>
         </p>
+
+        <p className="mt-4 text-center text-xs text-ink/40">
+          {t('auth.contactHint')}{' '}
+          <a href="https://wa.me/962781630603" className="underline hover:text-ink/60" dir="ltr">
+            +962 78 163 0603
+          </a>
+          {' · '}
+          <a href="mailto:m7mdayoubibdah@gmail.com" className="underline hover:text-ink/60">
+            m7mdayoubibdah@gmail.com
+          </a>
+        </p>
       </div>
     </div>
   );
