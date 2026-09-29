@@ -25,14 +25,17 @@ services:
     # Runs migrations before every boot (including restarts/redeploys) since
     # the Free plan has no Shell to run them by hand. Safe to repeat: Drizzle
     # tracks applied migrations and only runs new ones.
-    # TEMPORARY: the previous seed attempt crashed partway through (storage
-    # config bug, fixed below) after inserting themes/packages but before
-    # reaching cover templates or the demo notebook. clear-partial-catalog
-    # wipes just those two tables so seed.js can run cleanly from scratch.
-    # Revert this line back to just migrate+server right after this deploy
-    # succeeds — re-running seed.js against a fully-seeded DB fails on
-    # duplicate keys.
-    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/clear-partial-catalog.js && node apps/api/dist/db/seed.js && node apps/api/dist/server.js
+    #
+    # seed.js already completed successfully in an earlier deploy — do NOT
+    # chain it back in here. Re-running it against an already-seeded DB fails
+    # on duplicate keys (unique slugs) and would take the service down on
+    # every future boot.
+    #
+    # TEMPORARY: update-package-currency.js is a one-off, idempotent fix for
+    # rows seeded with currency='SAR' before pricing switched to JOD. Safe to
+    # leave in for a boot or two, but remove once confirmed applied — no
+    # reason to run a no-op UPDATE on every restart forever.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/update-package-currency.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
