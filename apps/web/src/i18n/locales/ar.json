@@ -29,6 +29,13 @@
     "no": "لا",
     "page": "صفحة"
   },
+  "account": {
+    "changePasswordTitle": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "changePasswordButton": "تحديث كلمة المرور",
+    "changePasswordSuccess": "تم تغيير كلمة المرور بنجاح"
+  },
   "nav": {
     "howItWorks": "كيف يعمل",
     "pricing": "الباقات",
@@ -83,7 +90,8 @@
     "noAccount": "ليس لديك حساب؟",
     "haveAccount": "لديك حساب بالفعل؟",
     "createOne": "أنشئ واحداً",
-    "loginInstead": "سجّل الدخول"
+    "loginInstead": "سجّل الدخول",
+    "contactHint": "تحتاج مساعدة أو دفتر مخصص؟ تواصل معنا"
   },
   "wizard": {
     "title": "أنشئ دفتر تخرجك",

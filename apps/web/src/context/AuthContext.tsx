@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/services/authService';
 import type { AuthUser } from '@/types/api';
-import type { LoginPayload, SignupPayload } from '@/api/endpoints/auth';
+import type { ChangePasswordPayload, LoginPayload, SignupPayload } from '@/api/endpoints/auth';
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -12,8 +12,10 @@ interface AuthContextValue {
   login: (payload: LoginPayload) => Promise<AuthUser>;
   signup: (payload: SignupPayload) => Promise<AuthUser>;
   logout: () => Promise<void>;
+  changePassword: (payload: ChangePasswordPayload) => Promise<AuthUser>;
   isLoggingIn: boolean;
   isSigningUp: boolean;
+  isChangingPassword: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -49,6 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: authService.changePassword,
+    onSuccess: (user) => queryClient.setQueryData(AUTH_QUERY_KEY, user),
+  });
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: meQuery.data ?? null,
@@ -58,10 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login: (payload) => loginMutation.mutateAsync(payload),
       signup: (payload) => signupMutation.mutateAsync(payload),
       logout: () => logoutMutation.mutateAsync(),
+      changePassword: (payload) => changePasswordMutation.mutateAsync(payload),
       isLoggingIn: loginMutation.isPending,
       isSigningUp: signupMutation.isPending,
+      isChangingPassword: changePasswordMutation.isPending,
     }),
-    [meQuery.data, meQuery.isLoading, loginMutation, signupMutation, logoutMutation],
+    [meQuery.data, meQuery.isLoading, loginMutation, signupMutation, logoutMutation, changePasswordMutation],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginSchema, signupSchema, type AuthUser } from '@daftar/shared';
+import { changePasswordSchema, loginSchema, signupSchema, type AuthUser } from '@daftar/shared';
 import { asyncHandler } from '../../lib/async-handler.js';
 import { validateBody } from '../../middleware/validate.js';
 import { authRateLimiter } from '../../middleware/rate-limit.js';
@@ -72,6 +72,18 @@ authRouter.get(
   asyncHandler(async (req, res) => {
     const user = await authService.getUserById(req.user!.sub);
     if (!user) throw ApiError.unauthorized();
+    res.json({ user: toAuthUser(user) });
+  }),
+);
+
+authRouter.post(
+  '/change-password',
+  requireAuth,
+  authRateLimiter,
+  validateBody(changePasswordSchema),
+  asyncHandler(async (req, res) => {
+    const { user, tokens } = await authService.changePassword(req.user!.sub, req.body);
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
     res.json({ user: toAuthUser(user) });
   }),
 );
