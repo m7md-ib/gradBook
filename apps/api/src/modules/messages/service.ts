@@ -84,7 +84,11 @@ export async function listPublicApproved(
   const items = await db.query.messages.findMany({
     where,
     with: { media: true },
-    orderBy: [messages.pageNumber],
+    // Chronological (when it was written), not messages.pageNumber (when it
+    // was approved) — a manually-moderated notebook approves newest-first
+    // (matching the owner's moderation queue order), which would otherwise
+    // hand early pages to the most recent messages and read backwards.
+    orderBy: [messages.createdAt],
     limit: pagination.pageSize,
     offset: (pagination.page - 1) * pagination.pageSize,
   });
