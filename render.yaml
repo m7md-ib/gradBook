@@ -31,11 +31,16 @@ services:
     # on duplicate keys (unique slugs) and would take the service down on
     # every future boot.
     #
-    # TEMPORARY: update-package-currency.js is a one-off, idempotent fix for
-    # rows seeded with currency='SAR' before pricing switched to JOD. Safe to
-    # leave in for a boot or two, but remove once confirmed applied — no
-    # reason to run a no-op UPDATE on every restart forever.
-    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/update-package-currency.js && node apps/api/dist/server.js
+    # TEMPORARY: both scripts below are one-off, idempotent, and never fail
+    # the boot (they log and continue if their target row doesn't exist yet).
+    # Safe to leave in for a few boots, but remove once confirmed applied —
+    # no reason to run no-op UPDATEs on every restart forever.
+    # - update-package-currency.js: fixes rows seeded with currency='SAR'
+    #   before pricing switched to JOD.
+    # - promote-owner-admin.js: promotes the owner's own account (signed up
+    #   normally, password never shared with anyone) to admin, and blocks
+    #   the public demo admin account whose password is in the README.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/update-package-currency.js && node apps/api/dist/db/promote-owner-admin.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
