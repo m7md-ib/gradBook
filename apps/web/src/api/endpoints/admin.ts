@@ -71,6 +71,13 @@ export const adminEndpoints = {
     const { data } = await apiClient.get<{ themes: Theme[] }>('/api/admin/themes');
     return data.themes;
   },
+  async createTheme(payload: Omit<Theme, 'active'>) {
+    const { data } = await apiClient.post<{ theme: Theme }>('/api/admin/themes', payload);
+    return data.theme;
+  },
+  async deleteTheme(slug: string) {
+    await apiClient.delete(`/api/admin/themes/${slug}`);
+  },
   async updateTheme(slug: string, payload: Partial<Pick<Theme, 'active' | 'nameAr' | 'nameEn'>>) {
     const { data } = await apiClient.patch<{ theme: Theme }>(`/api/admin/themes/${slug}`, payload);
     return data.theme;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { paginationQuerySchema } from '@daftar/shared';
+import { paginationQuerySchema, ThemeCategory } from '@daftar/shared';
 import { asyncHandler } from '../../lib/async-handler.js';
 import { validateBody, validateParams, validateQuery } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth-guard.js';
@@ -110,6 +110,43 @@ adminRouter.get(
   '/themes',
   asyncHandler(async (_req, res) => {
     res.json({ themes: await adminService.listThemesAdmin() });
+  }),
+);
+
+const themeCategoryValues = Object.values(ThemeCategory) as [string, ...string[]];
+
+adminRouter.post(
+  '/themes',
+  validateBody(
+    z.object({
+      slug: z
+        .string()
+        .min(2)
+        .max(60)
+        .regex(/^[a-z0-9-]+$/, 'المعرّف يجب أن يحتوي حروف إنجليزية صغيرة وأرقام وشرطات فقط'),
+      category: z.enum(themeCategoryValues),
+      nameAr: z.string().min(1).max(80),
+      nameEn: z.string().min(1).max(80),
+      paperColor: z.string().min(1),
+      accentColor: z.string().min(1),
+      inkColor: z.string().min(1),
+      headingFont: z.string().min(1),
+      bodyFont: z.string().min(1),
+      coverGradientFrom: z.string().min(1),
+      coverGradientTo: z.string().min(1),
+    }),
+  ),
+  asyncHandler(async (req, res) => {
+    res.status(201).json({ theme: await adminService.createTheme(req.body) });
+  }),
+);
+
+adminRouter.delete(
+  '/themes/:slug',
+  validateParams(slugParams),
+  asyncHandler(async (req, res) => {
+    await adminService.deleteTheme(req.params.slug);
+    res.status(204).send();
   }),
 );
 

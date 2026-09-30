@@ -259,7 +259,21 @@
     "block": "Block",
     "unblock": "Unblock",
     "active": "Active",
-    "blocked": "Blocked"
+    "blocked": "Blocked",
+    "addTheme": "+ Add theme",
+    "deleteTheme": "Delete",
+    "deleteThemeConfirm": "Delete this theme permanently?",
+    "themeSlug": "Slug (English, e.g. winter-blue)",
+    "themeCategory": "Category",
+    "themeNameAr": "Arabic name",
+    "themeNameEn": "English name",
+    "themePaperColor": "Paper color",
+    "themeAccentColor": "Accent color",
+    "themeInkColor": "Ink color",
+    "themeHeadingFont": "Heading font",
+    "themeBodyFont": "Body font",
+    "themeGradientFrom": "Cover gradient (from)",
+    "themeGradientTo": "Cover gradient (to)"
   },
   "packageFeatures": {
     "custom_cover": "Custom cover",
