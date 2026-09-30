@@ -32,15 +32,19 @@ services:
     # every future boot.
     #
     # TEMPORARY: both scripts below are one-off, idempotent, and never fail
-    # the boot (they log and continue if their target row doesn't exist yet).
-    # Safe to leave in for a few boots, but remove once confirmed applied —
-    # no reason to run no-op UPDATEs on every restart forever.
-    # - update-package-currency.js: fixes rows seeded with currency='SAR'
-    #   before pricing switched to JOD.
+    # the boot (they log and continue/skip if there's nothing to do). Safe to
+    # leave in for a few boots, but remove once confirmed applied — no reason
+    # to run no-op checks on every restart forever.
     # - promote-owner-admin.js: promotes the owner's own account (signed up
     #   normally, password never shared with anyone) to admin, and blocks
     #   the public demo admin account whose password is in the README.
-    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/update-package-currency.js && node apps/api/dist/db/promote-owner-admin.js && node apps/api/dist/server.js
+    # - fix-demo-notebook.js: an earlier seed run left the demo notebook
+    #   (sara-2026) stuck mid-creation (status='draft', so the public API
+    #   404s it) after a storage TLS failure, since fixed — seedDemoNotebook
+    #   skips if the row already exists, so a normal reseed can never finish
+    #   it. Deletes the stuck demo user (cascades to the notebook and
+    #   everything under it) and recreates it from scratch.
+    startCommand: node apps/api/dist/db/migrate.js && node apps/api/dist/db/promote-owner-admin.js && node apps/api/dist/db/fix-demo-notebook.js && node apps/api/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
