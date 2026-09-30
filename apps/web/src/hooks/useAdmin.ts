@@ -70,6 +70,28 @@ export function useAdminThemes() {
   return useQuery({ queryKey: ['admin', 'themes'], queryFn: adminEndpoints.themes });
 }
 
+export function useCreateAdminTheme() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: Parameters<typeof adminEndpoints.createTheme>[0]) => adminEndpoints.createTheme(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'themes'] });
+      queryClient.invalidateQueries({ queryKey: ['catalog', 'themes'] });
+    },
+  });
+}
+
+export function useDeleteAdminTheme() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (slug: string) => adminEndpoints.deleteTheme(slug),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'themes'] });
+      queryClient.invalidateQueries({ queryKey: ['catalog', 'themes'] });
+    },
+  });
+}
+
 export function useUpdateAdminTheme() {
   const queryClient = useQueryClient();
   return useMutation({

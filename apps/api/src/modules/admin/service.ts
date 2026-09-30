@@ -1,5 +1,5 @@
 import { count, desc, eq, ilike, sql, sum } from 'drizzle-orm';
-import type { PaginationQuery } from '@daftar/shared';
+import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
 import { paginate } from '@daftar/shared';
 import { db } from '../../db/client.js';
 import {
@@ -179,6 +179,29 @@ export async function listThemesAdmin() {
   return db.query.notebookThemes.findMany();
 }
 
+export interface CreateThemeInput {
+  slug: string;
+  category: ThemeCategory;
+  nameAr: string;
+  nameEn: string;
+  paperColor: string;
+  accentColor: string;
+  inkColor: string;
+  headingFont: string;
+  bodyFont: string;
+  coverGradientFrom: string;
+  coverGradientTo: string;
+}
+
+export async function createTheme(input: CreateThemeInput) {
+  const existing = await db.query.notebookThemes.findFirst({ where: eq(notebookThemes.slug, input.slug) });
+  if (existing) throw ApiError.conflict('يوجد تصميم بهذا المعرّف بالفعل');
+
+  const [created] = await db.insert(notebookThemes).values(input).returning();
+  if (!created) throw ApiError.internal();
+  return created;
+}
+
 export async function updateTheme(slug: string, input: Partial<{ active: boolean; nameAr: string; nameEn: string }>) {
   const [updated] = await db
     .update(notebookThemes)
@@ -187,6 +210,20 @@ export async function updateTheme(slug: string, input: Partial<{ active: boolean
     .returning();
   if (!updated) throw ApiError.notFound('التصميم غير موجود');
   return updated;
+}
+
+export async function deleteTheme(slug: string) {
+  try {
+    const [deleted] = await db.delete(notebookThemes).where(eq(notebookThemes.slug, slug)).returning();
+    if (!deleted) throw ApiError.notFound('التصميم غير موجود');
+    return deleted;
+  } catch (error) {
+    // Postgres foreign_key_violation: notebooks.theme_slug references this row.
+    if (error && typeof error === 'object' && 'code' in error && error.code === '23503') {
+      throw ApiError.conflict('لا يمكن حذف هذا التصميم لأنه مستخدم في دفتر واحد أو أكثر — عطّله بدلاً من حذفه');
+    }
+    throw error;
+  }
 }
 
 export async function listCoverTemplatesAdmin() {

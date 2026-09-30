@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, useState, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
 interface FieldWrapperProps {
@@ -11,8 +11,10 @@ interface FieldWrapperProps {
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement>, FieldWrapperProps {}
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, hint, required, id, ...props }, ref) => {
+  ({ className, label, error, hint, required, id, type, ...props }, ref) => {
     const inputId = id ?? props.name;
+    const isPassword = type === 'password';
+    const [revealed, setRevealed] = useState(false);
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
@@ -21,19 +23,34 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {required && <span className="text-maroon-600"> *</span>}
           </label>
         )}
-        <input
-          ref={ref}
-          id={inputId}
-          className={cn(
-            'w-full rounded-xl border bg-white/80 px-4 py-2.5 text-ink placeholder:text-ink/40',
-            'focus:outline-none focus:ring-2 focus:ring-maroon-500/40 focus:border-maroon-500 transition-colors',
-            error ? 'border-red-400' : 'border-ink/15',
-            className,
+        <div className="relative">
+          <input
+            ref={ref}
+            id={inputId}
+            type={isPassword && revealed ? 'text' : type}
+            className={cn(
+              'w-full rounded-xl border bg-white/80 px-4 py-2.5 text-ink placeholder:text-ink/40',
+              'focus:outline-none focus:ring-2 focus:ring-maroon-500/40 focus:border-maroon-500 transition-colors',
+              isPassword && 'pe-11',
+              error ? 'border-red-400' : 'border-ink/15',
+              className,
+            )}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
+            {...props}
+          />
+          {isPassword && (
+            <button
+              type="button"
+              onClick={() => setRevealed((v) => !v)}
+              className="absolute inset-y-0 end-3 flex items-center text-ink/40 hover:text-ink/70"
+              aria-label={revealed ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+              tabIndex={-1}
+            >
+              {revealed ? '🙈' : '👁️'}
+            </button>
           )}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
-          {...props}
-        />
+        </div>
         {error && (
           <p id={`${inputId}-error`} className="text-sm text-red-600">
             {error}

@@ -259,7 +259,21 @@
     "block": "إيقاف",
     "unblock": "إلغاء الإيقاف",
     "active": "نشط",
-    "blocked": "موقوف"
+    "blocked": "موقوف",
+    "addTheme": "+ إضافة تصميم",
+    "deleteTheme": "حذف",
+    "deleteThemeConfirm": "هل تريد حذف هذا التصميم نهائيًا؟",
+    "themeSlug": "المعرّف (إنجليزي، مثل: winter-blue)",
+    "themeCategory": "الفئة",
+    "themeNameAr": "الاسم بالعربي",
+    "themeNameEn": "الاسم بالإنجليزي",
+    "themePaperColor": "لون الصفحة",
+    "themeAccentColor": "لون التمييز",
+    "themeInkColor": "لون النص",
+    "themeHeadingFont": "خط العناوين",
+    "themeBodyFont": "خط النص",
+    "themeGradientFrom": "تدرّج الغلاف (من)",
+    "themeGradientTo": "تدرّج الغلاف (إلى)"
   },
   "packageFeatures": {
     "custom_cover": "غلاف مخصص",
