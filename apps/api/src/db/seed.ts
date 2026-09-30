@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { fileURLToPath } from 'node:url';
 import { eq } from 'drizzle-orm';
 import {
   DEFAULT_PACKAGES,
@@ -48,7 +49,7 @@ const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
   [ThemeCategory.YOUTH]: ['#FFE29F', '#FF7A59'],
 };
 
-async function seedThemes() {
+export async function seedThemes() {
   for (const theme of DEFAULT_THEMES) {
     await db
       .insert(notebookThemes)
@@ -70,7 +71,7 @@ async function seedThemes() {
   console.log(`✅ Themes: ${DEFAULT_THEMES.length}`);
 }
 
-async function seedPackages() {
+export async function seedPackages() {
   for (const pkg of DEFAULT_PACKAGES) {
     await db
       .insert(packages)
@@ -95,7 +96,7 @@ async function seedPackages() {
   console.log(`✅ Packages: ${DEFAULT_PACKAGES.length}`);
 }
 
-async function seedCoverTemplates() {
+export async function seedCoverTemplates() {
   const categories = Object.values(ThemeCategory);
   for (const [index, category] of categories.entries()) {
     const slug = `template-${category}`;
@@ -149,7 +150,7 @@ function categoryNameAr(category: string): string {
   return map[category] ?? category;
 }
 
-async function seedPlatformSettings() {
+export async function seedPlatformSettings() {
   await db
     .insert(platformSettings)
     .values([
@@ -159,7 +160,7 @@ async function seedPlatformSettings() {
     .onConflictDoNothing({ target: platformSettings.key });
 }
 
-async function seedDemoNotebook() {
+export async function seedDemoNotebook() {
   const existing = await db.query.notebooks.findFirst({ where: eq(notebooks.slug, 'sara-2026') });
   if (existing) {
     console.log('ℹ️  Demo notebook already exists, skipping demo content seeding');
@@ -480,7 +481,13 @@ async function main() {
   await pool.end();
 }
 
-main().catch((error) => {
-  console.error('❌ Seed failed', error);
-  process.exit(1);
-});
+// Only auto-runs when this file is executed directly (`node seed.js`) — not
+// when another script imports its individual seed functions, which would
+// otherwise re-run the whole thing (and close the shared pool) as a
+// side effect of the import.
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error('❌ Seed failed', error);
+    process.exit(1);
+  });
+}
