@@ -2,6 +2,7 @@ import { count, desc, eq, ilike, sql, sum } from 'drizzle-orm';
 import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
 import { paginate } from '@daftar/shared';
 import { db } from '../../db/client.js';
+import { getStorageProvider } from '../../storage/index.js';
 import {
   users,
   notebooks,
@@ -230,6 +231,25 @@ export async function listCoverTemplatesAdmin() {
   return db.query.coverTemplates.findMany();
 }
 
+export interface CreateCoverTemplateInput {
+  slug: string;
+  category: ThemeCategory;
+  nameAr: string;
+  nameEn: string;
+  imageKey: string;
+  thumbnailKey: string;
+  sortOrder?: number;
+}
+
+export async function createCoverTemplate(input: CreateCoverTemplateInput) {
+  const existing = await db.query.coverTemplates.findFirst({ where: eq(coverTemplates.slug, input.slug) });
+  if (existing) throw ApiError.conflict('يوجد قالب بهذا المعرّف بالفعل');
+
+  const [created] = await db.insert(coverTemplates).values(input).returning();
+  if (!created) throw ApiError.internal();
+  return created;
+}
+
 export async function updateCoverTemplate(
   id: string,
   input: Partial<{ active: boolean; sortOrder: number; nameAr: string; nameEn: string }>,
@@ -241,6 +261,19 @@ export async function updateCoverTemplate(
     .returning();
   if (!updated) throw ApiError.notFound('القالب غير موجود');
   return updated;
+}
+
+export async function deleteCoverTemplate(id: string) {
+  const [deleted] = await db.delete(coverTemplates).where(eq(coverTemplates.id, id)).returning();
+  if (!deleted) throw ApiError.notFound('القالب غير موجود');
+  // Notebooks reference a template by slug with no foreign key (a notebook
+  // whose template was deleted just shows no cover image — see
+  // resolveCoverImageUrl), so there's no FK violation to handle here.
+
+  const storage = getStorageProvider();
+  await Promise.all([storage.delete(deleted.imageKey), storage.delete(deleted.thumbnailKey)]);
+
+  return deleted;
 }
 
 export async function getSettings() {
