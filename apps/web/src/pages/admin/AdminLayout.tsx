@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/admin/reports', label: 'admin.reports', icon: '🚩' },
   { to: '/admin/packages', label: 'admin.packages', icon: '📦' },
   { to: '/admin/themes', label: 'admin.themes', icon: '🎨' },
+  { to: '/admin/cover-templates', label: 'admin.coverTemplates', icon: '🖼️' },
   { to: '/admin/settings', label: 'admin.settings', icon: '⚙️' },
 ] as const;
 

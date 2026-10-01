@@ -273,7 +273,16 @@
     "themeHeadingFont": "خط العناوين",
     "themeBodyFont": "خط النص",
     "themeGradientFrom": "تدرّج الغلاف (من)",
-    "themeGradientTo": "تدرّج الغلاف (إلى)"
+    "themeGradientTo": "تدرّج الغلاف (إلى)",
+    "coverTemplates": "قوالب الأغلفة",
+    "addCoverTemplate": "+ إضافة غلاف",
+    "deleteCoverTemplateConfirm": "هل تريد حذف هذا الغلاف نهائيًا؟",
+    "coverTemplateSlug": "المعرّف (إنجليزي، مثل: blue-wave)",
+    "coverTemplateCategory": "الفئة",
+    "coverTemplateNameAr": "الاسم بالعربي",
+    "coverTemplateNameEn": "الاسم بالإنجليزي",
+    "coverTemplateImage": "صورة الغلاف",
+    "coverTemplateSortOrder": "ترتيب الظهور"
   },
   "packageFeatures": {
     "custom_cover": "غلاف مخصص",

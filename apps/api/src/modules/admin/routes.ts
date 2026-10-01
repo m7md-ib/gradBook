@@ -4,6 +4,8 @@ import { paginationQuerySchema, ThemeCategory } from '@daftar/shared';
 import { asyncHandler } from '../../lib/async-handler.js';
 import { validateBody, validateParams, validateQuery } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth-guard.js';
+import { imageUpload, processAndStoreImage } from '../../lib/upload.js';
+import { ApiError } from '../../lib/errors.js';
 import * as adminService from './service.js';
 
 export const adminRouter = Router();
@@ -163,6 +165,46 @@ adminRouter.get(
   '/cover-templates',
   asyncHandler(async (_req, res) => {
     res.json({ coverTemplates: await adminService.listCoverTemplatesAdmin() });
+  }),
+);
+
+adminRouter.post(
+  '/cover-templates',
+  imageUpload.single('image'),
+  validateBody(
+    z.object({
+      slug: z
+        .string()
+        .min(2)
+        .max(60)
+        .regex(/^[a-z0-9-]+$/, 'المعرّف يجب أن يحتوي حروف إنجليزية صغيرة وأرقام وشرطات فقط'),
+      category: z.enum(themeCategoryValues),
+      nameAr: z.string().min(1).max(80),
+      nameEn: z.string().min(1).max(80),
+      sortOrder: z.coerce.number().int().optional(),
+    }),
+  ),
+  asyncHandler(async (req, res) => {
+    if (!req.file) throw ApiError.badRequest('صورة الغلاف مطلوبة');
+    const { key: imageKey, thumbnailKey } = await processAndStoreImage(req.file.buffer, 'cover-templates', {
+      maxWidth: 1600,
+      makeThumbnail: true,
+    });
+    const coverTemplate = await adminService.createCoverTemplate({
+      ...req.body,
+      imageKey,
+      thumbnailKey: thumbnailKey!,
+    });
+    res.status(201).json({ coverTemplate });
+  }),
+);
+
+adminRouter.delete(
+  '/cover-templates/:id',
+  validateParams(idParams),
+  asyncHandler(async (req, res) => {
+    await adminService.deleteCoverTemplate(req.params.id);
+    res.status(204).send();
   }),
 );
 
