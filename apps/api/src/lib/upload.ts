@@ -36,7 +36,7 @@ export async function processAndStoreImage(
   buffer: Buffer,
   folder: string,
   options: { maxWidth?: number; makeThumbnail?: boolean } = {},
-): Promise<ProcessedImage & { thumbnailUrl?: string }> {
+): Promise<ProcessedImage & { thumbnailUrl?: string; thumbnailKey?: string }> {
   const { maxWidth = 1600, makeThumbnail = false } = options;
   const storage = getStorageProvider();
 
@@ -67,6 +67,7 @@ export async function processAndStoreImage(
   });
 
   let thumbnailUrl: string | undefined;
+  let thumbnailKey: string | undefined;
   if (makeThumbnail) {
     const thumbBuffer = await sharp(buffer).rotate().resize({ width: 320 }).webp({ quality: 75 }).toBuffer();
     const thumb = await storage.upload({
@@ -75,6 +76,7 @@ export async function processAndStoreImage(
       contentType: 'image/webp',
     });
     thumbnailUrl = thumb.url;
+    thumbnailKey = thumb.key;
   }
 
   return {
@@ -83,5 +85,6 @@ export async function processAndStoreImage(
     width: outputMeta.width ?? 0,
     height: outputMeta.height ?? 0,
     thumbnailUrl,
+    thumbnailKey,
   };
 }

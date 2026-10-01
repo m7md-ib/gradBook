@@ -90,6 +90,29 @@ export const adminEndpoints = {
     const { data } = await apiClient.patch<{ coverTemplate: CoverTemplate }>(`/api/admin/cover-templates/${id}`, payload);
     return data.coverTemplate;
   },
+  async createCoverTemplate(payload: {
+    slug: string;
+    category: string;
+    nameAr: string;
+    nameEn: string;
+    sortOrder?: number;
+    image: File;
+  }) {
+    const form = new FormData();
+    form.append('slug', payload.slug);
+    form.append('category', payload.category);
+    form.append('nameAr', payload.nameAr);
+    form.append('nameEn', payload.nameEn);
+    if (payload.sortOrder !== undefined) form.append('sortOrder', String(payload.sortOrder));
+    form.append('image', payload.image);
+    const { data } = await apiClient.post<{ coverTemplate: CoverTemplate }>('/api/admin/cover-templates', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.coverTemplate;
+  },
+  async deleteCoverTemplate(id: string) {
+    await apiClient.delete(`/api/admin/cover-templates/${id}`);
+  },
   async settings(): Promise<Array<{ key: string; value: unknown }>> {
     const { data } = await apiClient.get<{ settings: Array<{ key: string; value: unknown }> }>('/api/admin/settings');
     return data.settings;

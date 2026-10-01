@@ -25,6 +25,7 @@ const AdminOrdersPage = lazy(() => import('@/pages/admin/AdminOrdersPage'));
 const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReportsPage'));
 const AdminPackagesPage = lazy(() => import('@/pages/admin/AdminPackagesPage'));
 const AdminThemesPage = lazy(() => import('@/pages/admin/AdminThemesPage'));
+const AdminCoverTemplatesPage = lazy(() => import('@/pages/admin/AdminCoverTemplatesPage'));
 const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
@@ -87,6 +88,7 @@ export default function App() {
           <Route path="reports" element={<AdminReportsPage />} />
           <Route path="packages" element={<AdminPackagesPage />} />
           <Route path="themes" element={<AdminThemesPage />} />
+          <Route path="cover-templates" element={<AdminCoverTemplatesPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
 

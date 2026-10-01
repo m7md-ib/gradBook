@@ -273,7 +273,16 @@
     "themeHeadingFont": "Heading font",
     "themeBodyFont": "Body font",
     "themeGradientFrom": "Cover gradient (from)",
-    "themeGradientTo": "Cover gradient (to)"
+    "themeGradientTo": "Cover gradient (to)",
+    "coverTemplates": "Cover templates",
+    "addCoverTemplate": "+ Add cover",
+    "deleteCoverTemplateConfirm": "Delete this cover template permanently?",
+    "coverTemplateSlug": "Slug (English, e.g. blue-wave)",
+    "coverTemplateCategory": "Category",
+    "coverTemplateNameAr": "Arabic name",
+    "coverTemplateNameEn": "English name",
+    "coverTemplateImage": "Cover image",
+    "coverTemplateSortOrder": "Sort order"
   },
   "packageFeatures": {
     "custom_cover": "Custom cover",

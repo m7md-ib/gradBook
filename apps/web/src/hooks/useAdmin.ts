@@ -104,6 +104,45 @@ export function useUpdateAdminTheme() {
   });
 }
 
+export function useAdminCoverTemplates() {
+  return useQuery({ queryKey: ['admin', 'coverTemplates'], queryFn: adminEndpoints.coverTemplates });
+}
+
+export function useCreateAdminCoverTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: Parameters<typeof adminEndpoints.createCoverTemplate>[0]) =>
+      adminEndpoints.createCoverTemplate(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coverTemplates'] });
+      queryClient.invalidateQueries({ queryKey: ['catalog', 'cover-templates'] });
+    },
+  });
+}
+
+export function useDeleteAdminCoverTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => adminEndpoints.deleteCoverTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coverTemplates'] });
+      queryClient.invalidateQueries({ queryKey: ['catalog', 'cover-templates'] });
+    },
+  });
+}
+
+export function useUpdateAdminCoverTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof adminEndpoints.updateCoverTemplate>[1] }) =>
+      adminEndpoints.updateCoverTemplate(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coverTemplates'] });
+      queryClient.invalidateQueries({ queryKey: ['catalog', 'cover-templates'] });
+    },
+  });
+}
+
 export function useAdminSettings() {
   return useQuery({ queryKey: ['admin', 'settings'], queryFn: adminEndpoints.settings });
 }
