@@ -54,11 +54,24 @@ export async function processAndStoreImage(
   }
 
   const id = crypto.randomUUID();
-  const resized = pipeline
-    .resize({ width: Math.min(maxWidth, metadata.width), withoutEnlargement: true })
-    .webp({ quality: 82 });
-  const outputBuffer = await resized.toBuffer();
-  const outputMeta = await sharp(outputBuffer).metadata();
+  let outputBuffer: Buffer;
+  let outputMeta: sharp.Metadata;
+  let thumbBuffer: Buffer | undefined;
+  try {
+    outputBuffer = await pipeline
+      .resize({ width: Math.min(maxWidth, metadata.width), withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer();
+    outputMeta = await sharp(outputBuffer).metadata();
+    if (makeThumbnail) {
+      thumbBuffer = await sharp(buffer).rotate().resize({ width: 320 }).webp({ quality: 75 }).toBuffer();
+    }
+  } catch {
+    // Covers e.g. an unusually high-megapixel photo exceeding sharp's pixel
+    // limit, or a mid-stream decode failure metadata() alone didn't catch —
+    // without this, it crashed out as a generic 500 instead of a clear 400.
+    throw ApiError.badRequest('تعذّر معالجة هذه الصورة، جرّب صورة أخرى');
+  }
 
   const { url, key } = await storage.upload({
     key: `${folder}/${id}.webp`,
@@ -68,8 +81,7 @@ export async function processAndStoreImage(
 
   let thumbnailUrl: string | undefined;
   let thumbnailKey: string | undefined;
-  if (makeThumbnail) {
-    const thumbBuffer = await sharp(buffer).rotate().resize({ width: 320 }).webp({ quality: 75 }).toBuffer();
+  if (thumbBuffer) {
     const thumb = await storage.upload({
       key: `${folder}/${id}-thumb.webp`,
       buffer: thumbBuffer,
