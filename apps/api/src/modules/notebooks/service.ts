@@ -77,7 +77,10 @@ export async function getNotebookForOwner(id: string, userId: string, isAdmin = 
     where: eq(notebooks.id, id),
     with: { graduates: true, qrCode: true },
   });
-  return assertNotebookOwner(notebook, userId, isAdmin);
+  // Without this, an owner whose subscription lapsed would keep seeing
+  // "active" on their own dashboard until someone (anyone) happened to open
+  // the public page and triggered the lazy status flip below.
+  return withExpiryCheck(assertNotebookOwner(notebook, userId, isAdmin));
 }
 
 /** Like {@link getNotebookForOwner}, plus the resolved cover image URL — for the
