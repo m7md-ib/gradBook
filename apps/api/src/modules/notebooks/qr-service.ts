@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../../db/client.js';
 import { qrCodes } from '../../db/schema/index.js';
 import { getStorageProvider } from '../../storage/index.js';
@@ -54,10 +54,11 @@ function withImageUrl<T extends { imageKey: string }>(row: T) {
 }
 
 export async function incrementQrScan(notebookId: string) {
-  const existing = await db.query.qrCodes.findFirst({ where: eq(qrCodes.notebookId, notebookId) });
-  if (!existing) return;
+  // Atomic SQL increment, not read-then-write — a batch of QR scans arriving
+  // at once (e.g. at a graduation ceremony) would otherwise lose counts to
+  // the race between concurrent requests reading the same stale value.
   await db
     .update(qrCodes)
-    .set({ scanCount: existing.scanCount + 1 })
+    .set({ scanCount: sql`${qrCodes.scanCount} + 1` })
     .where(eq(qrCodes.notebookId, notebookId));
 }
