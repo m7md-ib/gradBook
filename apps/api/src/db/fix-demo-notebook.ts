@@ -1,27 +1,34 @@
 import { eq } from 'drizzle-orm';
 import { db, pool } from './client.js';
 import { users } from './schema/identity.js';
+import { notebooks } from './schema/notebooks.js';
 import { seedDemoNotebook } from './seed.js';
 
 const DEMO_EMAIL = 'demo@daftar.app';
+const DEMO_SLUG = 'sara-2026';
 
 /**
- * One-off recovery: an earlier seed run got interrupted partway through
- * seedDemoNotebook (storage TLS failure, since fixed) after creating the
- * demo user and notebook but before finishing activation/messages/etc.
- * seedDemoNotebook's own idempotency check (skip if the notebook already
- * exists) then permanently protected that half-finished state from ever
- * being completed by a normal seed run — the notebook stayed status='draft'
- * forever, which the public API correctly treats as not-found.
- *
- * Deletes the demo user (cascades to the notebook and everything under it —
- * every notebook-owning FK is onDelete: 'cascade'), then reruns
- * seedDemoNotebook from a clean slate.
+ * Self-healing check, safe to run on every boot (chained into render.yaml's
+ * startCommand): if the demo notebook is missing or stuck mid-creation
+ * (status != 'active' — e.g. a storage upload failed partway through
+ * seedDemoNotebook, which earlier happened after a TLS failure), clean up
+ * any partial demo user/notebook and reseed it fresh. Otherwise it's a
+ * no-op (one indexed SELECT) — it must NOT unconditionally delete+recreate
+ * the demo notebook on every boot, or a transient storage hiccup during
+ * the rebuild (most likely right after a cold start) leaves it broken
+ * until the next restart gambles on the rebuild succeeding again.
  */
 async function main() {
-  const existing = await db.query.users.findFirst({ where: eq(users.email, DEMO_EMAIL) });
-  if (existing) {
-    await db.delete(users).where(eq(users.id, existing.id));
+  const notebook = await db.query.notebooks.findFirst({ where: eq(notebooks.slug, DEMO_SLUG) });
+  if (notebook && notebook.status === 'active') {
+    console.log('ℹ️  Demo notebook healthy, nothing to do');
+    await pool.end();
+    return;
+  }
+
+  const existingUser = await db.query.users.findFirst({ where: eq(users.email, DEMO_EMAIL) });
+  if (existingUser) {
+    await db.delete(users).where(eq(users.id, existingUser.id));
     console.log('✅ Removed stuck demo user + cascaded notebook/content');
   }
 
