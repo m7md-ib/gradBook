@@ -7,37 +7,35 @@ import { getNotebookForOwner } from './service.js';
 export async function getNotebookStats(notebookId: string, userId: string): Promise<NotebookStats> {
   await getNotebookForOwner(notebookId, userId);
 
-  const [messageCounts] = await db
-    .select({
-      total: count(),
-      pending: count(sql`CASE WHEN ${messages.status} = 'pending' THEN 1 END`),
-      approved: count(sql`CASE WHEN ${messages.status} = 'approved' THEN 1 END`),
-    })
-    .from(messages)
-    .where(eq(messages.notebookId, notebookId));
-
-  const [visitorRow] = await db
-    .select({ visitors: countDistinct(analyticsEvents.visitorHash) })
-    .from(analyticsEvents)
-    .where(and(eq(analyticsEvents.notebookId, notebookId), eq(analyticsEvents.type, 'notebook_view')));
-
-  const [shareRow] = await db
-    .select({ clicks: count() })
-    .from(analyticsEvents)
-    .where(and(eq(analyticsEvents.notebookId, notebookId), eq(analyticsEvents.type, 'share_click')));
-
-  const qrRow = await db.query.qrCodes.findFirst({ where: eq(qrCodes.notebookId, notebookId) });
-
-  const [mostActiveRow] = await db
-    .select({
-      day: sql<string>`to_char(${analyticsEvents.createdAt}, 'YYYY-MM-DD')`,
-      total: count(),
-    })
-    .from(analyticsEvents)
-    .where(eq(analyticsEvents.notebookId, notebookId))
-    .groupBy(sql`1`)
-    .orderBy(sql`2 DESC`)
-    .limit(1);
+  const [[messageCounts], [visitorRow], [shareRow], qrRow, [mostActiveRow]] = await Promise.all([
+    db
+      .select({
+        total: count(),
+        pending: count(sql`CASE WHEN ${messages.status} = 'pending' THEN 1 END`),
+        approved: count(sql`CASE WHEN ${messages.status} = 'approved' THEN 1 END`),
+      })
+      .from(messages)
+      .where(eq(messages.notebookId, notebookId)),
+    db
+      .select({ visitors: countDistinct(analyticsEvents.visitorHash) })
+      .from(analyticsEvents)
+      .where(and(eq(analyticsEvents.notebookId, notebookId), eq(analyticsEvents.type, 'notebook_view'))),
+    db
+      .select({ clicks: count() })
+      .from(analyticsEvents)
+      .where(and(eq(analyticsEvents.notebookId, notebookId), eq(analyticsEvents.type, 'share_click'))),
+    db.query.qrCodes.findFirst({ where: eq(qrCodes.notebookId, notebookId) }),
+    db
+      .select({
+        day: sql<string>`to_char(${analyticsEvents.createdAt}, 'YYYY-MM-DD')`,
+        total: count(),
+      })
+      .from(analyticsEvents)
+      .where(eq(analyticsEvents.notebookId, notebookId))
+      .groupBy(sql`1`)
+      .orderBy(sql`2 DESC`)
+      .limit(1),
+  ]);
 
   return {
     totalMessages: messageCounts?.total ?? 0,

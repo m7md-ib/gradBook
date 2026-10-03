@@ -50,8 +50,11 @@ publicRouter.get(
       throw err;
     }
 
-    await analyticsService.trackEvent(notebook.id, 'notebook_view', hashVisitor(req));
-    res.json(await publicService.buildPublicSummary(notebook));
+    const [summary] = await Promise.all([
+      publicService.buildPublicSummary(notebook),
+      analyticsService.trackEvent(notebook.id, 'notebook_view', hashVisitor(req)),
+    ]);
+    res.json(summary);
   }),
 );
 

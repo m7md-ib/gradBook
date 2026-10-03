@@ -17,6 +17,7 @@ export interface PlatformStats {
   totalMessages: number;
   totalVisitors: number;
   revenueCents: number;
+  revenueCurrency: string;
   popularThemes: Array<{ themeSlug: string; total: number }>;
 }
 
