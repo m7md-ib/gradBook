@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, ne, sql, sum } from 'drizzle-orm';
+import { and, count, desc, eq, gt, ilike, isNull, ne, or, sql, sum } from 'drizzle-orm';
 import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
 import { paginate } from '@daftar/shared';
 import { db } from '../../db/client.js';
@@ -41,7 +41,11 @@ export async function getPlatformStats() {
       db
         .select({
           total: count(),
-          active: count(sql`CASE WHEN ${notebooks.status} = 'active' THEN 1 END`),
+          // Same lazy-expiry caveat as listNotebooks above: a stale 'active'
+          // row whose expiresAt already passed must not count as active.
+          active: count(
+            sql`CASE WHEN ${notebooks.status} = 'active' AND (${notebooks.expiresAt} IS NULL OR ${notebooks.expiresAt} > NOW()) THEN 1 END`,
+          ),
         })
         .from(notebooks)
         .where(excludeDemoNotebook),
@@ -103,7 +107,16 @@ export async function setUserBlocked(userId: string, blocked: boolean) {
 type NotebookStatusValue = 'draft' | 'pending_payment' | 'active' | 'expired';
 
 export async function listNotebooks(pagination: PaginationQuery, status?: string) {
-  const where = status ? eq(notebooks.status, status as NotebookStatusValue) : undefined;
+  // A notebook's `status` column only flips from 'active' to 'expired' lazily,
+  // the next time someone actually opens it (see withExpiryCheck) — an
+  // untouched expired notebook can sit as 'active' in the DB indefinitely, so
+  // an "active" filter here must also check expiresAt directly.
+  const where =
+    status === 'active'
+      ? and(eq(notebooks.status, 'active'), or(isNull(notebooks.expiresAt), gt(notebooks.expiresAt, new Date())))
+      : status
+        ? eq(notebooks.status, status as NotebookStatusValue)
+        : undefined;
   const [{ total }] = await db.select({ total: count() }).from(notebooks).where(where);
   const items = await db.query.notebooks.findMany({
     where,

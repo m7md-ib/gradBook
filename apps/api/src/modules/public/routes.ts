@@ -9,6 +9,7 @@ import {
 import { asyncHandler } from '../../lib/async-handler.js';
 import { validateBody, validateParams, validateQuery } from '../../middleware/validate.js';
 import { messageRateLimiter } from '../../middleware/rate-limit.js';
+import { optionalAuth } from '../../middleware/auth-guard.js';
 import { imageUpload, processAndStoreImage } from '../../lib/upload.js';
 import { getStorageProvider } from '../../storage/index.js';
 import { ApiError } from '../../lib/errors.js';
@@ -19,10 +20,14 @@ import * as timelineService from './../timeline/service.js';
 import * as moderationService from './../moderation/service.js';
 import * as analyticsService from './../analytics/service.js';
 import * as qrService from './../notebooks/qr-service.js';
-import { assertViewable, assertWritable, grantAccessCookie } from './access.js';
+import { assertViewable, assertWritable, grantAccessCookie, isOwnerRequest } from './access.js';
 import { hashVisitor, submitterFingerprint } from './visitor.js';
 
 export const publicRouter = Router();
+// Populates req.user when the visitor happens to be logged in (e.g. the
+// owner previewing their own link) — these routes stay fully public either
+// way, this only lets trackEvent below recognize and skip the owner's visits.
+publicRouter.use(optionalAuth);
 
 const slugParams = slugParamSchema;
 const listQuery = paginationQuerySchema.extend({ targetGraduateId: z.string().uuid().optional() });
@@ -52,7 +57,9 @@ publicRouter.get(
 
     const [summary] = await Promise.all([
       publicService.buildPublicSummary(notebook),
-      analyticsService.trackEvent(notebook.id, 'notebook_view', hashVisitor(req)),
+      isOwnerRequest(req, notebook)
+        ? Promise.resolve()
+        : analyticsService.trackEvent(notebook.id, 'notebook_view', hashVisitor(req)),
     ]);
     res.json(summary);
   }),
@@ -155,7 +162,9 @@ publicRouter.post(
       fingerprint: submitterFingerprint(req, notebook.id),
     });
 
-    await analyticsService.trackEvent(notebook.id, 'message_submit', hashVisitor(req));
+    if (!isOwnerRequest(req, notebook)) {
+      await analyticsService.trackEvent(notebook.id, 'message_submit', hashVisitor(req));
+    }
     res.status(201).json({
       message: { id: message.id, status: message.status },
       requiresApproval: message.status === 'pending',
@@ -209,9 +218,11 @@ publicRouter.post(
     const notebook = await publicService.findNotebookBySlug(req.params.slug);
     assertViewable(req, notebook);
 
-    await analyticsService.trackEvent(notebook.id, req.body.type, hashVisitor(req), req.body.metadata);
-    if (req.body.type === 'qr_scan') {
-      await qrService.incrementQrScan(notebook.id);
+    if (!isOwnerRequest(req, notebook)) {
+      await analyticsService.trackEvent(notebook.id, req.body.type, hashVisitor(req), req.body.metadata);
+      if (req.body.type === 'qr_scan') {
+        await qrService.incrementQrScan(notebook.id);
+      }
     }
     res.status(204).send();
   }),

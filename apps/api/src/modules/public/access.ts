@@ -33,3 +33,13 @@ export function assertWritable(req: Request, notebook: Notebook) {
     throw new ApiError(403, 'invite_code_required', 'الكتابة في هذا الدفتر تتطلب رمز دعوة');
   }
 }
+
+/**
+ * True when the request is authenticated as the notebook's own owner (e.g. they
+ * opened their own public link from the dashboard to preview it) — their own
+ * visits must never inflate the visitor/engagement stats shown back to them.
+ * Requires `optionalAuth` on the route so `req.user` is populated when present.
+ */
+export function isOwnerRequest(req: Request, notebook: Notebook): boolean {
+  return req.user?.sub === notebook.ownerUserId;
+}
