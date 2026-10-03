@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
+import multer from 'multer';
 import type { Logger } from 'pino';
+import { env } from '../config/env.js';
 import { ApiError } from '../lib/errors.js';
 
 export function notFoundHandler(req: Request, res: Response) {
@@ -17,6 +19,17 @@ export function errorHandler(logger: Logger) {
           ...(err.fieldErrors ? { fieldErrors: err.fieldErrors } : {}),
         },
       });
+    }
+
+    // multer throws its own error class (not ApiError) when a file fails its
+    // upload middleware checks — a too-large photo was previously reported
+    // to the user as a generic 500 instead of a clear 400.
+    if (err instanceof multer.MulterError) {
+      const message =
+        err.code === 'LIMIT_FILE_SIZE'
+          ? `حجم الملف أكبر من الحد المسموح (${env.STORAGE_MAX_UPLOAD_MB} ميجابايت)`
+          : 'تعذّر رفع الملف، تأكد من نوع وحجم الصورة';
+      return res.status(400).json({ error: { code: 'upload_error', message } });
     }
 
     logger.error({ err }, 'unhandled_error');
