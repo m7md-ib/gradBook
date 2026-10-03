@@ -15,7 +15,7 @@ export default function AdminOverviewPage() {
     { label: t('admin.statTotalGraduates'), value: stats.totalGraduates, icon: '🎓' },
     { label: t('admin.statTotalMessages'), value: stats.totalMessages, icon: '💌' },
     { label: t('admin.statTotalVisitors'), value: stats.totalVisitors, icon: '👀' },
-    { label: t('admin.statRevenue'), value: formatCurrency(stats.revenueCents, 'SAR', i18n.language), icon: '💰' },
+    { label: t('admin.statRevenue'), value: formatCurrency(stats.revenueCents, stats.revenueCurrency, i18n.language), icon: '💰' },
   ];
 
   return (
