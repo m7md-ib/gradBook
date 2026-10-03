@@ -1,4 +1,4 @@
-import { count, desc, eq, ilike, sql, sum } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, ne, sql, sum } from 'drizzle-orm';
 import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
 import { paginate } from '@daftar/shared';
 import { db } from '../../db/client.js';
@@ -19,7 +19,23 @@ import {
 } from '../../db/schema/index.js';
 import { ApiError } from '../../lib/errors.js';
 
+// The seeded showcase notebook (see db/seed.ts seedDemoNotebook) is a fictional
+// graduate with a simulated paid order — it must never count toward the
+// owner's real platform metrics.
+const DEMO_NOTEBOOK_SLUG = 'sara-2026';
+
 export async function getPlatformStats() {
+  const demoNotebook = await db.query.notebooks.findFirst({
+    where: eq(notebooks.slug, DEMO_NOTEBOOK_SLUG),
+    columns: { id: true },
+  });
+  const demoNotebookId = demoNotebook?.id;
+  const excludeDemoNotebook = demoNotebookId ? ne(notebooks.id, demoNotebookId) : undefined;
+  const excludeDemoGraduate = demoNotebookId ? ne(graduates.notebookId, demoNotebookId) : undefined;
+  const excludeDemoMessage = demoNotebookId ? ne(messages.notebookId, demoNotebookId) : undefined;
+  const excludeDemoVisitor = demoNotebookId ? ne(analyticsEvents.notebookId, demoNotebookId) : undefined;
+  const excludeDemoOrder = demoNotebookId ? ne(orders.notebookId, demoNotebookId) : undefined;
+
   const [[notebookTotals], [graduateTotals], [messageTotals], [visitorTotals], [revenueTotals]] =
     await Promise.all([
       db
@@ -27,19 +43,24 @@ export async function getPlatformStats() {
           total: count(),
           active: count(sql`CASE WHEN ${notebooks.status} = 'active' THEN 1 END`),
         })
-        .from(notebooks),
-      db.select({ total: count() }).from(graduates),
-      db.select({ total: count() }).from(messages),
-      db.select({ total: count(sql`DISTINCT ${analyticsEvents.visitorHash}`) }).from(analyticsEvents),
+        .from(notebooks)
+        .where(excludeDemoNotebook),
+      db.select({ total: count() }).from(graduates).where(excludeDemoGraduate),
+      db.select({ total: count() }).from(messages).where(excludeDemoMessage),
       db
-        .select({ total: sum(orders.amountCents) })
+        .select({ total: count(sql`DISTINCT ${analyticsEvents.visitorHash}`) })
+        .from(analyticsEvents)
+        .where(excludeDemoVisitor),
+      db
+        .select({ total: sum(orders.amountCents), currency: sql<string | null>`max(${orders.currency})` })
         .from(orders)
-        .where(eq(orders.status, 'paid')),
+        .where(and(eq(orders.status, 'paid'), excludeDemoOrder)),
     ]);
 
   const popularThemes = await db
     .select({ themeSlug: notebooks.themeSlug, total: count() })
     .from(notebooks)
+    .where(excludeDemoNotebook)
     .groupBy(notebooks.themeSlug)
     .orderBy(desc(count()))
     .limit(5);
@@ -51,6 +72,7 @@ export async function getPlatformStats() {
     totalMessages: messageTotals?.total ?? 0,
     totalVisitors: visitorTotals?.total ?? 0,
     revenueCents: Number(revenueTotals?.total ?? 0),
+    revenueCurrency: revenueTotals?.currency ?? 'JOD',
     popularThemes,
   };
 }
