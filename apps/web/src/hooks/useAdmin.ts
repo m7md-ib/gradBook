@@ -33,6 +33,11 @@ export function useForceNotebookStatus() {
   });
 }
 
+/** Counts behind the admin nav badges; refreshed every minute while the panel is open. */
+export function useAdminAttention() {
+  return useQuery({ queryKey: ['admin', 'attention'], queryFn: adminEndpoints.attention, refetchInterval: 60_000 });
+}
+
 export function useAdminOrders(page: number) {
   return useQuery({ queryKey: ['admin', 'orders', page], queryFn: () => adminEndpoints.orders(page) });
 }
@@ -45,6 +50,7 @@ export function useReviewOrderPayment() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       void queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'attention'] });
       void queryClient.invalidateQueries({ queryKey: ['admin', 'notebooks'] });
     },
   });
@@ -63,7 +69,10 @@ export function useResolveReport() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: 'dismissed' | 'actioned' }) =>
       adminEndpoints.resolveReport(id, status),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'reports'] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'reports'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'attention'] });
+    },
   });
 }
 

@@ -16,6 +16,13 @@ const idParams = z.object({ id: z.string().uuid() });
 const slugParams = z.object({ slug: z.string() });
 
 adminRouter.get(
+  '/attention',
+  asyncHandler(async (_req, res) => {
+    res.json(await adminService.getAttentionCounts());
+  }),
+);
+
+adminRouter.get(
   '/stats',
   asyncHandler(async (_req, res) => {
     res.json(await adminService.getPlatformStats());

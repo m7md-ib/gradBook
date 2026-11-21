@@ -22,6 +22,10 @@ export interface PlatformStats {
 }
 
 export const adminEndpoints = {
+  async attention(): Promise<{ pendingOrders: number; openReports: number }> {
+    const { data } = await apiClient.get<{ pendingOrders: number; openReports: number }>('/api/admin/attention');
+    return data;
+  },
   async stats(): Promise<PlatformStats> {
     const { data } = await apiClient.get<PlatformStats>('/api/admin/stats');
     return data;

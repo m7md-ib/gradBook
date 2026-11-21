@@ -319,7 +319,8 @@
     "resetPassword": "كلمة مرور مؤقتة",
     "resetPasswordConfirm": "إنشاء كلمة مرور مؤقتة لـ {{email}}؟ سيتم تسجيل خروجه من كل الأجهزة.",
     "temporaryPasswordTitle": "كلمة المرور المؤقتة لـ {{email}}",
-    "temporaryPasswordHint": "أرسلها للمستخدم، واطلب منه تغييرها من الإعدادات بعد الدخول. لن تظهر مرة أخرى."
+    "temporaryPasswordHint": "أرسلها للمستخدم، واطلب منه تغييرها من الإعدادات بعد الدخول. لن تظهر مرة أخرى.",
+    "openReportsCount": "{{count}} بلاغ بانتظار المراجعة"
   },
   "packageFeatures": {
     "custom_cover": "غلاف مخصص",

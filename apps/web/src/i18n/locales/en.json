@@ -319,7 +319,8 @@
     "resetPassword": "Temporary password",
     "resetPasswordConfirm": "Create a temporary password for {{email}}? They'll be signed out everywhere.",
     "temporaryPasswordTitle": "Temporary password for {{email}}",
-    "temporaryPasswordHint": "Send it to the user and ask them to change it from Settings after signing in. It won't be shown again."
+    "temporaryPasswordHint": "Send it to the user and ask them to change it from Settings after signing in. It won't be shown again.",
+    "openReportsCount": "{{count}} report(s) awaiting review"
   },
   "packageFeatures": {
     "custom_cover": "Custom cover",

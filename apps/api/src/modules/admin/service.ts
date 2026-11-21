@@ -19,6 +19,7 @@ import {
   moderationActions,
   refreshTokens,
   auditLogs,
+  payments,
 } from '../../db/schema/index.js';
 import { ApiError } from '../../lib/errors.js';
 import { hashPassword } from '../../auth/password.js';
@@ -27,6 +28,23 @@ import { hashPassword } from '../../auth/password.js';
 // graduate with a simulated paid order — it must never count toward the
 // owner's real platform metrics.
 const DEMO_NOTEBOOK_SLUG = 'sara-2026';
+
+/**
+ * What needs the admin's hands right now: manual transfers waiting to be
+ * confirmed (other providers' pending orders are just abandoned checkouts)
+ * and open abuse reports. Polled by the admin layout for its nav badges.
+ */
+export async function getAttentionCounts() {
+  const [[pending], [open]] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(orders)
+      .innerJoin(payments, eq(payments.orderId, orders.id))
+      .where(and(eq(orders.status, 'pending'), eq(payments.provider, 'manual'))),
+    db.select({ total: count() }).from(reports).where(eq(reports.status, 'open')),
+  ]);
+  return { pendingOrders: Number(pending?.total ?? 0), openReports: Number(open?.total ?? 0) };
+}
 
 export async function getPlatformStats() {
   const demoNotebook = await db.query.notebooks.findFirst({

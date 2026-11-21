@@ -122,6 +122,9 @@ describe('manual (CliQ / bank transfer) payments', () => {
     const notAdmin = await buyer.agent.post(`/api/admin/orders/${orderId}/confirm-payment`);
     expect(notAdmin.status).toBe(403);
 
+    const waiting = (await admin.agent.get('/api/admin/attention')).body.pendingOrders;
+    expect(waiting).toBeGreaterThan(0);
+
     const confirm = await admin.agent.post(`/api/admin/orders/${orderId}/confirm-payment`);
     expect(confirm.status).toBe(200);
     expect(confirm.body.order.status).toBe('paid');
@@ -131,6 +134,8 @@ describe('manual (CliQ / bank transfer) payments', () => {
 
     const twice = await admin.agent.post(`/api/admin/orders/${orderId}/confirm-payment`);
     expect(twice.status).toBe(409);
+
+    expect((await admin.agent.get('/api/admin/attention')).body.pendingOrders).toBe(waiting - 1);
   });
 
   it('lets an admin reject a pending payment without activating anything', async () => {
