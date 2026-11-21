@@ -110,7 +110,6 @@ publicRouter.get(
     const { page, pageSize, targetGraduateId } = req.query as any;
     const result = await messageService.listPublicApproved(notebook.id, { page, pageSize }, targetGraduateId);
 
-    const storage = getStorageProvider();
     res.json({
       ...result,
       items: result.items.map((m) => ({
@@ -123,7 +122,7 @@ publicRouter.get(
         pageNumber: m.pageNumber,
         targetGraduateId: m.targetGraduateId,
         createdAt: m.createdAt,
-        photoUrl: m.media[0] ? storage.getPublicUrl(m.media[0].fileKey) : null,
+        photoUrl: m.media[0] ? messageService.messagePhotoUrl(m.media[0].fileKey) : null,
       })),
     });
   }),
@@ -172,16 +171,19 @@ publicRouter.post(
     const notebook = await publicService.findNotebookBySlug(req.params.slug);
     assertWritable(req, notebook);
 
-    let photoUrl: string | undefined;
+    let photoKey: string | undefined;
     if (req.file) {
       const processed = await processAndStoreImage(req.file.buffer, 'messages', { maxWidth: 1400 });
-      photoUrl = processed.url;
+      // Store the key, not the URL: the read side turns keys into URLs.
+      photoKey = processed.key;
     }
 
-    const message = await messageService.createMessage(notebook, { ...req.body, photoUrl }, {
-      ipHash: hashVisitor(req),
-      fingerprint: submitterFingerprint(req, notebook.id),
-    });
+    const message = await messageService.createMessage(
+      notebook,
+      req.body,
+      { ipHash: hashVisitor(req), fingerprint: submitterFingerprint(req, notebook.id) },
+      photoKey,
+    );
 
     if (!isOwnerRequest(req, notebook)) {
       await analyticsService.trackEvent(notebook.id, 'message_submit', hashVisitor(req));

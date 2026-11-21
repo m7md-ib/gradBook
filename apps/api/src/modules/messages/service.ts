@@ -8,6 +8,16 @@ import { sanitizePlainText } from '../../lib/sanitize.js';
 import { containsProfanity } from '../../lib/profanity.js';
 import { ApiError } from '../../lib/errors.js';
 import { assignPageNumber } from './pagination.js';
+import { getStorageProvider } from '../../storage/index.js';
+
+/**
+ * Public URL for a message photo. Rows written before the photo-key fix hold
+ * a full URL instead of a storage key; serve those as-is rather than
+ * prefixing the storage base URL a second time.
+ */
+export function messagePhotoUrl(fileKey: string): string {
+  return /^https?:\/\//.test(fileKey) ? fileKey : getStorageProvider().getPublicUrl(fileKey);
+}
 
 export interface SubmitterMeta {
   ipHash: string;
@@ -16,7 +26,13 @@ export interface SubmitterMeta {
 
 const DUPLICATE_WINDOW_MS = 2 * 60 * 1000;
 
-export async function createMessage(notebook: Notebook, input: CreateMessageInput, meta: SubmitterMeta) {
+export async function createMessage(
+  notebook: Notebook,
+  input: Omit<CreateMessageInput, 'photoUrl'>,
+  meta: SubmitterMeta,
+  /** Storage key of an already-uploaded photo (never a client-supplied value). */
+  photoKey?: string,
+) {
   const authorName = sanitizePlainText(input.authorName);
   const body = sanitizePlainText(input.body);
 
@@ -36,7 +52,7 @@ export async function createMessage(notebook: Notebook, input: CreateMessageInpu
 
   const flaggedByProfanity = containsProfanity(body) || containsProfanity(authorName);
   const status = notebook.approvalMode === 'auto' && !flaggedByProfanity ? 'approved' : 'pending';
-  const photoUrl = notebook.allowPhotos ? (input.photoUrl ?? null) : null;
+  const photoFileKey = notebook.allowPhotos ? (photoKey ?? null) : null;
 
   const result = await db.transaction(async (tx) => {
     const [message] = await tx
@@ -63,8 +79,8 @@ export async function createMessage(notebook: Notebook, input: CreateMessageInpu
     return message;
   });
 
-  if (photoUrl) {
-    await db.insert(messageMedia).values({ messageId: result.id, kind: 'photo', fileKey: photoUrl });
+  if (photoFileKey) {
+    await db.insert(messageMedia).values({ messageId: result.id, kind: 'photo', fileKey: photoFileKey });
   }
 
   return result;
@@ -109,13 +125,15 @@ export async function listForOwner(notebookId: string, query: MessageQuery, pagi
   const where = and(...conditions);
   const [{ total }] = await db.select({ total: sql<number>`count(*)` }).from(messages).where(where);
 
-  const items = await db.query.messages.findMany({
+  const rows = await db.query.messages.findMany({
     where,
     with: { media: true },
     orderBy: [desc(messages.createdAt)],
     limit: pagination.pageSize,
     offset: (pagination.page - 1) * pagination.pageSize,
   });
+  // The dashboard renders `photoUrl` (same shape as the public feed).
+  const items = rows.map((m) => ({ ...m, photoUrl: m.media[0] ? messagePhotoUrl(m.media[0].fileKey) : null }));
 
   return paginate(items, pagination.page, pagination.pageSize, Number(total));
 }
