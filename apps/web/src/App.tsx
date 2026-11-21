@@ -19,6 +19,7 @@ const DashboardSettingsPage = lazy(() => import('@/pages/dashboard/DashboardSett
 const DashboardSharePage = lazy(() => import('@/pages/dashboard/DashboardSharePage'));
 const DashboardPaymentPage = lazy(() => import('@/pages/dashboard/DashboardPaymentPage'));
 const DashboardEditPage = lazy(() => import('@/pages/dashboard/DashboardEditPage'));
+const DashboardPrintPage = lazy(() => import('@/pages/dashboard/DashboardPrintPage'));
 const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'));
 const AdminOverviewPage = lazy(() => import('@/pages/admin/AdminOverviewPage'));
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'));
@@ -76,6 +77,7 @@ export default function App() {
           <Route path="share" element={<DashboardSharePage />} />
           <Route path="payment" element={<DashboardPaymentPage />} />
           <Route path="edit" element={<DashboardEditPage />} />
+          <Route path="print" element={<DashboardPrintPage />} />
         </Route>
 
         <Route

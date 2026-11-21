@@ -399,5 +399,15 @@
     "welcomePlaceholder": "e.g. Welcome to my notebook! Write me a memory we shared 💛",
     "showProfilePhoto": "Show the profile photo on the welcome page",
     "saved": "Saved"
+  },
+  "print": {
+    "title": "Save notebook as PDF",
+    "open": "Save messages as PDF",
+    "button": "Print / Save PDF",
+    "hint": "In the print dialog, choose \"Save as PDF\" as the destination.",
+    "notebookOf": "{{name}}'s graduation notebook",
+    "messageCount": "Messages: {{count}}",
+    "forEveryone": "Messages for everyone",
+    "empty": "No published messages yet."
   }
 }

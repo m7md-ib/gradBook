@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useFeatureMessage, useModerateMessage, useOwnerMessages } from '@/hooks/useMessages';
@@ -43,7 +43,12 @@ export default function DashboardMessagesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('dashboard.messagesTitle')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('dashboard.messagesTitle')}</h1>
+        <Link to="/dashboard/print" className="text-sm font-medium text-maroon-600 hover:underline">
+          💾 {t('print.open')}
+        </Link>
+      </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
@@ -89,7 +94,7 @@ export default function DashboardMessagesPage() {
                     )}
                     {m.featured && <span title={t('notebook.featured') ?? ''}>⭐</span>}
                   </div>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-ink/80">{m.body}</p>
+                  <p dir="auto" className="mt-1 whitespace-pre-wrap text-start text-sm text-ink/80">{m.body}</p>
                   {m.photoUrl && <img src={m.photoUrl} alt="" className="mt-2 h-20 w-20 rounded-lg object-cover" />}
                   <p className="mt-1 text-xs text-ink/40">{formatRelativeDay(m.createdAt, i18n.language)}</p>
                 </div>

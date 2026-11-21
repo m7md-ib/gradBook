@@ -40,7 +40,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-paper">
-      <aside className="hidden w-64 shrink-0 flex-col border-e border-ink/10 bg-white/50 p-5 lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-e border-ink/10 bg-white/50 p-5 lg:flex print:!hidden">
         <div className="mb-6 font-heading-auto text-2xl font-bold text-maroon-700">📖 {t('common.appName')}</div>
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => (
@@ -72,18 +72,22 @@ export default function DashboardLayout() {
       </aside>
 
       <div className="flex-1">
-        {notebook.status !== 'active' && <PaymentBanner notebookId={notebook.id} status={notebook.status} />}
+        {notebook.status !== 'active' && (
+          <div className="print:hidden">
+            <PaymentBanner notebookId={notebook.id} status={notebook.status} />
+          </div>
+        )}
 
-        <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden">
+        <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden print:hidden">
           <span className="font-heading-auto text-xl font-bold text-maroon-700">📖 {t('common.appName')}</span>
           <LanguageSwitcher />
         </header>
 
-        <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 print:max-w-none print:p-0">
           <Outlet context={{ notebook }} />
         </main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-ink/10 bg-white/95 py-2 backdrop-blur lg:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-ink/10 bg-white/95 py-2 backdrop-blur lg:hidden print:hidden">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -95,7 +99,7 @@ export default function DashboardLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="h-16 lg:hidden" />
+        <div className="h-16 lg:hidden print:hidden" />
       </div>
     </div>
   );
