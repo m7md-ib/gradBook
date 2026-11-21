@@ -138,8 +138,13 @@ Open `http://localhost:5173/d/sara-2026` to see the demo notebook, or `http://lo
 
 `PAYMENT_PROVIDER` in `apps/api/.env` selects the implementation:
 
-- `mock` (default): simulates a successful checkout end-to-end without any external account, for local development and demos. The "payment" is still verified server-side (see `src/payments/mock-provider.ts` and `src/modules/commerce/service.ts`) — the frontend is never trusted to just report success.
-- `stripe`: real Stripe Checkout. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`, and point a Stripe webhook at `POST /api/payments/webhook/stripe`.
+- `mock` (default): simulates a successful checkout end-to-end without any external account, for local development and demos. The "payment" is still verified server-side (see `src/payments/mock-provider.ts` and `src/modules/commerce/service.ts`) — the frontend is never trusted to just report success. **Never used in production**: with `NODE_ENV=production`, `mock` is replaced by `manual` at boot.
+- `manual` (production default): CliQ / bank transfer. Checkout shows the amount, a short order reference (`DF-XXXXXX`) to write in the transfer note, the platform's transfer details, and a button to send the receipt on WhatsApp. An admin confirms (or rejects) the order in **Admin → Orders**, which activates the notebook. The transfer details are set in **Admin → Settings → Payment details**.
+- `stripe`: real Stripe Checkout. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`, and point a Stripe webhook at `POST /api/payments/webhook/stripe`. (Stripe doesn't onboard merchants in Jordan, which is why `manual` is the production default.)
+
+## Password recovery
+
+There's no outgoing email yet. "Forgot your password?" on the login page opens WhatsApp with a prefilled message; an admin then issues a one-off temporary password from **Admin → Users** (which also signs the user out everywhere), and the user changes it from their settings.
 
 ## Testing
 

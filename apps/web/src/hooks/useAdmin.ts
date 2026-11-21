@@ -37,6 +37,23 @@ export function useAdminOrders(page: number) {
   return useQuery({ queryKey: ['admin', 'orders', page], queryFn: () => adminEndpoints.orders(page) });
 }
 
+export function useReviewOrderPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, decision }: { id: string; decision: 'confirm' | 'reject' }) =>
+      decision === 'confirm' ? adminEndpoints.confirmOrderPayment(id) : adminEndpoints.rejectOrderPayment(id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'notebooks'] });
+    },
+  });
+}
+
+export function useResetUserPassword() {
+  return useMutation({ mutationFn: (id: string) => adminEndpoints.resetUserPassword(id) });
+}
+
 export function useAdminReports(page: number) {
   return useQuery({ queryKey: ['admin', 'reports', page], queryFn: () => adminEndpoints.reports(page) });
 }

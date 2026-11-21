@@ -91,7 +91,10 @@
     "haveAccount": "لديك حساب بالفعل؟",
     "createOne": "أنشئ واحداً",
     "loginInstead": "سجّل الدخول",
-    "contactHint": "تحتاج مساعدة أو دفتر مخصص؟ تواصل معنا"
+    "contactHint": "تحتاج مساعدة أو دفتر مخصص؟ تواصل معنا",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "forgotPasswordMessage": "مرحباً، نسيت كلمة المرور لحسابي على دفتر. البريد الإلكتروني: {{email}}",
+    "termsAgreement": "بإنشاء حسابك فإنك توافق على <terms>الشروط والأحكام</terms> و<privacy>سياسة الخصوصية</privacy>."
   },
   "wizard": {
     "title": "أنشئ دفتر تخرجك",
@@ -238,7 +241,13 @@
     "renewNotebook": "تجديد الدفتر",
     "reportsTitle": "البلاغات",
     "noReports": "لا توجد بلاغات",
-    "dismiss": "تجاهل"
+    "dismiss": "تجاهل",
+    "bannerDraft": "دفترك غير مفعّل بعد — أكمل الدفع لتفعيله ومشاركته.",
+    "bannerAwaitingPayment": "بانتظار تأكيد الدفع لطلبك رقم {{reference}}.",
+    "bannerExpired": "انتهت صلاحية دفترك — جدّد الاشتراك ليعود متاحاً للزوار.",
+    "completePayment": "أكمل الدفع",
+    "viewPaymentDetails": "عرض تفاصيل الدفع",
+    "renewNow": "جدّد الآن"
   },
   "admin": {
     "title": "لوحة الإدارة",
@@ -282,7 +291,35 @@
     "coverTemplateNameAr": "الاسم بالعربي",
     "coverTemplateNameEn": "الاسم بالإنجليزي",
     "coverTemplateImage": "صورة الغلاف",
-    "coverTemplateSortOrder": "ترتيب الظهور"
+    "coverTemplateSortOrder": "ترتيب الظهور",
+    "ordersEmpty": "لا توجد طلبات بعد",
+    "orderDate": "التاريخ",
+    "orderCustomer": "العميل",
+    "orderPackage": "الباقة",
+    "orderAmount": "المبلغ",
+    "orderReference": "رقم الطلب",
+    "orderStatus": "الحالة",
+    "orderActions": "إجراءات",
+    "orderStatusPending": "بانتظار الدفع",
+    "orderStatusPaid": "مدفوع",
+    "orderStatusFailed": "مرفوض",
+    "orderStatusCancelled": "مستبدَل",
+    "orderStatusRefunded": "مسترد",
+    "confirmPayment": "تأكيد الدفع",
+    "rejectPayment": "رفض",
+    "confirmPaymentPrompt": "تأكيد استلام {{amount}} للطلب {{reference}}؟ سيتم تفعيل الدفتر فوراً.",
+    "rejectPaymentPrompt": "رفض الطلب {{reference}}؟ لن يتم تفعيل الدفتر.",
+    "pendingOrdersCount": "{{count}} طلب بانتظار تأكيد الدفع",
+    "paymentSettingsTitle": "تفاصيل الدفع (CliQ)",
+    "paymentSettingsDesc": "تظهر هذه التفاصيل للعميل في صفحة الدفع مع رقم الطلب.",
+    "paymentCliqAlias": "الاسم المستعار (CliQ Alias) أو رقم المحفظة",
+    "paymentAccountName": "اسم صاحب الحساب",
+    "paymentNote": "ملاحظة إضافية (اختياري)",
+    "otherSettings": "إعدادات أخرى",
+    "resetPassword": "كلمة مرور مؤقتة",
+    "resetPasswordConfirm": "إنشاء كلمة مرور مؤقتة لـ {{email}}؟ سيتم تسجيل خروجه من كل الأجهزة.",
+    "temporaryPasswordTitle": "كلمة المرور المؤقتة لـ {{email}}",
+    "temporaryPasswordHint": "أرسلها للمستخدم، واطلب منه تغييرها من الإعدادات بعد الدخول. لن تظهر مرة أخرى."
   },
   "packageFeatures": {
     "custom_cover": "غلاف مخصص",
@@ -304,11 +341,40 @@
     "successDesc": "دفترك أصبح نشطاً الآن ويمكنك مشاركته مع الجميع.",
     "cancelTitle": "تم إلغاء عملية الدفع",
     "cancelDesc": "يمكنك المحاولة مرة أخرى في أي وقت من لوحة التحكم.",
-    "backToDashboard": "الذهاب للوحة التحكم"
+    "backToDashboard": "الذهاب للوحة التحكم",
+    "manualTitle": "إتمام الدفع",
+    "orderSummary": "الباقة",
+    "amount": "المبلغ",
+    "reference": "رقم الطلب",
+    "statusPending": "بانتظار التحويل والتأكيد",
+    "step1": "حوّل مبلغ {{amount}} عبر CliQ إلى:",
+    "step1NoDetails": "تواصل معنا على واتساب لاستلام تفاصيل التحويل.",
+    "cliqAlias": "الاسم المستعار (CliQ)",
+    "accountName": "اسم صاحب الحساب",
+    "step2": "اكتب رقم الطلب {{reference}} في ملاحظة التحويل.",
+    "step3": "أرسل صورة إيصال التحويل على واتساب.",
+    "sendReceipt": "أرسل الإيصال على واتساب",
+    "receiptMessage": "مرحباً، حوّلت مبلغ {{amount}} لطلب دفتر رقم {{reference}}. البريد الإلكتروني: {{email}}",
+    "pendingNote": "سنفعّل دفترك فور تأكيد التحويل، عادةً خلال ساعات قليلة، وستتحدث هذه الصفحة تلقائياً. يمكنك إغلاقها والعودة إليها من لوحة التحكم في أي وقت.",
+    "failedTitle": "لم نتمكن من تأكيد هذا الدفع",
+    "failedDesc": "إذا كنت قد حوّلت المبلغ فعلاً، تواصل معنا على واتساب وأرسل الإيصال وسنحل الأمر.",
+    "cancelledTitle": "تم استبدال هذا الطلب",
+    "cancelledDesc": "اخترت باقة أخرى بعد هذا الطلب. تابع الدفع من لوحة التحكم.",
+    "contactUs": "تواصل معنا على واتساب",
+    "choosePackageTitle": "اختر الباقة لتفعيل دفترك",
+    "renewTitle": "جدّد اشتراك دفترك",
+    "staleTitle": "هذا الطلب لم يعد صالحاً",
+    "staleDesc": "تغيّرت طريقة الدفع منذ إنشاء هذا الطلب. اختر باقتك من جديد لتحصل على تفاصيل الدفع ورقم طلب جديد."
   },
   "errors": {
     "notFoundTitle": "الصفحة غير موجودة",
     "notFoundDesc": "الرابط الذي تحاول الوصول إليه غير موجود.",
     "backHome": "العودة للرئيسية"
+  },
+  "legal": {
+    "privacy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام",
+    "lastUpdated": "آخر تحديث: {{date}}",
+    "contact": "تواصل معنا"
   }
 }

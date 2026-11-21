@@ -7,6 +7,7 @@ import { requireAuth, requireRole } from '../../middleware/auth-guard.js';
 import { imageUpload, processAndStoreImage } from '../../lib/upload.js';
 import { ApiError } from '../../lib/errors.js';
 import * as adminService from './service.js';
+import * as commerceService from '../commerce/service.js';
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireRole('admin'));
@@ -39,6 +40,14 @@ adminRouter.patch(
   }),
 );
 
+adminRouter.post(
+  '/users/:id/reset-password',
+  validateParams(idParams),
+  asyncHandler(async (req, res) => {
+    res.json(await adminService.resetUserPassword(req.params.id, req.user!.sub));
+  }),
+);
+
 adminRouter.get(
   '/notebooks',
   validateQuery(paginationQuerySchema.extend({ status: z.string().optional() })),
@@ -63,6 +72,22 @@ adminRouter.get(
   validateQuery(paginationQuerySchema),
   asyncHandler(async (req, res) => {
     res.json(await adminService.listOrders(req.query as any));
+  }),
+);
+
+adminRouter.post(
+  '/orders/:id/confirm-payment',
+  validateParams(idParams),
+  asyncHandler(async (req, res) => {
+    res.json({ order: await commerceService.confirmPaymentByAdmin(req.params.id, req.user!.sub) });
+  }),
+);
+
+adminRouter.post(
+  '/orders/:id/reject-payment',
+  validateParams(idParams),
+  asyncHandler(async (req, res) => {
+    res.json({ order: await commerceService.rejectPaymentByAdmin(req.params.id, req.user!.sub) });
   }),
 );
 

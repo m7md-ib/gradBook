@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import type { NotebookDto, OrderDto, Package, Paginated, ReportDto, Theme, CoverTemplate } from '@/types/api';
+import type { AdminOrderDto, NotebookDto, OrderDto, Package, Paginated, ReportDto, Theme, CoverTemplate } from '@/types/api';
 
 export interface AdminUser {
   id: string;
@@ -48,8 +48,20 @@ export const adminEndpoints = {
     });
     return data.notebook;
   },
-  async orders(page = 1, pageSize = 20): Promise<Paginated<OrderDto>> {
-    const { data } = await apiClient.get<Paginated<OrderDto>>('/api/admin/orders', { params: { page, pageSize } });
+  async orders(page = 1, pageSize = 20): Promise<Paginated<AdminOrderDto>> {
+    const { data } = await apiClient.get<Paginated<AdminOrderDto>>('/api/admin/orders', { params: { page, pageSize } });
+    return data;
+  },
+  async confirmOrderPayment(id: string): Promise<OrderDto> {
+    const { data } = await apiClient.post<{ order: OrderDto }>(`/api/admin/orders/${id}/confirm-payment`);
+    return data.order;
+  },
+  async rejectOrderPayment(id: string): Promise<OrderDto> {
+    const { data } = await apiClient.post<{ order: OrderDto }>(`/api/admin/orders/${id}/reject-payment`);
+    return data.order;
+  },
+  async resetUserPassword(id: string): Promise<{ temporaryPassword: string }> {
+    const { data } = await apiClient.post<{ temporaryPassword: string }>(`/api/admin/users/${id}/reset-password`);
     return data;
   },
   async reports(page = 1, pageSize = 20): Promise<Paginated<ReportDto>> {

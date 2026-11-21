@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export function Footer() {
@@ -7,6 +8,14 @@ export function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 text-center sm:px-6 lg:px-8">
         <div className="font-heading-auto text-xl font-bold text-maroon-700">{t('common.appName')}</div>
         <p className="max-w-md text-sm text-ink/60">{t('landing.footerTagline')}</p>
+        <nav className="flex gap-4 text-xs text-ink/50">
+          <Link to="/terms" className="hover:text-ink/80 hover:underline">
+            {t('legal.terms')}
+          </Link>
+          <Link to="/privacy" className="hover:text-ink/80 hover:underline">
+            {t('legal.privacy')}
+          </Link>
+        </nav>
         <p className="text-xs text-ink/40">
           © {new Date().getFullYear()} {t('common.appName')} — {t('landing.footerRights')}
         </p>

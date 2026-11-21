@@ -91,6 +91,7 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
 export const PaymentProviderId = {
   MOCK: 'mock',
   STRIPE: 'stripe',
+  MANUAL: 'manual',
 } as const;
 export type PaymentProviderId = (typeof PaymentProviderId)[keyof typeof PaymentProviderId];
 

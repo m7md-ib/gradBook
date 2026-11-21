@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { signupSchema, type SignupInput } from '@daftar/shared';
 import { useAuth } from '@/context/AuthContext';
@@ -70,6 +70,15 @@ export default function SignupPage() {
           <Button type="submit" size="lg" loading={isSigningUp} className="mt-2">
             {t('auth.signupButton')}
           </Button>
+          <p className="text-center text-xs leading-relaxed text-ink/50">
+            <Trans
+              i18nKey="auth.termsAgreement"
+              components={{
+                terms: <Link to="/terms" target="_blank" className="underline hover:text-ink/70" />,
+                privacy: <Link to="/privacy" target="_blank" className="underline hover:text-ink/70" />,
+              }}
+            />
+          </p>
         </form>
 
         <p className="mt-6 text-center text-sm text-ink/60">

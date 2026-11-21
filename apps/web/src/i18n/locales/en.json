@@ -91,7 +91,10 @@
     "haveAccount": "Already have an account?",
     "createOne": "Create one",
     "loginInstead": "Log in",
-    "contactHint": "Need help or a custom notebook? Contact us"
+    "contactHint": "Need help or a custom notebook? Contact us",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordMessage": "Hi, I forgot the password for my Daftar account. Email: {{email}}",
+    "termsAgreement": "By creating an account you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
   "wizard": {
     "title": "Create your graduation notebook",
@@ -238,7 +241,13 @@
     "renewNotebook": "Renew notebook",
     "reportsTitle": "Reports",
     "noReports": "No reports",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "bannerDraft": "Your notebook isn't active yet — complete the payment to activate and share it.",
+    "bannerAwaitingPayment": "Waiting for payment confirmation on order {{reference}}.",
+    "bannerExpired": "Your notebook has expired — renew it so visitors can open it again.",
+    "completePayment": "Complete payment",
+    "viewPaymentDetails": "View payment details",
+    "renewNow": "Renew now"
   },
   "admin": {
     "title": "Admin panel",
@@ -282,7 +291,35 @@
     "coverTemplateNameAr": "Arabic name",
     "coverTemplateNameEn": "English name",
     "coverTemplateImage": "Cover image",
-    "coverTemplateSortOrder": "Sort order"
+    "coverTemplateSortOrder": "Sort order",
+    "ordersEmpty": "No orders yet",
+    "orderDate": "Date",
+    "orderCustomer": "Customer",
+    "orderPackage": "Package",
+    "orderAmount": "Amount",
+    "orderReference": "Reference",
+    "orderStatus": "Status",
+    "orderActions": "Actions",
+    "orderStatusPending": "Awaiting payment",
+    "orderStatusPaid": "Paid",
+    "orderStatusFailed": "Rejected",
+    "orderStatusCancelled": "Replaced",
+    "orderStatusRefunded": "Refunded",
+    "confirmPayment": "Confirm payment",
+    "rejectPayment": "Reject",
+    "confirmPaymentPrompt": "Confirm you received {{amount}} for order {{reference}}? The notebook activates immediately.",
+    "rejectPaymentPrompt": "Reject order {{reference}}? The notebook will not be activated.",
+    "pendingOrdersCount": "{{count}} order(s) awaiting payment confirmation",
+    "paymentSettingsTitle": "Payment details (CliQ)",
+    "paymentSettingsDesc": "Shown to the customer on the payment page, next to their order reference.",
+    "paymentCliqAlias": "CliQ alias or wallet number",
+    "paymentAccountName": "Account holder name",
+    "paymentNote": "Extra note (optional)",
+    "otherSettings": "Other settings",
+    "resetPassword": "Temporary password",
+    "resetPasswordConfirm": "Create a temporary password for {{email}}? They'll be signed out everywhere.",
+    "temporaryPasswordTitle": "Temporary password for {{email}}",
+    "temporaryPasswordHint": "Send it to the user and ask them to change it from Settings after signing in. It won't be shown again."
   },
   "packageFeatures": {
     "custom_cover": "Custom cover",
@@ -304,11 +341,40 @@
     "successDesc": "Your notebook is now active and ready to share with everyone.",
     "cancelTitle": "Payment cancelled",
     "cancelDesc": "You can try again anytime from your dashboard.",
-    "backToDashboard": "Go to dashboard"
+    "backToDashboard": "Go to dashboard",
+    "manualTitle": "Complete your payment",
+    "orderSummary": "Package",
+    "amount": "Amount",
+    "reference": "Order reference",
+    "statusPending": "Awaiting transfer and confirmation",
+    "step1": "Send {{amount}} via CliQ to:",
+    "step1NoDetails": "Message us on WhatsApp to get the transfer details.",
+    "cliqAlias": "CliQ alias",
+    "accountName": "Account holder",
+    "step2": "Write the order reference {{reference}} in the transfer note.",
+    "step3": "Send a screenshot of the transfer receipt on WhatsApp.",
+    "sendReceipt": "Send receipt on WhatsApp",
+    "receiptMessage": "Hi, I transferred {{amount}} for Daftar order {{reference}}. Email: {{email}}",
+    "pendingNote": "We'll activate your notebook as soon as the transfer is confirmed — usually within a few hours — and this page updates on its own. You can close it and come back from your dashboard any time.",
+    "failedTitle": "We couldn't confirm this payment",
+    "failedDesc": "If you did send the money, message us on WhatsApp with the receipt and we'll sort it out.",
+    "cancelledTitle": "This order was replaced",
+    "cancelledDesc": "You picked a different package after this order. Continue from your dashboard.",
+    "contactUs": "Message us on WhatsApp",
+    "choosePackageTitle": "Choose a package to activate your notebook",
+    "renewTitle": "Renew your notebook",
+    "staleTitle": "This order is no longer valid",
+    "staleDesc": "Payment options changed since this order was created. Choose your package again to get the payment details and a new order reference."
   },
   "errors": {
     "notFoundTitle": "Page not found",
     "notFoundDesc": "The link you're trying to reach doesn't exist.",
     "backHome": "Back home"
+  },
+  "legal": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "lastUpdated": "Last updated: {{date}}",
+    "contact": "Contact us"
   }
 }
