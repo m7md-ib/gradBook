@@ -44,7 +44,10 @@ export function StepPackage({
             <h4 className="font-heading-auto text-xl font-bold text-ink">
               {i18n.language === 'ar' ? pkg.nameAr : pkg.nameEn}
             </h4>
-            <p className="text-2xl font-bold text-maroon-700">{formatCurrency(pkg.priceCents, pkg.currency, i18n.language)}</p>
+            <p className="text-2xl font-bold text-maroon-700">
+              {formatCurrency(pkg.priceCents, pkg.currency, i18n.language)}
+              <span className="ms-2 text-sm font-medium text-ink/50">{t(`packageDuration.${pkg.duration}`, '')}</span>
+            </p>
             <p className="text-sm text-ink/60">{i18n.language === 'ar' ? pkg.descriptionAr : pkg.descriptionEn}</p>
             <ul className="flex flex-col gap-1.5 text-sm text-ink/70">
               {pkg.features.map((f) => (

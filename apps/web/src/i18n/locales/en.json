@@ -75,7 +75,37 @@
     "footerTagline": "Your digital graduation notebook, page after page.",
     "footerRights": "All rights reserved",
     "finalCtaTitle": "Ready to start your notebook?",
-    "finalCtaSubtitle": "Creating your notebook takes less than five minutes."
+    "finalCtaSubtitle": "Creating your notebook takes less than five minutes.",
+    "paymentNote": "💳 Pay by CliQ or bank transfer — we activate your notebook as soon as the transfer is confirmed.",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "How do I pay?",
+        "a": "After choosing a package you'll see the CliQ transfer details and an order reference. Send the amount with the reference in the transfer note, send us the receipt on WhatsApp, and we activate your notebook, usually within a few hours."
+      },
+      {
+        "q": "Do people need an account to write to me?",
+        "a": "No. Anyone with your notebook's link or QR code can write a message right away, no sign-up needed."
+      },
+      {
+        "q": "Can I control the messages?",
+        "a": "Yes. Choose whether messages publish immediately or after your approval, hide or delete any message, and visitors can report abusive content."
+      },
+      {
+        "q": "Can my notebook be private?",
+        "a": "Yes. Make it public for anyone with the link, or private behind an access code you share with the people you choose."
+      },
+      {
+        "q": "What happens when my package ends?",
+        "a": "The notebook is hidden from visitors but kept, and comes back as soon as you renew. You can save all messages as a PDF from your dashboard at any time."
+      },
+      {
+        "q": "Can I make one notebook for a whole class?",
+        "a": "Yes — the Class package holds every graduate in one notebook, each with their own pages; visitors pick who they're writing to."
+      }
+    ],
+    "contactTitle": "Another question?",
+    "contactCta": "Message us on WhatsApp"
   },
   "auth": {
     "loginTitle": "Log in",
@@ -409,5 +439,11 @@
     "messageCount": "Messages: {{count}}",
     "forEveryone": "Messages for everyone",
     "empty": "No published messages yet."
+  },
+  "packageDuration": {
+    "1_month": "for 1 month",
+    "3_months": "for 3 months",
+    "1_year": "for 1 year",
+    "lifetime": "lifetime"
   }
 }
