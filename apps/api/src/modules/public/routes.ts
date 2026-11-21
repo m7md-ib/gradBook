@@ -65,6 +65,27 @@ publicRouter.get(
   }),
 );
 
+// Link-preview endpoints, called by the web app's crawler-only edge function
+// (apps/web/api/link-preview.ts). Never tracked as visits.
+publicRouter.get(
+  '/:slug/preview',
+  validateParams(slugParams),
+  asyncHandler(async (req, res) => {
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json(await publicService.buildLinkPreview(req.params.slug));
+  }),
+);
+
+publicRouter.get(
+  '/:slug/preview.jpg',
+  validateParams(slugParams),
+  asyncHandler(async (req, res) => {
+    const image = await publicService.renderLinkPreviewImage(req.params.slug);
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.type('jpeg').send(image);
+  }),
+);
+
 publicRouter.post(
   '/:slug/access',
   validateParams(slugParams),
