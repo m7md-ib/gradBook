@@ -102,7 +102,9 @@ export function StepGraduateInfo({
           label={t('wizard.infoDateOptional') ?? undefined}
           type="date"
           error={errors.graduationDate?.message}
-          {...register('graduationDate')}
+          // An empty date input reports "", which fails z.string().date() even
+          // though the field is optional — map it to undefined instead.
+          {...register('graduationDate', { setValueAs: (v: string) => v || undefined })}
         />
       </div>
       <Textarea

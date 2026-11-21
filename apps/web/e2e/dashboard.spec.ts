@@ -6,7 +6,7 @@ test('graduate can log in and manage their notebook from the dashboard', async (
 
   await page.goto('/login');
   await page.getByLabel('البريد الإلكتروني').fill('demo@daftar.app');
-  await page.getByLabel('كلمة المرور').fill('Daftar2026!');
+  await page.locator('#password').fill('Daftar2026!');
   await page.getByRole('button', { name: 'دخول' }).click();
 
   await page.waitForURL('**/dashboard');
