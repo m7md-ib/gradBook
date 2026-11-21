@@ -376,5 +376,27 @@
     "terms": "Terms of Service",
     "lastUpdated": "Last updated: {{date}}",
     "contact": "Contact us"
+  },
+  "edit": {
+    "title": "Edit notebook",
+    "openEditor": "Edit details and cover",
+    "graduateSection": "Graduate details",
+    "graduatesSection": "Graduates",
+    "graduatesHint": "Each graduate has their own pages; visitors pick who they're writing to.",
+    "classTitle": "Class name",
+    "addGraduate": "Add graduate",
+    "editGraduate": "Edit",
+    "removeGraduate": "Remove",
+    "removeGraduateConfirm": "Remove {{name}} from the notebook? All messages written to them will be permanently deleted.",
+    "photo": "Profile photo",
+    "uploadPhoto": "Upload photo",
+    "changePhoto": "Change photo",
+    "designSection": "Notebook design",
+    "coverSection": "Cover",
+    "welcomeSection": "Welcome page",
+    "welcomeMessage": "Welcome message",
+    "welcomePlaceholder": "e.g. Welcome to my notebook! Write me a memory we shared 💛",
+    "showProfilePhoto": "Show the profile photo on the welcome page",
+    "saved": "Saved"
   }
 }

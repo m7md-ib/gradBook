@@ -5,6 +5,8 @@ import {
   graduateInfoSchema,
   introPageSchema,
   notebookSettingsSchema,
+  updateGraduateSchema,
+  updateNotebookDetailsSchema,
   updateNotebookSlugSchema,
 } from '@daftar/shared';
 import { z } from 'zod';
@@ -64,6 +66,16 @@ notebooksRouter.patch(
   validateBody(updateNotebookSlugSchema),
   asyncHandler(async (req, res) => {
     const notebook = await notebookService.updateSlug(req.params.id, req.user!.sub, req.body.slug);
+    res.json({ notebook });
+  }),
+);
+
+notebooksRouter.patch(
+  '/:id/details',
+  validateParams(notebookIdParams),
+  validateBody(updateNotebookDetailsSchema),
+  asyncHandler(async (req, res) => {
+    const notebook = await notebookService.updateDetails(req.params.id, req.user!.sub, req.body);
     res.json({ notebook });
   }),
 );
@@ -141,7 +153,8 @@ notebooksRouter.get(
   validateParams(notebookIdParams),
   asyncHandler(async (req, res) => {
     await notebookService.getNotebookForOwner(req.params.id, req.user!.sub, req.user!.role === 'admin');
-    res.json({ graduates: await graduatesService.listGraduates(req.params.id) });
+    const list = await graduatesService.listGraduates(req.params.id);
+    res.json({ graduates: list.map(notebookService.withGraduatePhotoUrl) });
   }),
 );
 
@@ -151,14 +164,14 @@ notebooksRouter.post(
   validateBody(graduateInfoSchema),
   asyncHandler(async (req, res) => {
     const graduate = await graduatesService.addGraduate(req.params.id, req.user!.sub, req.body);
-    res.status(201).json({ graduate });
+    res.status(201).json({ graduate: graduate && notebookService.withGraduatePhotoUrl(graduate) });
   }),
 );
 
 notebooksRouter.patch(
   '/:id/graduates/:graduateId',
   validateParams(graduateParams),
-  validateBody(graduateInfoSchema.partial()),
+  validateBody(updateGraduateSchema),
   asyncHandler(async (req, res) => {
     const graduate = await graduatesService.updateGraduate(
       req.params.id,
@@ -166,7 +179,7 @@ notebooksRouter.patch(
       req.user!.sub,
       req.body,
     );
-    res.json({ graduate });
+    res.json({ graduate: graduate && notebookService.withGraduatePhotoUrl(graduate) });
   }),
 );
 
@@ -183,7 +196,7 @@ notebooksRouter.post(
       req.user!.sub,
       processed.key,
     );
-    res.json({ graduate, image: processed });
+    res.json({ graduate: notebookService.withGraduatePhotoUrl(graduate), image: processed });
   }),
 );
 

@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notebooksEndpoints, type CreateNotebookPayload, type CoverCustomizationPayload, type NotebookSettingsPayload, type GraduateInfoPayload } from '@/api/endpoints/notebooks';
+import {
+  notebooksEndpoints,
+  type CreateNotebookPayload,
+  type CoverCustomizationPayload,
+  type NotebookSettingsPayload,
+  type GraduateInfoPayload,
+  type UpdateGraduatePayload,
+} from '@/api/endpoints/notebooks';
 import type { NotebookDto } from '@/types/api';
 
 export function useMyNotebooks() {
@@ -72,6 +79,10 @@ export function useUpdateIntro(id: string | undefined) {
   );
 }
 
+export function useUpdateDetails(id: string | undefined) {
+  return useNotebookMutation<{ title?: string; themeSlug?: string }>(id, notebooksEndpoints.updateDetails);
+}
+
 export function useUpdateSlug(id: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -103,7 +114,7 @@ export function useAddGraduate(notebookId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: GraduateInfoPayload) => notebooksEndpoints.addGraduate(notebookId as string, payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks', notebookId, 'graduates'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks'] }),
   });
 }
 
@@ -111,7 +122,7 @@ export function useRemoveGraduate(notebookId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (graduateId: string) => notebooksEndpoints.removeGraduate(notebookId as string, graduateId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks', notebookId, 'graduates'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks'] }),
   });
 }
 
@@ -120,6 +131,15 @@ export function useUploadGraduatePhoto(notebookId: string | undefined) {
   return useMutation({
     mutationFn: ({ graduateId, file }: { graduateId: string; file: File }) =>
       notebooksEndpoints.uploadGraduatePhoto(notebookId as string, graduateId, file),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks', notebookId, 'graduates'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks'] }),
+  });
+}
+
+export function useUpdateGraduate(notebookId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ graduateId, payload }: { graduateId: string; payload: UpdateGraduatePayload }) =>
+      notebooksEndpoints.updateGraduate(notebookId as string, graduateId, payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notebooks'] }),
   });
 }

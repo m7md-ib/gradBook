@@ -10,6 +10,12 @@ export interface GraduateInfoPayload {
   shortMessage?: string;
 }
 
+/** null clears an optional field. */
+export type UpdateGraduatePayload = Partial<Omit<GraduateInfoPayload, 'graduationDate' | 'shortMessage'>> & {
+  graduationDate?: string | null;
+  shortMessage?: string | null;
+};
+
 export interface CreateNotebookPayload {
   notebook: { type: 'individual' | 'class'; themeSlug: string; title?: string };
   graduate: GraduateInfoPayload;
@@ -92,7 +98,11 @@ export const notebooksEndpoints = {
     const { data } = await apiClient.post<{ graduate: GraduateDto }>(`/api/notebooks/${id}/graduates`, payload);
     return data.graduate;
   },
-  async updateGraduate(id: string, graduateId: string, payload: Partial<GraduateInfoPayload>) {
+  async updateDetails(id: string, payload: { title?: string; themeSlug?: string }): Promise<NotebookDto> {
+    const { data } = await apiClient.patch<{ notebook: NotebookDto }>(`/api/notebooks/${id}/details`, payload);
+    return data.notebook;
+  },
+  async updateGraduate(id: string, graduateId: string, payload: UpdateGraduatePayload) {
     const { data } = await apiClient.patch<{ graduate: GraduateDto }>(
       `/api/notebooks/${id}/graduates/${graduateId}`,
       payload,

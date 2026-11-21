@@ -63,6 +63,7 @@ export interface GraduateDto {
   graduationYear: number;
   graduationDate: string | null;
   profilePhotoKey: string | null;
+  profilePhotoUrl?: string | null;
   shortMessage: string | null;
   slug: string;
   sortOrder: number;

@@ -15,6 +15,16 @@ export const graduateInfoSchema = z.object({
 });
 export type GraduateInfoInput = z.infer<typeof graduateInfoSchema>;
 
+/** Partial edit; null clears the optional fields (graduation date, short message). */
+export const updateGraduateSchema = graduateInfoSchema
+  .omit({ profilePhotoUrl: true })
+  .partial()
+  .extend({
+    graduationDate: z.string().date().nullable().optional(),
+    shortMessage: z.string().max(400).nullable().optional(),
+  });
+export type UpdateGraduateInput = z.infer<typeof updateGraduateSchema>;
+
 export const graduateSchema = graduateInfoSchema.extend({
   id: z.string().uuid(),
   notebookId: z.string().uuid(),

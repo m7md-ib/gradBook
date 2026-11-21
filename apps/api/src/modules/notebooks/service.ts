@@ -7,6 +7,7 @@ import {
   type IntroPageInput,
   type NotebookDuration,
   type NotebookSettingsInput,
+  type UpdateNotebookDetailsInput,
 } from '@daftar/shared';
 import { generateAccessCode } from '@daftar/shared';
 import { db, type Database } from '../../db/client.js';
@@ -17,6 +18,15 @@ import { ApiError } from '../../lib/errors.js';
 import { generateUniqueNotebookSlug } from './slug.js';
 import { assertNotebookOwner } from './access.js';
 import { resolveCoverImageUrl } from './cover-url.js';
+import { getStorageProvider } from '../../storage/index.js';
+
+/** Adds the public URL for a graduate's stored profile photo (the row only has the key). */
+export function withGraduatePhotoUrl<T extends { profilePhotoKey: string | null }>(graduate: T) {
+  return {
+    ...graduate,
+    profilePhotoUrl: graduate.profilePhotoKey ? getStorageProvider().getPublicUrl(graduate.profilePhotoKey) : null,
+  };
+}
 
 export async function createNotebookWithGraduate(
   ownerUserId: string,
@@ -54,7 +64,9 @@ export async function createNotebookWithGraduate(
         major: graduate.major,
         graduationYear: graduate.graduationYear,
         graduationDate: graduate.graduationDate,
-        profilePhotoKey: graduate.profilePhotoUrl,
+        // Photos are only set through the upload endpoint, never from a
+        // client-supplied key/URL.
+        profilePhotoKey: null,
         shortMessage: graduate.shortMessage,
         slug: 'main',
       })
@@ -65,11 +77,24 @@ export async function createNotebookWithGraduate(
 }
 
 export async function listMyNotebooks(ownerUserId: string) {
-  return db.query.notebooks.findMany({
+  const rows = await db.query.notebooks.findMany({
     where: eq(notebooks.ownerUserId, ownerUserId),
-    with: { graduates: true },
+    with: { graduates: { orderBy: (g, { asc }) => [asc(g.sortOrder), asc(g.createdAt)] } },
     orderBy: (table, { desc }) => [desc(table.createdAt)],
   });
+  // The dashboard renders straight from this list, so it needs the same
+  // resolved cover URL, photo URLs and up-to-date expiry status as the
+  // single-notebook read below.
+  return Promise.all(
+    rows.map(async (row) => {
+      const notebook = withExpiryCheck(row);
+      return {
+        ...notebook,
+        coverImageUrl: await resolveCoverImageUrl(notebook),
+        graduates: notebook.graduates.map(withGraduatePhotoUrl),
+      };
+    }),
+  );
 }
 
 export async function getNotebookForOwner(id: string, userId: string, isAdmin = false) {
@@ -88,7 +113,28 @@ export async function getNotebookForOwner(id: string, userId: string, isAdmin = 
 export async function getNotebookForOwnerWithCoverUrl(id: string, userId: string, isAdmin = false) {
   const notebook = await getNotebookForOwner(id, userId, isAdmin);
   const coverImageUrl = await resolveCoverImageUrl(notebook);
-  return { ...notebook, coverImageUrl };
+  return { ...notebook, coverImageUrl, graduates: notebook.graduates.map(withGraduatePhotoUrl) };
+}
+
+/** Title and theme ("cover style") — the two things picked at creation that had no edit path. */
+export async function updateDetails(notebookId: string, userId: string, input: UpdateNotebookDetailsInput) {
+  await getNotebookForOwner(notebookId, userId);
+
+  if (input.themeSlug !== undefined) {
+    const theme = await db.query.notebookThemes.findFirst({ where: eq(notebookThemes.slug, input.themeSlug) });
+    if (!theme || !theme.active) throw ApiError.badRequest('التصميم المختار غير متاح');
+  }
+
+  const [updated] = await db
+    .update(notebooks)
+    .set({
+      ...(input.title !== undefined ? { title: input.title } : {}),
+      ...(input.themeSlug !== undefined ? { themeSlug: input.themeSlug } : {}),
+      updatedAt: new Date(),
+    })
+    .where(eq(notebooks.id, notebookId))
+    .returning();
+  return updated;
 }
 
 export async function updateCover(

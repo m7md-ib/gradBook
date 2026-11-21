@@ -10,6 +10,7 @@ import { cn } from '@/lib/cn';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'dashboard.myNotebook', icon: '📖', end: true },
+  { to: '/dashboard/edit', label: 'edit.title', icon: '✏️' },
   { to: '/dashboard/messages', label: 'dashboard.messagesTitle', icon: '💌' },
   { to: '/dashboard/gallery', label: 'dashboard.galleryTitle', icon: '🖼️' },
   { to: '/dashboard/timeline', label: 'dashboard.timelineTitle', icon: '🗺️' },

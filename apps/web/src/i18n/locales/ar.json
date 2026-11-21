@@ -376,5 +376,27 @@
     "terms": "الشروط والأحكام",
     "lastUpdated": "آخر تحديث: {{date}}",
     "contact": "تواصل معنا"
+  },
+  "edit": {
+    "title": "تعديل الدفتر",
+    "openEditor": "تعديل المعلومات والغلاف",
+    "graduateSection": "معلومات الخريج",
+    "graduatesSection": "الخريجون",
+    "graduatesHint": "كل خريج له صفحته الخاصة، ويختار الزائر الخريج اللي بدو يكتبله.",
+    "classTitle": "اسم الدفعة",
+    "addGraduate": "إضافة خريج",
+    "editGraduate": "تعديل",
+    "removeGraduate": "حذف",
+    "removeGraduateConfirm": "حذف {{name}} من الدفتر؟ سيتم حذف كل الرسائل المكتوبة له نهائياً.",
+    "photo": "الصورة الشخصية",
+    "uploadPhoto": "رفع صورة",
+    "changePhoto": "تغيير الصورة",
+    "designSection": "تصميم الدفتر",
+    "coverSection": "الغلاف",
+    "welcomeSection": "صفحة الترحيب",
+    "welcomeMessage": "رسالة الترحيب",
+    "welcomePlaceholder": "مثال: أهلاً فيكم بدفتري! اكتبولي ذكرى حلوة جمعتنا 💛",
+    "showProfilePhoto": "إظهار الصورة الشخصية في صفحة الترحيب",
+    "saved": "تم الحفظ"
   }
 }
