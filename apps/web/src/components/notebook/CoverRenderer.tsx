@@ -2,7 +2,13 @@ import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CoverStyle } from '@daftar/shared';
 import { cn } from '@/lib/cn';
-import { DEFAULT_COVER_ELEMENTS, FALLBACK_THEME, type CoverElementsVisibility, type NotebookThemeStyle } from './types';
+import {
+  COVER_FONT_FAMILIES,
+  DEFAULT_COVER_ELEMENTS,
+  FALLBACK_THEME,
+  type CoverElementsVisibility,
+  type NotebookThemeStyle,
+} from './types';
 
 export interface CoverCropValue {
   /** Focal point in percent (0–100). */
@@ -29,16 +35,6 @@ export interface CoverRendererProps {
   className?: string;
   compact?: boolean;
 }
-
-/** CSS font stacks for the name-font choices (all loaded in index.html). */
-export const COVER_FONT_FAMILIES: Record<CoverStyle['nameFont'], string | undefined> = {
-  theme: undefined,
-  ruqaa: '"Aref Ruqaa", serif',
-  amiri: '"Amiri", serif',
-  cairo: '"Cairo", sans-serif',
-  tajawal: '"Tajawal", sans-serif',
-  playfair: '"Playfair Display", serif',
-};
 
 export function CoverRenderer({
   theme = FALLBACK_THEME,
