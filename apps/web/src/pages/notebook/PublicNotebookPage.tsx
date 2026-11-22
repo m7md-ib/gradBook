@@ -162,7 +162,8 @@ export default function PublicNotebookPage() {
 
       {notebook.musicEnabled && notebook.musicTrackId && <MusicControl trackUrl={notebook.musicTrackId} />}
 
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 py-10">
+      {/* pb-28: the floating "write" button must not cover the share buttons at the end. */}
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 pb-28 pt-10">
         <Notebook3D
           cover={{
             theme,
@@ -170,6 +171,8 @@ export default function PublicNotebookPage() {
             coverQuote: notebook.coverQuote,
             elements: notebook.coverElements,
             overlayOpacity: notebook.coverOverlayOpacity,
+            crop: notebook.coverCrop,
+            coverStyle: notebook.coverStyle,
             graduateName: notebook.type === 'class' ? notebook.title ?? '' : graduate?.fullName ?? '',
             major: graduate?.major,
             institution: graduate?.institution,

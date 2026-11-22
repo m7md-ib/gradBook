@@ -153,11 +153,9 @@ adminRouter.post(
   '/themes',
   validateBody(
     z.object({
-      slug: z
-        .string()
-        .min(2)
-        .max(60)
-        .regex(/^[a-z0-9-]+$/, 'المعرّف يجب أن يحتوي حروف إنجليزية صغيرة وأرقام وشرطات فقط'),
+      // Optional and free-form: normalised (or derived from the name) by
+      // the service, so "Gold Theme" or an Arabic name just works.
+      slug: z.string().max(80).optional(),
       category: z.enum(themeCategoryValues),
       nameAr: z.string().min(1).max(80),
       nameEn: z.string().min(1).max(80),
@@ -205,11 +203,9 @@ adminRouter.post(
   imageUpload.single('image'),
   validateBody(
     z.object({
-      slug: z
-        .string()
-        .min(2)
-        .max(60)
-        .regex(/^[a-z0-9-]+$/, 'المعرّف يجب أن يحتوي حروف إنجليزية صغيرة وأرقام وشرطات فقط'),
+      // Optional and free-form: normalised (or derived from the name) by
+      // the service, so "Gold Theme" or an Arabic name just works.
+      slug: z.string().max(80).optional(),
       category: z.enum(themeCategoryValues),
       nameAr: z.string().min(1).max(80),
       nameEn: z.string().min(1).max(80),

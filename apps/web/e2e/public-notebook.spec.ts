@@ -5,10 +5,10 @@ test('visitor can open the demo notebook, browse pages, and write a message', as
   page.on('pageerror', (err) => errors.push(err.message));
 
   await page.goto('/d/sara-2026');
-  await expect(page.getByRole('button', { name: /افتح الدفتر/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /📖 افتح الدفتر/ })).toBeVisible();
   await page.screenshot({ path: 'test-results/notebook-closed.png' });
 
-  await page.getByRole('button', { name: /افتح الدفتر/ }).click();
+  await page.getByRole('button', { name: /📖 افتح الدفتر/ }).click();
   await page.waitForTimeout(2500);
   await expect(page.getByText('سارة الحربي').first()).toBeVisible();
   await page.screenshot({ path: 'test-results/notebook-open-intro.png' });

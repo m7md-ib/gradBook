@@ -185,3 +185,36 @@ describe('admin-assisted password reset', () => {
     expect(notAdmin.status).toBe(403);
   });
 });
+
+describe('admin catalog forms', () => {
+  it('creates a theme without an identifier, or with a free-form one, generating a valid unique slug', async () => {
+    const base = {
+      category: 'elegant',
+      nameAr: 'ذهبي أنيق',
+      // Unique per run: the shared test database keeps rows between runs.
+      nameEn: `Golden Elegance ${Date.now()}`,
+      paperColor: '#FBF6EC',
+      accentColor: '#B8905A',
+      inkColor: '#2B241B',
+      headingFont: 'Amiri',
+      bodyFont: 'Cairo',
+      coverGradientFrom: '#F3E7D3',
+      coverGradientTo: '#D9C09B',
+    };
+    const first = await admin.agent.post('/api/admin/themes').send(base);
+    expect(first.status).toBe(201);
+    const expected = base.nameEn.toLowerCase().replace(/ /g, '-');
+    expect(first.body.theme.slug).toBe(expected);
+
+    // Free-form identifier with capitals and spaces, already taken → normalised + suffixed.
+    const again = await admin.agent.post('/api/admin/themes').send({ ...base, slug: base.nameEn.toUpperCase() });
+    expect(again.status).toBe(201);
+    expect(again.body.theme.slug).toBe(`${expected}-2`);
+  });
+
+  it('names the bad field in Arabic when a request is invalid', async () => {
+    const res = await admin.agent.post('/api/admin/themes').send({ category: 'elegant' });
+    expect(res.status).toBe(400);
+    expect(res.body.error.fieldErrors.nameAr).toEqual(['مطلوب']);
+  });
+});

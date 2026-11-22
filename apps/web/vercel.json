@@ -26,8 +26,23 @@
       "destination": "/api/link-preview"
     },
     {
+      "source": "/api/((?!link-preview).*)",
+      "destination": "https://daftar-api-auel.onrender.com/api/$1"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/((?!link-preview).*)",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "0"
+        }
+      ]
     }
   ]
 }

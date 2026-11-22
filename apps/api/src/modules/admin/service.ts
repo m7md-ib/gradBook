@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { and, count, desc, eq, gt, ilike, isNull, ne, or, sql, sum } from 'drizzle-orm';
 import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
-import { paginate } from '@daftar/shared';
+import { paginate, slugify } from '@daftar/shared';
 import { db } from '../../db/client.js';
 import { getStorageProvider } from '../../storage/index.js';
 import {
@@ -291,11 +291,24 @@ export interface CreateThemeInput {
   coverGradientTo: string;
 }
 
-export async function createTheme(input: CreateThemeInput) {
-  const existing = await db.query.notebookThemes.findFirst({ where: eq(notebookThemes.slug, input.slug) });
-  if (existing) throw ApiError.conflict('يوجد تصميم بهذا المعرّف بالفعل');
+/**
+ * Turns whatever the admin typed (or, if blank, the English/Arabic name) into
+ * a valid unique slug — admins kept getting a bare 400 for "Gold Theme" or an
+ * Arabic identifier. Appends -2, -3… when it's taken.
+ */
+async function uniqueSlug(raw: string | undefined, names: string[], exists: (slug: string) => Promise<boolean>) {
+  const base = slugify([raw, ...names].find((v) => v && v.trim()) ?? 'item');
+  let candidate = base;
+  for (let n = 2; await exists(candidate); n += 1) candidate = `${base}-${n}`;
+  return candidate;
+}
 
-  const [created] = await db.insert(notebookThemes).values(input).returning();
+export async function createTheme(input: Omit<CreateThemeInput, 'slug'> & { slug?: string }) {
+  const slug = await uniqueSlug(input.slug, [input.nameEn, input.nameAr], async (candidate) =>
+    Boolean(await db.query.notebookThemes.findFirst({ where: eq(notebookThemes.slug, candidate) })),
+  );
+
+  const [created] = await db.insert(notebookThemes).values({ ...input, slug }).returning();
   if (!created) throw ApiError.internal();
   return created;
 }
@@ -338,11 +351,12 @@ export interface CreateCoverTemplateInput {
   sortOrder?: number;
 }
 
-export async function createCoverTemplate(input: CreateCoverTemplateInput) {
-  const existing = await db.query.coverTemplates.findFirst({ where: eq(coverTemplates.slug, input.slug) });
-  if (existing) throw ApiError.conflict('يوجد قالب بهذا المعرّف بالفعل');
+export async function createCoverTemplate(input: Omit<CreateCoverTemplateInput, 'slug'> & { slug?: string }) {
+  const slug = await uniqueSlug(input.slug, [input.nameEn, input.nameAr], async (candidate) =>
+    Boolean(await db.query.coverTemplates.findFirst({ where: eq(coverTemplates.slug, candidate) })),
+  );
 
-  const [created] = await db.insert(coverTemplates).values(input).returning();
+  const [created] = await db.insert(coverTemplates).values({ ...input, slug }).returning();
   if (!created) throw ApiError.internal();
   return created;
 }

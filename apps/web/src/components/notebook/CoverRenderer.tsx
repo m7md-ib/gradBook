@@ -1,6 +1,21 @@
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { CoverStyle } from '@daftar/shared';
 import { cn } from '@/lib/cn';
-import { DEFAULT_COVER_ELEMENTS, FALLBACK_THEME, type CoverElementsVisibility, type NotebookThemeStyle } from './types';
+import {
+  COVER_FONT_FAMILIES,
+  DEFAULT_COVER_ELEMENTS,
+  FALLBACK_THEME,
+  type CoverElementsVisibility,
+  type NotebookThemeStyle,
+} from './types';
+
+export interface CoverCropValue {
+  /** Focal point in percent (0–100). */
+  x: number;
+  y: number;
+  zoom: number;
+}
 
 export interface CoverRendererProps {
   theme?: NotebookThemeStyle;
@@ -8,6 +23,10 @@ export interface CoverRendererProps {
   coverQuote?: string | null;
   elements?: CoverElementsVisibility;
   overlayOpacity?: number;
+  /** Image framing chosen by the owner; centred and unzoomed when absent. */
+  crop?: CoverCropValue | null;
+  /** Text size / colour / font / alignment chosen by the owner. */
+  coverStyle?: Partial<CoverStyle> | null;
   graduateName: string;
   major?: string | null;
   institution?: string | null;
@@ -23,6 +42,8 @@ export function CoverRenderer({
   coverQuote,
   elements = DEFAULT_COVER_ELEMENTS,
   overlayOpacity = 0.4,
+  crop,
+  coverStyle,
   graduateName,
   major,
   institution,
@@ -34,9 +55,18 @@ export function CoverRenderer({
   const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
-  const backgroundStyle = coverImageUrl
-    ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : { background: `linear-gradient(160deg, ${theme.coverGradientFrom}, ${theme.coverGradientTo})` };
+  const nameScale = coverStyle?.nameScale ?? 1;
+  const textScale = coverStyle?.textScale ?? 1;
+  const textColor = coverStyle?.textColor ?? '#FFFFFF';
+  const nameFont = COVER_FONT_FAMILIES[coverStyle?.nameFont ?? 'theme'];
+  const centered = coverStyle?.align === 'center';
+
+  const focus = `${crop?.x ?? 50}% ${crop?.y ?? 50}%`;
+  const imageStyle: CSSProperties = {
+    objectPosition: focus,
+    transform: `scale(${crop?.zoom ?? 1})`,
+    transformOrigin: focus,
+  };
 
   return (
     <div
@@ -45,8 +75,21 @@ export function CoverRenderer({
         'shadow-book ring-1 ring-black/10',
         className,
       )}
-      style={backgroundStyle}
+      style={
+        coverImageUrl
+          ? undefined
+          : { background: `linear-gradient(160deg, ${theme.coverGradientFrom}, ${theme.coverGradientTo})` }
+      }
     >
+      {coverImageUrl && (
+        <img
+          src={coverImageUrl}
+          alt=""
+          draggable={false}
+          className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
+          style={imageStyle}
+        />
+      )}
       <div
         className="pointer-events-none absolute inset-0"
         style={{ background: `linear-gradient(to top, rgba(0,0,0,${overlayOpacity + 0.25}), rgba(0,0,0,${overlayOpacity * 0.3}) 55%, rgba(0,0,0,0.05))` }}
@@ -56,20 +99,28 @@ export function CoverRenderer({
       {elements.showQuote && coverQuote && (
         <p
           className={cn(
-            'absolute top-6 w-full px-6 text-center text-sm italic text-white/85 sm:top-8 sm:text-base',
+            'absolute top-6 w-full px-6 text-center text-sm italic sm:top-8 sm:text-base',
             compact && 'top-4 text-xs sm:text-xs',
           )}
+          style={{ color: textColor, opacity: 0.85 }}
         >
-          “{coverQuote}”
+          <span style={{ fontSize: `${textScale}em` }}>“{coverQuote}”</span>
         </p>
       )}
 
-      <div className={cn('relative flex flex-col gap-1 px-5 pb-6 text-white sm:px-7 sm:pb-8', compact && 'px-3 pb-3 gap-0.5')}>
+      <div
+        className={cn(
+          'relative flex flex-col gap-1 px-5 pb-6 sm:px-7 sm:pb-8',
+          centered && 'items-center text-center',
+          compact && 'gap-0.5 px-3 pb-3',
+        )}
+        style={{ color: textColor }}
+      >
         {elements.showGraduationYear && graduationYear && (
           <span
             className={cn(
               'mb-1 inline-flex w-fit items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide backdrop-blur-sm',
-              compact && 'px-2 py-0.5 text-[10px] mb-0.5',
+              compact && 'mb-0.5 px-2 py-0.5 text-[10px]',
             )}
           >
             {graduationYear}
@@ -77,21 +128,30 @@ export function CoverRenderer({
         )}
         {elements.showName && (
           <h2
-            className={cn('font-heading-auto text-3xl font-bold leading-tight sm:text-4xl', compact && 'text-lg sm:text-lg')}
+            className={cn(
+              'font-bold leading-tight text-3xl sm:text-4xl',
+              !nameFont && 'font-heading-auto',
+              compact && 'text-lg sm:text-lg',
+            )}
+            style={nameFont ? { fontFamily: nameFont } : undefined}
             dir={isAr ? 'rtl' : 'ltr'}
           >
-            {graduateName}
+            <span style={{ fontSize: `${nameScale}em` }}>{graduateName}</span>
           </h2>
         )}
         {(elements.showMajor || elements.showInstitution) && (
-          <p className={cn('text-sm text-white/90 sm:text-base', compact && 'text-[11px]')}>
-            {[elements.showMajor ? major : null, elements.showInstitution ? institution : null]
-              .filter(Boolean)
-              .join(' — ')}
+          <p className={cn('text-sm opacity-90 sm:text-base', compact && 'text-[11px] sm:text-[11px]')}>
+            <span style={{ fontSize: `${textScale}em` }}>
+              {[elements.showMajor ? major : null, elements.showInstitution ? institution : null]
+                .filter(Boolean)
+                .join(' — ')}
+            </span>
           </p>
         )}
         {elements.showGraduationDate && graduationDate && (
-          <p className={cn('text-xs text-white/70', compact && 'text-[10px]')}>{graduationDate}</p>
+          <p className={cn('text-xs opacity-70', compact && 'text-[10px]')}>
+            <span style={{ fontSize: `${textScale}em` }}>{graduationDate}</span>
+          </p>
         )}
       </div>
     </div>

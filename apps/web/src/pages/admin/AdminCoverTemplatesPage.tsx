@@ -84,7 +84,6 @@ export default function AdminCoverTemplatesPage() {
         <form onSubmit={handleCreate} className="grid gap-3 rounded-xl bg-white/70 p-4 shadow-page sm:grid-cols-2">
           <Input
             label={t('admin.coverTemplateSlug')}
-            required
             value={form.slug}
             onChange={(e) => setForm({ ...form, slug: e.target.value })}
             dir="ltr"

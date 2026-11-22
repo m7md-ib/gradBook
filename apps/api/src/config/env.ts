@@ -37,6 +37,12 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 
+  // Proxies in front of the API whose X-Forwarded-For entries Express should
+  // trust to find the client IP: Vercel (the site proxies /api/* to us) and
+  // Render's load balancer. Too low and every visitor shares the proxy's IP,
+  // so rate limits and visitor counts lump everyone together.
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(2),
+
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60_000),
   RATE_LIMIT_MAX_MESSAGES: z.coerce.number().default(5),
   RATE_LIMIT_MAX_AUTH: z.coerce.number().default(10),

@@ -25,6 +25,8 @@ export function StepPreview({ wizard, onNext, onBack }: { wizard: WizardState; o
           coverQuote={wizard.cover.quote}
           elements={wizard.cover.elements}
           overlayOpacity={wizard.cover.overlayOpacity}
+          crop={wizard.cover.crop}
+          coverStyle={wizard.cover.style}
           graduateName={wizard.graduate.fullName}
           major={wizard.graduate.major}
           institution={wizard.graduate.institution}

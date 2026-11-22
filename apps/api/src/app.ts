@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
 import path from 'node:path';
 import { env } from './config/env.js';
+import './lib/zod-error-map.js';
 import { logger } from './lib/logger.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 import { csrfProtection, issueCsrfCookie } from './middleware/csrf.js';
@@ -26,7 +27,7 @@ import { notificationsRouter } from './modules/notifications/routes.js';
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
-  app.set('trust proxy', 1);
+  app.set('trust proxy', env.TRUST_PROXY_HOPS);
 
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   app.use(cors({ origin: env.APP_URL, credentials: true }));

@@ -1,3 +1,5 @@
+import type { CoverStyle } from '@daftar/shared';
+
 export interface NotebookThemeStyle {
   paperColor: string;
   accentColor: string;
@@ -16,6 +18,16 @@ export const FALLBACK_THEME: NotebookThemeStyle = {
   bodyFont: 'Cairo',
   coverGradientFrom: '#F3E7D3',
   coverGradientTo: '#D9C09B',
+};
+
+/** CSS font stacks for the name-font choices (all loaded in index.html). */
+export const COVER_FONT_FAMILIES: Record<CoverStyle['nameFont'], string | undefined> = {
+  theme: undefined,
+  ruqaa: '"Aref Ruqaa", serif',
+  amiri: '"Amiri", serif',
+  cairo: '"Cairo", sans-serif',
+  tajawal: '"Tajawal", sans-serif',
+  playfair: '"Playfair Display", serif',
 };
 
 export interface CoverElementsVisibility {

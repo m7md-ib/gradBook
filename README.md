@@ -190,6 +190,8 @@ The backend integration tests spin up the real Express app (`createApp()`) again
 
 The API and web app are independently deployable — there's no server-side rendering coupling them together.
 
+On Vercel, `apps/web/vercel.json` proxies `/api/*` to the API host, and the production build calls `/api` on its own origin. This keeps the auth and CSRF cookies first-party: as third-party cookies on the API's own domain they're blocked by Safari/iOS and by private browsing, which breaks sign-up and login. If the API URL changes, update the rewrite destination there. `TRUST_PROXY_HOPS` (default 2: Vercel + Render) tells the API how many proxies to look through for the client IP used by rate limiting.
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) for the vulnerability reporting process, and a summary of what's already implemented: password hashing (bcrypt), JWT access + rotating refresh tokens in httpOnly cookies, CSRF protection (double-submit cookie), rate limiting on auth and message endpoints, input validation with zod on every route, image re-encoding + magic-byte sniffing on every upload (not just trusting the client's declared MIME type), HTML/script stripping on all user-generated text, a basic profanity filter, honeypot + duplicate-submission detection on the public write endpoint, and owner-only authorization checks on every notebook-scoped route.

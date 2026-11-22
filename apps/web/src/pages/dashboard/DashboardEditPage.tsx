@@ -254,6 +254,8 @@ function CoverSection({ notebook, graduate }: { notebook: NotebookDto; graduate?
             quote: notebook.coverQuote ?? '',
             elements: notebook.coverElements,
             overlayOpacity: Number(notebook.coverOverlayOpacity),
+            crop: notebook.coverCrop ?? undefined,
+            style: notebook.coverStyle ?? undefined,
           },
         }}
         onUploadImage={async (file) => (await uploadCoverImage.mutateAsync(file)).coverImageUrl ?? ''}
@@ -265,6 +267,8 @@ function CoverSection({ notebook, graduate }: { notebook: NotebookDto; graduate?
               overlayOpacity: cover.overlayOpacity,
               quote: cover.quote,
               elements: cover.elements,
+              crop: cover.crop,
+              style: cover.style,
             });
             toast.success(t('edit.saved'));
           } catch (error) {

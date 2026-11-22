@@ -1,7 +1,16 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 
+// In production the API is reached through this site's own origin: vercel.json
+// proxies /api/* to the API host. That makes the auth and CSRF cookies
+// first-party — as cross-site (third-party) cookies on the API's own domain
+// they're blocked by Safari/iOS always and by every browser's private mode,
+// which made sign-up and login fail (403) for those visitors. Local dev still
+// talks to VITE_API_URL directly (same-site on localhost). Set
+// VITE_API_DIRECT=true to call VITE_API_URL directly from a non-Vercel host.
+const useSameOrigin = import.meta.env.PROD && import.meta.env.VITE_API_DIRECT !== 'true';
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL as string,
+  baseURL: useSameOrigin ? '' : (import.meta.env.VITE_API_URL as string),
   withCredentials: true,
 });
 
@@ -65,9 +74,36 @@ export interface ApiErrorResponse {
   error: { code: string; message: string; fieldErrors?: Record<string, string[]> };
 }
 
+/** Readable names for request fields, so a validation error says *which* field. */
+const FIELD_LABELS: Record<string, { ar: string; en: string }> = {
+  slug: { ar: 'المعرّف', en: 'Identifier' },
+  nameAr: { ar: 'الاسم بالعربي', en: 'Arabic name' },
+  nameEn: { ar: 'الاسم بالإنجليزي', en: 'English name' },
+  category: { ar: 'الفئة', en: 'Category' },
+  fullName: { ar: 'الاسم', en: 'Name' },
+  email: { ar: 'البريد الإلكتروني', en: 'Email' },
+  password: { ar: 'كلمة المرور', en: 'Password' },
+  newPassword: { ar: 'كلمة المرور الجديدة', en: 'New password' },
+  authorName: { ar: 'الاسم', en: 'Name' },
+  body: { ar: 'الرسالة', en: 'Message' },
+  title: { ar: 'العنوان', en: 'Title' },
+  priceCents: { ar: 'السعر', en: 'Price' },
+  institution: { ar: 'الجامعة / المدرسة', en: 'Institution' },
+  major: { ar: 'التخصص', en: 'Major' },
+  graduationYear: { ar: 'سنة التخرج', en: 'Graduation year' },
+};
+
 export function getApiErrorMessage(error: unknown, fallback = 'حدث خطأ غير متوقع، حاول لاحقاً'): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as ApiErrorResponse | undefined;
+    // A bare "invalid data" left admins guessing; name the first bad field.
+    const firstField = Object.entries(data?.error?.fieldErrors ?? {}).find(([, msgs]) => msgs?.length);
+    if (firstField) {
+      const [field, msgs] = firstField;
+      const isEn = document.documentElement.lang === 'en';
+      const label = FIELD_LABELS[field]?.[isEn ? 'en' : 'ar'] ?? field;
+      return `${label}: ${msgs[0]}`;
+    }
     if (data?.error?.message) return data.error.message;
   }
   return fallback;

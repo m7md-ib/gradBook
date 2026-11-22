@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import type { GraduateDto, NotebookDto, NotebookStats, QrCodeDto } from '@/types/api';
+import type { CoverStyle, GraduateDto, NotebookDto, NotebookStats, QrCodeDto } from '@/types/api';
 
 export interface GraduateInfoPayload {
   fullName: string;
@@ -25,6 +25,7 @@ export interface CoverCustomizationPayload {
   sourceType: 'template' | 'custom';
   templateSlug?: string;
   crop?: { x: number; y: number; zoom: number };
+  style?: CoverStyle;
   overlayOpacity: number;
   quote?: string;
   elements: NotebookDto['coverElements'];

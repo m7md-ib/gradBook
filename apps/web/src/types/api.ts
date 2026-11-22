@@ -1,4 +1,5 @@
 import type {
+  CoverStyle,
   MessageStatus,
   NotebookStatus,
   NotebookType,
@@ -69,6 +70,15 @@ export interface GraduateDto {
   sortOrder: number;
 }
 
+export type { CoverStyle };
+
+/** Image framing: x/y focal point in percent (0–100), zoom ≥ 1. */
+export interface CoverCrop {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
 export interface CoverElements {
   showName: boolean;
   showMajor: boolean;
@@ -91,6 +101,8 @@ export interface NotebookDto {
   coverImageKey: string | null;
   coverImageUrl?: string | null;
   coverOverlayOpacity: string;
+  coverCrop: CoverCrop | null;
+  coverStyle: CoverStyle | null;
   coverQuote: string | null;
   coverElements: CoverElements;
   visibility: NotebookVisibility;
@@ -143,6 +155,8 @@ export interface PublicNotebook {
   coverQuote: string | null;
   coverElements: CoverElements;
   coverOverlayOpacity: number;
+  coverCrop?: CoverCrop | null;
+  coverStyle?: CoverStyle | null;
   visibility: NotebookVisibility;
   approvalMode: 'auto' | 'manual';
   allowPhotos: boolean;

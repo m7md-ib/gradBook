@@ -15,6 +15,13 @@
       "when": 1795271514697,
       "tag": "0001_add_manual_payment_provider",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795380697379,
+      "tag": "0002_add_cover_style",
+      "breakpoints": true
     }
   ]
 }

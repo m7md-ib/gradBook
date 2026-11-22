@@ -77,7 +77,7 @@ export default function AdminThemesPage() {
 
       {showForm && (
         <form onSubmit={handleCreate} className="grid gap-3 rounded-xl bg-white/70 p-4 shadow-page sm:grid-cols-2">
-          <Input label={t('admin.themeSlug')} required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} dir="ltr" />
+          <Input label={t('admin.themeSlug')} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} dir="ltr" />
           <Select
             label={t('admin.themeCategory')}
             options={CATEGORY_OPTIONS}

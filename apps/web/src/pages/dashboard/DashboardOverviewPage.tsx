@@ -50,6 +50,8 @@ export default function DashboardOverviewPage() {
             coverQuote={notebook.coverQuote}
             elements={notebook.coverElements}
             overlayOpacity={Number(notebook.coverOverlayOpacity)}
+            crop={notebook.coverCrop}
+            coverStyle={notebook.coverStyle}
             graduateName={notebook.type === 'class' ? notebook.title ?? '' : graduate?.fullName ?? ''}
             major={graduate?.major}
             institution={graduate?.institution}
