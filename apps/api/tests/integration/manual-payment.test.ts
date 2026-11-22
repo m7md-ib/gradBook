@@ -191,7 +191,8 @@ describe('admin catalog forms', () => {
     const base = {
       category: 'elegant',
       nameAr: 'ذهبي أنيق',
-      nameEn: 'Golden Elegance',
+      // Unique per run: the shared test database keeps rows between runs.
+      nameEn: `Golden Elegance ${Date.now()}`,
       paperColor: '#FBF6EC',
       accentColor: '#B8905A',
       inkColor: '#2B241B',
@@ -202,11 +203,13 @@ describe('admin catalog forms', () => {
     };
     const first = await admin.agent.post('/api/admin/themes').send(base);
     expect(first.status).toBe(201);
-    expect(first.body.theme.slug).toBe('golden-elegance');
+    const expected = base.nameEn.toLowerCase().replace(/ /g, '-');
+    expect(first.body.theme.slug).toBe(expected);
 
-    const again = await admin.agent.post('/api/admin/themes').send({ ...base, slug: 'Golden Elegance' });
+    // Free-form identifier with capitals and spaces, already taken → normalised + suffixed.
+    const again = await admin.agent.post('/api/admin/themes').send({ ...base, slug: base.nameEn.toUpperCase() });
     expect(again.status).toBe(201);
-    expect(again.body.theme.slug).toBe('golden-elegance-2');
+    expect(again.body.theme.slug).toBe(`${expected}-2`);
   });
 
   it('names the bad field in Arabic when a request is invalid', async () => {
