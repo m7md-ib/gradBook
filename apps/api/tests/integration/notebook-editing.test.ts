@@ -104,3 +104,31 @@ describe('class notebook graduates', () => {
     expect((await owner.agent.delete(`/api/notebooks/${notebookId}/graduates/${first}`)).status).toBe(400);
   });
 });
+
+describe('cover style and framing', () => {
+  it('saves text style and image framing, and shows them on the public notebook', async () => {
+    const { notebook } = await createNotebookForAgent(owner.agent);
+    const style = { nameScale: 1.4, textScale: 0.9, textColor: '#F3E7D3', nameFont: 'amiri', align: 'center' };
+    const crop = { x: 30, y: 70, zoom: 1.6 };
+
+    const saved = await owner.agent.patch(`/api/notebooks/${notebook.id}/cover`).send({
+      sourceType: 'template',
+      overlayOpacity: 0.55,
+      quote: 'Chapter complete',
+      elements: { showName: true, showMajor: true, showInstitution: true, showGraduationYear: true, showGraduationDate: false, showQuote: true },
+      style,
+      crop,
+    });
+    expect(saved.status).toBe(200);
+    expect(saved.body.notebook.coverStyle).toEqual(style);
+    expect(saved.body.notebook.coverCrop).toEqual(crop);
+
+    const bad = await owner.agent.patch(`/api/notebooks/${notebook.id}/cover`).send({
+      sourceType: 'template',
+      overlayOpacity: 0.4,
+      elements: saved.body.notebook.coverElements,
+      style: { ...style, textColor: 'red; background:url(x)' },
+    });
+    expect(bad.status).toBe(400);
+  });
+});

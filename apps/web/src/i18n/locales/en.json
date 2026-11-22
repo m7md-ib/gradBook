@@ -203,7 +203,28 @@
     "notebookLink": "Your notebook link",
     "goToDashboard": "Go to dashboard",
     "viewNotebook": "Open your notebook",
-    "validationFixErrors": "Please fix the errors above to continue"
+    "validationFixErrors": "Please fix the errors above to continue",
+    "textStyleTitle": "Text style",
+    "nameSize": "Name size",
+    "textSize": "Other text size",
+    "textColor": "Text colour",
+    "customColor": "Custom",
+    "nameFont": "Name font",
+    "font_theme": "Theme font",
+    "font_ruqaa": "Ruqaa",
+    "font_amiri": "Amiri",
+    "font_cairo": "Cairo",
+    "font_tajawal": "Tajawal",
+    "font_playfair": "Playfair",
+    "alignment": "Text position",
+    "alignStart": "Side",
+    "alignCenter": "Centre",
+    "imageAdjustTitle": "Adjust photo",
+    "imageZoom": "Zoom",
+    "imagePosX": "Move left / right",
+    "imagePosY": "Move up / down",
+    "imageOverlay": "Darken photo (so text stands out)",
+    "resetCoverStyle": "Reset to default style"
   },
   "notebook": {
     "openButton": "Open the notebook",
@@ -245,7 +266,8 @@
     "musicPause": "Pause music",
     "sharePreviewText": "{{name}}'s graduation notebook — write them a message!",
     "featured": "Featured memory",
-    "endMessage": "This is the last page... for now. The memories keep coming, and this notebook stays open for every new word."
+    "endMessage": "This is the last page... for now. The memories keep coming, and this notebook stays open for every new word.",
+    "tapToOpen": "Tap to open"
   },
   "dashboard": {
     "welcomeBack": "Welcome back",

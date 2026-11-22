@@ -11,7 +11,7 @@ test('capture README screenshots', async ({ page }) => {
   await page.screenshot({ path: '../../docs/screenshots/landing.png' });
 
   await page.goto('/d/sara-2026');
-  await page.getByRole('button', { name: /افتح الدفتر/ }).click();
+  await page.getByRole('button', { name: /📖 افتح الدفتر/ }).click();
   await page.waitForTimeout(2600);
   await page.screenshot({ path: '../../docs/screenshots/notebook-intro.png' });
 

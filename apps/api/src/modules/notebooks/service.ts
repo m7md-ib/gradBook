@@ -150,6 +150,7 @@ export async function updateCover(
       coverSourceType: input.sourceType,
       coverTemplateSlug: input.templateSlug ?? null,
       coverCrop: input.crop ?? null,
+      coverStyle: input.style ?? null,
       coverOverlayOpacity: String(input.overlayOpacity),
       coverQuote: input.quote ?? null,
       coverElements: input.elements,

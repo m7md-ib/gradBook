@@ -17,17 +17,33 @@ export const coverElementsToggleSchema = z.object({
 });
 export type CoverElementsToggle = z.infer<typeof coverElementsToggleSchema>;
 
+/** How the cover's text looks — chosen by the owner, all optional with sane defaults. */
+export const COVER_NAME_FONTS = ['theme', 'ruqaa', 'amiri', 'cairo', 'tajawal', 'playfair'] as const;
+export const coverStyleSchema = z.object({
+  nameScale: z.number().min(0.6).max(1.8).default(1),
+  textScale: z.number().min(0.7).max(1.5).default(1),
+  textColor: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/)
+    .default('#FFFFFF'),
+  nameFont: z.enum(COVER_NAME_FONTS).default('theme'),
+  align: z.enum(['start', 'center']).default('start'),
+});
+export type CoverStyle = z.infer<typeof coverStyleSchema>;
+
 export const coverCustomizationSchema = z.object({
   sourceType: z.nativeEnum(CoverSourceType),
   templateSlug: z.string().optional(),
   customImageUrl: z.string().url().optional(),
+  /** Image framing: x/y are the focal point in percent (0–100), zoom ≥ 1. */
   crop: z
     .object({
-      x: z.number(),
-      y: z.number(),
+      x: z.number().min(0).max(100),
+      y: z.number().min(0).max(100),
       zoom: z.number().min(1).max(4),
     })
     .optional(),
+  style: coverStyleSchema.optional(),
   overlayOpacity: z.number().min(0).max(1).default(0.35),
   quote: z.string().max(160).optional(),
   elements: coverElementsToggleSchema,

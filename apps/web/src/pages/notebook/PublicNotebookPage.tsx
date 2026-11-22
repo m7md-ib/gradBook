@@ -170,6 +170,8 @@ export default function PublicNotebookPage() {
             coverQuote: notebook.coverQuote,
             elements: notebook.coverElements,
             overlayOpacity: notebook.coverOverlayOpacity,
+            crop: notebook.coverCrop,
+            coverStyle: notebook.coverStyle,
             graduateName: notebook.type === 'class' ? notebook.title ?? '' : graduate?.fullName ?? '',
             major: graduate?.major,
             institution: graduate?.institution,

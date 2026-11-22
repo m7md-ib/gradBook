@@ -10,6 +10,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
+import type { CoverStyle } from '@daftar/shared';
 import { createdAt, updatedAt } from './_helpers.js';
 import {
   coverSourceTypeEnum,
@@ -60,6 +61,7 @@ export const notebooks = pgTable(
       .notNull()
       .default('0.35'),
     coverQuote: text('cover_quote'),
+    coverStyle: jsonb('cover_style').$type<CoverStyle>(),
     coverElements: jsonb('cover_elements').$type<CoverElements>().notNull().default({
       showName: true,
       showMajor: true,

@@ -39,6 +39,8 @@ export async function buildPublicSummary(notebook: Awaited<ReturnType<typeof fin
     coverQuote: notebook.coverQuote,
     coverElements: notebook.coverElements,
     coverOverlayOpacity: Number(notebook.coverOverlayOpacity),
+    coverCrop: notebook.coverCrop,
+    coverStyle: notebook.coverStyle,
     visibility: notebook.visibility,
     approvalMode: notebook.approvalMode,
     allowPhotos: notebook.allowPhotos,

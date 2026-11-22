@@ -203,7 +203,28 @@
     "notebookLink": "رابط دفترك",
     "goToDashboard": "اذهب للوحة التحكم",
     "viewNotebook": "افتح دفترك",
-    "validationFixErrors": "يرجى تصحيح الأخطاء أعلاه للمتابعة"
+    "validationFixErrors": "يرجى تصحيح الأخطاء أعلاه للمتابعة",
+    "textStyleTitle": "تنسيق الكتابة",
+    "nameSize": "حجم الاسم",
+    "textSize": "حجم باقي الكتابة",
+    "textColor": "لون الكتابة",
+    "customColor": "لون آخر",
+    "nameFont": "خط الاسم",
+    "font_theme": "خط التصميم",
+    "font_ruqaa": "رقعة",
+    "font_amiri": "أميري",
+    "font_cairo": "القاهرة",
+    "font_tajawal": "تجوال",
+    "font_playfair": "Playfair",
+    "alignment": "مكان الكتابة",
+    "alignStart": "على الطرف",
+    "alignCenter": "بالنص",
+    "imageAdjustTitle": "ضبط الصورة",
+    "imageZoom": "تكبير الصورة",
+    "imagePosX": "تحريك يمين / يسار",
+    "imagePosY": "تحريك فوق / تحت",
+    "imageOverlay": "تعتيم الصورة (عشان تبيّن الكتابة)",
+    "resetCoverStyle": "إرجاع التنسيق الافتراضي"
   },
   "notebook": {
     "openButton": "افتح الدفتر",
@@ -245,7 +266,8 @@
     "musicPause": "إيقاف الموسيقى",
     "sharePreviewText": "دفتر تخرج {{name}} — اترك كلمة تبقى ذكرى!",
     "featured": "ذكرى مميزة",
-    "endMessage": "هذه آخر صفحة... حتى الآن. الذكريات تستمر، وهذا الدفتر يبقى مفتوحاً لكل كلمة جديدة."
+    "endMessage": "هذه آخر صفحة... حتى الآن. الذكريات تستمر، وهذا الدفتر يبقى مفتوحاً لكل كلمة جديدة.",
+    "tapToOpen": "اضغط لفتح الدفتر"
   },
   "dashboard": {
     "welcomeBack": "أهلاً بعودتك",

@@ -1,4 +1,5 @@
-import type { CoverElementsVisibility } from '@/components/notebook';
+import type { CoverStyle } from '@daftar/shared';
+import type { CoverCropValue, CoverElementsVisibility } from '@/components/notebook';
 
 export interface WizardGraduateInfo {
   fullName: string;
@@ -17,6 +18,8 @@ export interface WizardCoverState {
   quote: string;
   elements: CoverElementsVisibility;
   overlayOpacity: number;
+  crop?: CoverCropValue;
+  style?: CoverStyle;
 }
 
 export interface WizardState {

@@ -81,6 +81,8 @@ export default function CreateWizardPage() {
         overlayOpacity: cover.overlayOpacity,
         quote: cover.quote,
         elements: cover.elements,
+        crop: cover.crop,
+        style: cover.style,
       });
       setWizard((w) => ({ ...w, cover }));
       goTo(3);

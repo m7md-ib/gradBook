@@ -38,36 +38,57 @@ export function Notebook3D({ cover, book, onOpen, className, autoOpenLabel }: No
             key="closed-book"
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.3 }}
-            className="relative mx-auto w-full max-w-xs sm:max-w-sm"
-            style={{ perspective: '1800px' }}
+            className="mx-auto flex w-full flex-col items-center"
+            // Sized so the cover *and* the open button fit on one phone screen.
+            style={{ maxWidth: 'min(24rem, calc((100svh - 13rem) * 0.75))' }}
           >
-            <div
-              className="pointer-events-none absolute inset-0 translate-y-2 translate-x-1 rounded-[10px] bg-black/10 blur-[2px]"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-y-1 w-full translate-x-0.5 rounded-[10px] border border-black/5 bg-gold-100"
-              aria-hidden
-              style={{ transform: 'translate(3px, 3px)' }}
-            />
-            <motion.div
-              animate={stage === 'opening' ? { rotateY: isRtl ? 115 : -115, opacity: 0.4 } : { rotateY: 0, opacity: 1 }}
-              transition={{ duration: 0.55, ease: [0.32, 0, 0.15, 1] }}
-              onAnimationComplete={() => {
-                if (stage === 'opening') setStage('open');
-              }}
-              style={{ transformOrigin: isRtl ? '100% 50%' : '0% 50%', transformStyle: 'preserve-3d' }}
-              className="relative"
+            {/* The whole cover is the button: visitors kept tapping the cover. */}
+            <button
+              type="button"
+              onClick={handleOpen}
+              disabled={stage !== 'closed'}
+              aria-label={autoOpenLabel ?? t('notebook.openButton')}
+              className="group relative block w-full cursor-pointer rounded-[10px] text-start outline-none focus-visible:ring-4 focus-visible:ring-maroon-300"
+              style={{ perspective: '1800px' }}
             >
-              <CoverRenderer {...cover} />
-            </motion.div>
+              <div
+                className="pointer-events-none absolute inset-0 translate-x-1 translate-y-2 rounded-[10px] bg-black/10 blur-[2px]"
+                aria-hidden
+              />
+              <div
+                className="pointer-events-none absolute inset-0 rounded-[10px] border border-black/5 bg-gold-100"
+                aria-hidden
+                style={{ transform: 'translate(4px, 4px)' }}
+              />
+              <motion.div
+                animate={stage === 'opening' ? { rotateY: isRtl ? 115 : -115, opacity: 0.4 } : { rotateY: 0, opacity: 1 }}
+                transition={{ duration: 0.55, ease: [0.32, 0, 0.15, 1] }}
+                onAnimationComplete={() => {
+                  if (stage === 'opening') setStage('open');
+                }}
+                style={{ transformOrigin: isRtl ? '100% 50%' : '0% 50%', transformStyle: 'preserve-3d' }}
+                className="relative transition-transform duration-300 group-hover:-translate-y-1"
+              >
+                <CoverRenderer {...cover} />
+
+                {stage === 'closed' && (
+                  <span className="pointer-events-none absolute inset-x-0 top-[38%] flex justify-center" aria-hidden>
+                    <span className="relative inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-maroon-700 shadow-lg backdrop-blur-sm">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-white/50" />
+                      <span className="relative text-base">👆</span>
+                      <span className="relative">{t('notebook.tapToOpen')}</span>
+                    </span>
+                  </span>
+                )}
+              </motion.div>
+            </button>
 
             {stage === 'closed' && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="mt-6 flex justify-center"
+                className="relative z-10 mt-7 flex justify-center"
               >
                 <Button size="lg" onClick={handleOpen} className="shadow-lg">
                   📖 {autoOpenLabel ?? t('notebook.openButton')}
