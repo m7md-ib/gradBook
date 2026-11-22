@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { formatDate } from '@/lib/format';
-import { CONTACT_EMAIL, CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
+import { CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
 import { LEGAL_LAST_UPDATED, PRIVACY, TERMS } from './legalContent';
 
 export default function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
@@ -42,10 +42,6 @@ export default function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
             <p className="mt-2 text-sm text-ink/70">
               <a href={whatsappLink()} target="_blank" rel="noreferrer" className="underline" dir="ltr">
                 {CONTACT_WHATSAPP_DISPLAY}
-              </a>
-              {' · '}
-              <a href={`mailto:${CONTACT_EMAIL}`} className="underline">
-                {CONTACT_EMAIL}
               </a>
             </p>
           </section>

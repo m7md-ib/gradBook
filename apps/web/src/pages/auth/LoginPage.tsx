@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { getApiErrorMessage } from '@/api/client';
-import { CONTACT_EMAIL, CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
+import { CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -86,10 +86,6 @@ export default function LoginPage() {
           {t('auth.contactHint')}{' '}
           <a href={whatsappLink()} className="underline hover:text-ink/60" dir="ltr">
             {CONTACT_WHATSAPP_DISPLAY}
-          </a>
-          {' · '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="underline hover:text-ink/60">
-            {CONTACT_EMAIL}
           </a>
         </p>
       </div>
