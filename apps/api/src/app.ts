@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
 import path from 'node:path';
 import { env } from './config/env.js';
+import './lib/zod-error-map.js';
 import { logger } from './lib/logger.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 import { csrfProtection, issueCsrfCookie } from './middleware/csrf.js';
