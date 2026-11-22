@@ -151,6 +151,12 @@ No admin email is stored in the repository. On every boot, `src/db/promote-owner
 - `ADMIN_EMAIL`: comma-separated emails that should be admins. Each existing account is promoted (and unblocked); every *other* admin is demoted to a regular user. This only happens once at least one listed account exists, so a typo can't leave the platform without an admin.
 - `ADMIN_PASSWORD` (optional): if a listed account doesn't exist yet, it's created with this password; if it exists, its password is reset to it. Remove the variable after signing in. It's also the way back in if the admin password is forgotten.
 
+### Starting over (wipe all user data)
+
+`RESET_ALL_DATA=delete-all-users-1` (any value starting with `delete-all-users`) wipes every account and everything that belongs to users (notebooks, messages, orders and payments, QR codes, analytics, reports) plus their uploaded files on the next boot. Themes, packages, cover templates and platform settings are kept. It runs before the admin step, so `ADMIN_EMAIL` / `ADMIN_PASSWORD` then create the admin fresh. Each value runs only once, so leaving it set doesn't wipe again; still, remove it afterwards. To wipe again later, use a new value (`delete-all-users-2`).
+
+The public demo notebook is no longer recreated on boot unless `SEED_DEMO_NOTEBOOK=true`; the landing page shows a static example notebook instead.
+
 ## Password recovery
 
 There's no outgoing email yet. "Forgot your password?" on the login page opens WhatsApp with a prefilled message; an admin then issues a one-off temporary password from **Admin → Users** (which also signs the user out everywhere), and the user changes it from their settings.

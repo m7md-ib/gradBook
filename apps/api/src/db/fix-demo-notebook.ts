@@ -19,6 +19,15 @@ const DEMO_SLUG = 'sara-2026';
  * until the next restart gambles on the rebuild succeeding again.
  */
 async function main() {
+  // Opt-in since the production data was reset to start from zero: the
+  // landing page shows a static example now, and a public demo account (its
+  // password is in the README) shouldn't be recreated on every boot.
+  if (process.env.SEED_DEMO_NOTEBOOK !== 'true') {
+    console.log('ℹ️  Demo notebook seeding is off (set SEED_DEMO_NOTEBOOK=true to enable)');
+    await pool.end();
+    return;
+  }
+
   const notebook = await db.query.notebooks.findFirst({ where: eq(notebooks.slug, DEMO_SLUG) });
   if (notebook && notebook.status === 'active') {
     console.log('ℹ️  Demo notebook healthy, nothing to do');

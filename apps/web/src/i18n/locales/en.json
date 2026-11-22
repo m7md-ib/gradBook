@@ -105,7 +105,35 @@
       }
     ],
     "contactTitle": "Another question?",
-    "contactCta": "Message us on WhatsApp"
+    "contactCta": "Message us on WhatsApp",
+    "sampleLabel": "Example graduation notebook",
+    "sample": {
+      "graduateName": "Layan Ahmad",
+      "institution": "University of Jordan",
+      "major": "Computer Engineering",
+      "quote": "Chapter complete — on to the next",
+      "welcome": "Welcome to my notebook! Leave me a word or a memory to keep 💛",
+      "messages": [
+        {
+          "author": "Sara",
+          "relationship": "classmate",
+          "body": "Four years of lectures, late nights and coffee… so proud of you. The best is yet to come!",
+          "reaction": "🎓"
+        },
+        {
+          "author": "Mom",
+          "relationship": "family",
+          "body": "From your first school day until today I've watched you work so hard. Congratulations, my love.",
+          "reaction": "❤️"
+        },
+        {
+          "author": "Dr. Khaled",
+          "relationship": "teacher",
+          "body": "One of the most dedicated students I've taught. Best of luck with what comes next.",
+          "reaction": "✨"
+        }
+      ]
+    }
   },
   "auth": {
     "loginTitle": "Log in",
