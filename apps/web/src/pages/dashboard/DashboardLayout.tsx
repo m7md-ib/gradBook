@@ -8,14 +8,15 @@ import { Button } from '@/components/ui/Button';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { cn } from '@/lib/cn';
 
+// `short` labels the phone's bottom bar, where seven bare icons were a guessing game.
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'dashboard.myNotebook', icon: '📖', end: true },
-  { to: '/dashboard/edit', label: 'edit.title', icon: '✏️' },
-  { to: '/dashboard/messages', label: 'dashboard.messagesTitle', icon: '💌' },
-  { to: '/dashboard/gallery', label: 'dashboard.galleryTitle', icon: '🖼️' },
-  { to: '/dashboard/timeline', label: 'dashboard.timelineTitle', icon: '🗺️' },
-  { to: '/dashboard/share', label: 'dashboard.shareAndQr', icon: '🔗' },
-  { to: '/dashboard/settings', label: 'dashboard.settingsTitle', icon: '⚙️' },
+  { to: '/dashboard', label: 'dashboard.myNotebook', short: 'dashboard.navShort.home', icon: '📖', end: true },
+  { to: '/dashboard/edit', label: 'edit.title', short: 'dashboard.navShort.edit', icon: '✏️' },
+  { to: '/dashboard/messages', label: 'dashboard.messagesTitle', short: 'dashboard.navShort.messages', icon: '💌' },
+  { to: '/dashboard/gallery', label: 'dashboard.galleryTitle', short: 'dashboard.navShort.gallery', icon: '🖼️' },
+  { to: '/dashboard/timeline', label: 'dashboard.timelineTitle', short: 'dashboard.navShort.timeline', icon: '🗺️' },
+  { to: '/dashboard/share', label: 'dashboard.shareAndQr', short: 'dashboard.navShort.share', icon: '🔗' },
+  { to: '/dashboard/settings', label: 'dashboard.settingsTitle', short: 'dashboard.navShort.settings', icon: '⚙️' },
 ] as const;
 
 export default function DashboardLayout() {
@@ -80,26 +81,42 @@ export default function DashboardLayout() {
 
         <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden print:hidden">
           <span className="font-heading-auto text-xl font-bold text-maroon-700">📖 {t('common.appName')}</span>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            {/* Logout lived only in the desktop sidebar — phones had no way out. */}
+            <button
+              type="button"
+              onClick={() => void logout().then(() => navigate('/'))}
+              className="rounded-lg border border-ink/15 px-2.5 py-1 text-xs font-medium text-ink/70 hover:bg-ink/5"
+            >
+              {t('common.logout')}
+            </button>
+          </div>
         </header>
 
         <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 print:max-w-none print:p-0">
           <Outlet context={{ notebook }} />
         </main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-ink/10 bg-white/95 py-2 backdrop-blur lg:hidden print:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around gap-0.5 border-t border-ink/10 bg-white/95 px-1 py-1.5 backdrop-blur lg:hidden print:hidden">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={'end' in item ? item.end : false}
-              className={({ isActive }) => cn('flex flex-col items-center gap-0.5 px-2 text-[11px]', isActive ? 'text-maroon-600' : 'text-ink/50')}
+              className={({ isActive }) =>
+                cn(
+                  'flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-lg px-0.5 py-0.5 text-[10px] leading-tight',
+                  isActive ? 'bg-maroon-50 font-semibold text-maroon-700' : 'text-ink/55',
+                )
+              }
             >
               <span className="text-lg">{item.icon}</span>
+              <span className="w-full truncate text-center">{t(item.short)}</span>
             </NavLink>
           ))}
         </nav>
-        <div className="h-16 lg:hidden print:hidden" />
+        <div className="h-20 lg:hidden print:hidden" />
       </div>
     </div>
   );

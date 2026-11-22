@@ -267,7 +267,9 @@
     "sharePreviewText": "دفتر تخرج {{name}} — اترك كلمة تبقى ذكرى!",
     "featured": "ذكرى مميزة",
     "endMessage": "هذه آخر صفحة... حتى الآن. الذكريات تستمر، وهذا الدفتر يبقى مفتوحاً لكل كلمة جديدة.",
-    "tapToOpen": "اضغط لفتح الدفتر"
+    "tapToOpen": "اضغط لفتح الدفتر",
+    "choosePhoto": "اختر صورة من جهازك",
+    "removePhoto": "إزالة"
   },
   "dashboard": {
     "welcomeBack": "أهلاً بعودتك",
@@ -327,7 +329,17 @@
     "bannerExpired": "انتهت صلاحية دفترك — جدّد الاشتراك ليعود متاحاً للزوار.",
     "completePayment": "أكمل الدفع",
     "viewPaymentDetails": "عرض تفاصيل الدفع",
-    "renewNow": "جدّد الآن"
+    "renewNow": "جدّد الآن",
+    "deleteMessageConfirm": "حذف رسالة {{name}} نهائياً؟",
+    "navShort": {
+      "home": "دفتري",
+      "edit": "تعديل",
+      "messages": "الرسائل",
+      "gallery": "الذكريات",
+      "timeline": "المحطات",
+      "share": "مشاركة",
+      "settings": "إعدادات"
+    }
   },
   "admin": {
     "title": "لوحة الإدارة",

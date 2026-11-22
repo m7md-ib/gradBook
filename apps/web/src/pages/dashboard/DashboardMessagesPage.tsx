@@ -118,8 +118,13 @@ export default function DashboardMessagesPage() {
                   </Button>
                   <Button
                     size="sm"
-                    variant="danger"
-                    onClick={() => act(moderate.mutateAsync({ messageId: m.id, status: 'deleted' }))}
+                    variant="ghost"
+                    className="text-red-600 hover:bg-red-50"
+                    onClick={() => {
+                      if (window.confirm(t('dashboard.deleteMessageConfirm', { name: m.authorName }))) {
+                        void act(moderate.mutateAsync({ messageId: m.id, status: 'deleted' }));
+                      }
+                    }}
                   >
                     {t('common.delete')}
                   </Button>

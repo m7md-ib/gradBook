@@ -267,7 +267,9 @@
     "sharePreviewText": "{{name}}'s graduation notebook — write them a message!",
     "featured": "Featured memory",
     "endMessage": "This is the last page... for now. The memories keep coming, and this notebook stays open for every new word.",
-    "tapToOpen": "Tap to open"
+    "tapToOpen": "Tap to open",
+    "choosePhoto": "Choose a photo",
+    "removePhoto": "Remove"
   },
   "dashboard": {
     "welcomeBack": "Welcome back",
@@ -327,7 +329,17 @@
     "bannerExpired": "Your notebook has expired — renew it so visitors can open it again.",
     "completePayment": "Complete payment",
     "viewPaymentDetails": "View payment details",
-    "renewNow": "Renew now"
+    "renewNow": "Renew now",
+    "deleteMessageConfirm": "Delete the message from {{name}} permanently?",
+    "navShort": {
+      "home": "Home",
+      "edit": "Edit",
+      "messages": "Messages",
+      "gallery": "Photos",
+      "timeline": "Timeline",
+      "share": "Share",
+      "settings": "Settings"
+    }
   },
   "admin": {
     "title": "Admin panel",

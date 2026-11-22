@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,10 @@ export function WriteMessageModal({
   const { t } = useTranslation();
   const [reaction, setReaction] = useState<string | undefined>();
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const photoPreview = useMemo(() => (photoFile ? URL.createObjectURL(photoFile) : null), [photoFile]);
+  useEffect(() => () => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+  }, [photoPreview]);
   const [submitted, setSubmitted] = useState<'approved' | 'pending' | null>(null);
 
   const {
@@ -159,13 +163,35 @@ export function WriteMessageModal({
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-ink/80">{t('notebook.writeFormPhoto')}</label>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
-                    className="block w-full text-sm text-ink/60 file:me-3 file:rounded-lg file:border-0 file:bg-gold-200 file:px-3 file:py-1.5 file:text-ink"
-                  />
+                  <span className="mb-1.5 block text-sm font-medium text-ink/80">{t('notebook.writeFormPhoto')}</span>
+                  {/* Styled picker: the browser's own file input shows English
+                      "Choose File / No file chosen" inside the Arabic form. */}
+                  {photoFile ? (
+                    <div className="flex items-center gap-3 rounded-xl border border-ink/10 bg-white/70 p-2">
+                      <img src={photoPreview ?? ''} alt="" className="h-14 w-14 rounded-lg object-cover" />
+                      <span className="min-w-0 flex-1 truncate text-sm text-ink/70" dir="auto">
+                        {photoFile.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPhotoFile(null)}
+                        className="rounded-lg px-2 py-1 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        {t('notebook.removePhoto')}
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-ink/15 bg-white/50 px-4 py-4 text-sm font-medium text-ink/60 transition-colors hover:border-maroon-300 hover:text-maroon-700">
+                      <span className="text-lg">📷</span>
+                      {t('notebook.choosePhoto')}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
+                        className="sr-only"
+                      />
+                    </label>
+                  )}
                 </div>
 
                 {/* Honeypot field — hidden from real visitors, filled only by bots */}
