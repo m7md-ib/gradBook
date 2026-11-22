@@ -6,7 +6,7 @@ test('admin can log in and view platform management pages', async ({ page }) => 
 
   await page.goto('/login');
   await page.getByLabel('البريد الإلكتروني').fill('admin@daftar.app');
-  await page.getByLabel('كلمة المرور').fill('AdminDaftar2026!');
+  await page.locator('#password').fill('AdminDaftar2026!');
   await page.getByRole('button', { name: 'دخول' }).click();
 
   await page.waitForURL('**/dashboard');

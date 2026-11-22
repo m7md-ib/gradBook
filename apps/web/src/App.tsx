@@ -17,6 +17,9 @@ const DashboardGalleryPage = lazy(() => import('@/pages/dashboard/DashboardGalle
 const DashboardTimelinePage = lazy(() => import('@/pages/dashboard/DashboardTimelinePage'));
 const DashboardSettingsPage = lazy(() => import('@/pages/dashboard/DashboardSettingsPage'));
 const DashboardSharePage = lazy(() => import('@/pages/dashboard/DashboardSharePage'));
+const DashboardPaymentPage = lazy(() => import('@/pages/dashboard/DashboardPaymentPage'));
+const DashboardEditPage = lazy(() => import('@/pages/dashboard/DashboardEditPage'));
+const DashboardPrintPage = lazy(() => import('@/pages/dashboard/DashboardPrintPage'));
 const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'));
 const AdminOverviewPage = lazy(() => import('@/pages/admin/AdminOverviewPage'));
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'));
@@ -27,6 +30,7 @@ const AdminPackagesPage = lazy(() => import('@/pages/admin/AdminPackagesPage'));
 const AdminThemesPage = lazy(() => import('@/pages/admin/AdminThemesPage'));
 const AdminCoverTemplatesPage = lazy(() => import('@/pages/admin/AdminCoverTemplatesPage'));
 const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage'));
+const LegalPage = lazy(() => import('@/pages/legal/LegalPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 export default function App() {
@@ -71,6 +75,9 @@ export default function App() {
           <Route path="timeline" element={<DashboardTimelinePage />} />
           <Route path="settings" element={<DashboardSettingsPage />} />
           <Route path="share" element={<DashboardSharePage />} />
+          <Route path="payment" element={<DashboardPaymentPage />} />
+          <Route path="edit" element={<DashboardEditPage />} />
+          <Route path="print" element={<DashboardPrintPage />} />
         </Route>
 
         <Route
@@ -93,6 +100,9 @@ export default function App() {
         </Route>
 
         <Route path="/d/:slug" element={<PublicNotebookPage />} />
+
+        <Route path="/privacy" element={<LegalPage kind="privacy" />} />
+        <Route path="/terms" element={<LegalPage kind="terms" />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

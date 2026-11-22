@@ -63,6 +63,7 @@ export interface GraduateDto {
   graduationYear: number;
   graduationDate: string | null;
   profilePhotoKey: string | null;
+  profilePhotoUrl?: string | null;
   shortMessage: string | null;
   slug: string;
   sortOrder: number;
@@ -230,15 +231,37 @@ export interface NotebookStats {
   mostActiveDay: string | null;
 }
 
+export interface PaymentDto {
+  id: string;
+  provider: 'mock' | 'stripe' | 'manual';
+  providerReference: string | null;
+  status: string;
+}
+
 export interface OrderDto {
   id: string;
   userId: string;
   notebookId: string;
   packageId: string;
-  status: string;
+  status: 'pending' | 'paid' | 'failed' | 'cancelled' | 'refunded';
   amountCents: number;
   currency: string;
   createdAt: string;
+  payments?: PaymentDto[];
+  package?: Package;
+}
+
+/** Admin list rows carry who ordered and for which notebook. */
+export interface AdminOrderDto extends OrderDto {
+  user?: { email: string; fullName: string } | null;
+  notebook?: { slug: string; status: string } | null;
+}
+
+/** Transfer details an admin fills in under Admin → Settings (manual payments). */
+export interface PaymentInstructions {
+  cliqAlias: string | null;
+  accountName: string | null;
+  note: string | null;
 }
 
 export interface CheckoutSessionDto {

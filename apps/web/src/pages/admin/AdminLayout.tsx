@@ -1,9 +1,11 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
+import { useAdminAttention } from '@/hooks/useAdmin';
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'admin.overview', icon: '📊', end: true },
@@ -21,6 +23,19 @@ export default function AdminLayout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { data: attention } = useAdminAttention();
+  const badges: Record<string, number> = {
+    '/admin/orders': attention?.pendingOrders ?? 0,
+    '/admin/reports': attention?.openReports ?? 0,
+  };
+  const waiting = (attention?.pendingOrders ?? 0) + (attention?.openReports ?? 0);
+
+  // Show the count in the tab title too, so a new transfer is noticed even
+  // when the panel sits in a background tab.
+  useEffect(() => {
+    const base = t('admin.title');
+    document.title = waiting > 0 ? `(${waiting}) ${base}` : base;
+  }, [waiting, t]);
 
   return (
     <div className="flex min-h-screen bg-paper">
@@ -40,7 +55,8 @@ export default function AdminLayout() {
               }
             >
               <span>{item.icon}</span>
-              {t(item.label)}
+              <span className="flex-1">{t(item.label)}</span>
+              <CountBadge count={badges[item.to] ?? 0} />
             </NavLink>
           ))}
         </nav>
@@ -70,7 +86,10 @@ export default function AdminLayout() {
                 cn('shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium', isActive ? 'bg-maroon-600 text-white' : 'bg-white/70 text-ink/60')
               }
             >
-              {t(item.label)}
+              <span className="inline-flex items-center gap-1.5">
+                {t(item.label)}
+                <CountBadge count={badges[item.to] ?? 0} />
+              </span>
             </NavLink>
           ))}
         </div>
@@ -79,5 +98,14 @@ export default function AdminLayout() {
         </main>
       </div>
     </div>
+  );
+}
+
+function CountBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-gold-500 px-1.5 text-[11px] font-bold leading-5 text-ink">
+      {count}
+    </span>
   );
 }

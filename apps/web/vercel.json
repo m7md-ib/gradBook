@@ -2,5 +2,32 @@
   "installCommand": "cd ../.. && corepack enable && NODE_ENV=development pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/web run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/d/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|Viber|Snapchat|Pinterestbot|redditbot|Embedly|vkShare|Googlebot|Google-InspectionTool|bingbot|Applebot|DuckDuckBot|YandexBot).*"
+        }
+      ],
+      "destination": "/api/link-preview?slug=:slug"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|Viber|Snapchat|Pinterestbot|redditbot|Embedly|vkShare).*"
+        }
+      ],
+      "destination": "/api/link-preview"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }

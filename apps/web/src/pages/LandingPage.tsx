@@ -12,6 +12,7 @@ import { isExpiredView } from '@/api/endpoints/public';
 import { usePackages } from '@/hooks/useCatalog';
 import { formatCurrency } from '@/lib/format';
 import { useAuth } from '@/context/AuthContext';
+import { whatsappLink } from '@/lib/contact';
 
 const DEMO_SLUG = 'sara-2026';
 
@@ -180,6 +181,9 @@ export default function LandingPage() {
                 <h3 className="font-heading-auto text-2xl font-bold">{i18n.language === 'ar' ? pkg.nameAr : pkg.nameEn}</h3>
                 <p className={`text-3xl font-bold ${i === 1 ? 'text-gold-200' : 'text-maroon-700'}`}>
                   {formatCurrency(pkg.priceCents, pkg.currency, i18n.language)}
+                  <span className={`ms-2 text-sm font-medium ${i === 1 ? 'text-white/70' : 'text-ink/50'}`}>
+                    {t(`packageDuration.${pkg.duration}`, '')}
+                  </span>
                 </p>
                 <p className={i === 1 ? 'text-white/80' : 'text-ink/60'}>
                   {i18n.language === 'ar' ? pkg.descriptionAr : pkg.descriptionEn}
@@ -202,10 +206,36 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          <p className="mt-8 text-sm text-ink/60">{t('landing.paymentNote')}</p>
         </div>
       </section>
 
-      <section className="px-4 py-20 text-center sm:px-6 lg:px-8">
+      <section id="faq" className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-center font-heading-auto text-3xl font-bold text-ink sm:text-4xl">{t('landing.faqTitle')}</h2>
+          <div className="mt-10 flex flex-col gap-3">
+            {(t('landing.faq', { returnObjects: true }) as Array<{ q: string; a: string }>).map((item) => (
+              <details key={item.q} className="group rounded-xl bg-white/70 p-5 shadow-page">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                  {item.q}
+                  <span className="text-maroon-600 transition-transform group-open:rotate-45" aria-hidden>
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 leading-relaxed text-ink/70">{item.a}</p>
+              </details>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col items-center gap-3 text-center">
+            <p className="text-ink/60">{t('landing.contactTitle')}</p>
+            <a href={whatsappLink()} target="_blank" rel="noreferrer">
+              <Button variant="outline">💬 {t('landing.contactCta')}</Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white/50 px-4 py-20 text-center sm:px-6 lg:px-8">
         <h2 className="font-heading-auto text-3xl font-bold text-ink sm:text-4xl">{t('landing.finalCtaTitle')}</h2>
         <p className="mt-3 text-ink/60">{t('landing.finalCtaSubtitle')}</p>
         <Button size="lg" className="mt-6" onClick={goCreate}>

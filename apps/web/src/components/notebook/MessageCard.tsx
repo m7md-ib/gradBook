@@ -69,7 +69,10 @@ export function MessageCard({ authorName, body, relationship, reaction, photoUrl
         />
       )}
 
-      <p className="whitespace-pre-wrap font-body text-[15px] leading-relaxed text-ink/90 sm:text-base">{body}</p>
+      {/* dir="auto": an English message in the Arabic UI otherwise gets its punctuation flipped to the wrong end. */}
+      <p dir="auto" className="whitespace-pre-wrap text-start font-body text-[15px] leading-relaxed text-ink/90 sm:text-base">
+        {body}
+      </p>
 
       <div className="mt-1 flex items-center justify-end gap-2 font-heading-auto text-lg text-ink/80">
         <span>—</span>

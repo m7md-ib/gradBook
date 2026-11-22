@@ -1,12 +1,15 @@
 import { env } from '../config/env.js';
 import { MockPaymentProvider } from './mock-provider.js';
 import { StripePaymentProvider } from './stripe-provider.js';
+import { ManualPaymentProvider } from './manual-provider.js';
 import type { PaymentProvider } from './types.js';
 
 let instance: PaymentProvider | null = null;
 
 export function getPaymentProvider(): PaymentProvider {
-  if (instance) return instance;
+  // Keyed on the configured id (not just "already built") so tests can switch
+  // env.PAYMENT_PROVIDER between suites without a stale instance sticking around.
+  if (instance && instance.id === env.PAYMENT_PROVIDER) return instance;
 
   switch (env.PAYMENT_PROVIDER) {
     case 'mock':
@@ -14,6 +17,9 @@ export function getPaymentProvider(): PaymentProvider {
       break;
     case 'stripe':
       instance = new StripePaymentProvider();
+      break;
+    case 'manual':
+      instance = new ManualPaymentProvider();
       break;
     default:
       throw new Error(`Unsupported payment provider: ${env.PAYMENT_PROVIDER satisfies never}`);

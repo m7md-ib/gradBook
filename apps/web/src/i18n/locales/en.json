@@ -75,7 +75,37 @@
     "footerTagline": "Your digital graduation notebook, page after page.",
     "footerRights": "All rights reserved",
     "finalCtaTitle": "Ready to start your notebook?",
-    "finalCtaSubtitle": "Creating your notebook takes less than five minutes."
+    "finalCtaSubtitle": "Creating your notebook takes less than five minutes.",
+    "paymentNote": "💳 Pay by CliQ or bank transfer — we activate your notebook as soon as the transfer is confirmed.",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "How do I pay?",
+        "a": "After choosing a package you'll see the CliQ transfer details and an order reference. Send the amount with the reference in the transfer note, send us the receipt on WhatsApp, and we activate your notebook, usually within a few hours."
+      },
+      {
+        "q": "Do people need an account to write to me?",
+        "a": "No. Anyone with your notebook's link or QR code can write a message right away, no sign-up needed."
+      },
+      {
+        "q": "Can I control the messages?",
+        "a": "Yes. Choose whether messages publish immediately or after your approval, hide or delete any message, and visitors can report abusive content."
+      },
+      {
+        "q": "Can my notebook be private?",
+        "a": "Yes. Make it public for anyone with the link, or private behind an access code you share with the people you choose."
+      },
+      {
+        "q": "What happens when my package ends?",
+        "a": "The notebook is hidden from visitors but kept, and comes back as soon as you renew. You can save all messages as a PDF from your dashboard at any time."
+      },
+      {
+        "q": "Can I make one notebook for a whole class?",
+        "a": "Yes — the Class package holds every graduate in one notebook, each with their own pages; visitors pick who they're writing to."
+      }
+    ],
+    "contactTitle": "Another question?",
+    "contactCta": "Message us on WhatsApp"
   },
   "auth": {
     "loginTitle": "Log in",
@@ -91,7 +121,10 @@
     "haveAccount": "Already have an account?",
     "createOne": "Create one",
     "loginInstead": "Log in",
-    "contactHint": "Need help or a custom notebook? Contact us"
+    "contactHint": "Need help or a custom notebook? Contact us",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordMessage": "Hi, I forgot the password for my Daftar account. Email: {{email}}",
+    "termsAgreement": "By creating an account you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
   "wizard": {
     "title": "Create your graduation notebook",
@@ -238,7 +271,13 @@
     "renewNotebook": "Renew notebook",
     "reportsTitle": "Reports",
     "noReports": "No reports",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "bannerDraft": "Your notebook isn't active yet — complete the payment to activate and share it.",
+    "bannerAwaitingPayment": "Waiting for payment confirmation on order {{reference}}.",
+    "bannerExpired": "Your notebook has expired — renew it so visitors can open it again.",
+    "completePayment": "Complete payment",
+    "viewPaymentDetails": "View payment details",
+    "renewNow": "Renew now"
   },
   "admin": {
     "title": "Admin panel",
@@ -282,7 +321,36 @@
     "coverTemplateNameAr": "Arabic name",
     "coverTemplateNameEn": "English name",
     "coverTemplateImage": "Cover image",
-    "coverTemplateSortOrder": "Sort order"
+    "coverTemplateSortOrder": "Sort order",
+    "ordersEmpty": "No orders yet",
+    "orderDate": "Date",
+    "orderCustomer": "Customer",
+    "orderPackage": "Package",
+    "orderAmount": "Amount",
+    "orderReference": "Reference",
+    "orderStatus": "Status",
+    "orderActions": "Actions",
+    "orderStatusPending": "Awaiting payment",
+    "orderStatusPaid": "Paid",
+    "orderStatusFailed": "Rejected",
+    "orderStatusCancelled": "Replaced",
+    "orderStatusRefunded": "Refunded",
+    "confirmPayment": "Confirm payment",
+    "rejectPayment": "Reject",
+    "confirmPaymentPrompt": "Confirm you received {{amount}} for order {{reference}}? The notebook activates immediately.",
+    "rejectPaymentPrompt": "Reject order {{reference}}? The notebook will not be activated.",
+    "pendingOrdersCount": "{{count}} order(s) awaiting payment confirmation",
+    "paymentSettingsTitle": "Payment details (CliQ)",
+    "paymentSettingsDesc": "Shown to the customer on the payment page, next to their order reference.",
+    "paymentCliqAlias": "CliQ alias or wallet number",
+    "paymentAccountName": "Account holder name",
+    "paymentNote": "Extra note (optional)",
+    "otherSettings": "Other settings",
+    "resetPassword": "Temporary password",
+    "resetPasswordConfirm": "Create a temporary password for {{email}}? They'll be signed out everywhere.",
+    "temporaryPasswordTitle": "Temporary password for {{email}}",
+    "temporaryPasswordHint": "Send it to the user and ask them to change it from Settings after signing in. It won't be shown again.",
+    "openReportsCount": "{{count}} report(s) awaiting review"
   },
   "packageFeatures": {
     "custom_cover": "Custom cover",
@@ -304,11 +372,78 @@
     "successDesc": "Your notebook is now active and ready to share with everyone.",
     "cancelTitle": "Payment cancelled",
     "cancelDesc": "You can try again anytime from your dashboard.",
-    "backToDashboard": "Go to dashboard"
+    "backToDashboard": "Go to dashboard",
+    "manualTitle": "Complete your payment",
+    "orderSummary": "Package",
+    "amount": "Amount",
+    "reference": "Order reference",
+    "statusPending": "Awaiting transfer and confirmation",
+    "step1": "Send {{amount}} via CliQ to:",
+    "step1NoDetails": "Message us on WhatsApp to get the transfer details.",
+    "cliqAlias": "CliQ alias",
+    "accountName": "Account holder",
+    "step2": "Write the order reference {{reference}} in the transfer note.",
+    "step3": "Send a screenshot of the transfer receipt on WhatsApp.",
+    "sendReceipt": "Send receipt on WhatsApp",
+    "receiptMessage": "Hi, I transferred {{amount}} for Daftar order {{reference}}. Email: {{email}}",
+    "pendingNote": "We'll activate your notebook as soon as the transfer is confirmed — usually within a few hours — and this page updates on its own. You can close it and come back from your dashboard any time.",
+    "failedTitle": "We couldn't confirm this payment",
+    "failedDesc": "If you did send the money, message us on WhatsApp with the receipt and we'll sort it out.",
+    "cancelledTitle": "This order was replaced",
+    "cancelledDesc": "You picked a different package after this order. Continue from your dashboard.",
+    "contactUs": "Message us on WhatsApp",
+    "choosePackageTitle": "Choose a package to activate your notebook",
+    "renewTitle": "Renew your notebook",
+    "staleTitle": "This order is no longer valid",
+    "staleDesc": "Payment options changed since this order was created. Choose your package again to get the payment details and a new order reference."
   },
   "errors": {
     "notFoundTitle": "Page not found",
     "notFoundDesc": "The link you're trying to reach doesn't exist.",
     "backHome": "Back home"
+  },
+  "legal": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "lastUpdated": "Last updated: {{date}}",
+    "contact": "Contact us"
+  },
+  "edit": {
+    "title": "Edit notebook",
+    "openEditor": "Edit details and cover",
+    "graduateSection": "Graduate details",
+    "graduatesSection": "Graduates",
+    "graduatesHint": "Each graduate has their own pages; visitors pick who they're writing to.",
+    "classTitle": "Class name",
+    "addGraduate": "Add graduate",
+    "editGraduate": "Edit",
+    "removeGraduate": "Remove",
+    "removeGraduateConfirm": "Remove {{name}} from the notebook? All messages written to them will be permanently deleted.",
+    "photo": "Profile photo",
+    "uploadPhoto": "Upload photo",
+    "changePhoto": "Change photo",
+    "designSection": "Notebook design",
+    "coverSection": "Cover",
+    "welcomeSection": "Welcome page",
+    "welcomeMessage": "Welcome message",
+    "welcomePlaceholder": "e.g. Welcome to my notebook! Write me a memory we shared 💛",
+    "showProfilePhoto": "Show the profile photo on the welcome page",
+    "saved": "Saved"
+  },
+  "print": {
+    "title": "Save notebook as PDF",
+    "open": "Save messages as PDF",
+    "button": "Print / Save PDF",
+    "hint": "In the print dialog, choose \"Save as PDF\" as the destination.",
+    "notebookOf": "{{name}}'s graduation notebook",
+    "messageCount": "Messages: {{count}}",
+    "forEveryone": "Messages for everyone",
+    "empty": "No published messages yet."
+  },
+  "packageDuration": {
+    "1_month": "for 1 month",
+    "3_months": "for 3 months",
+    "1_year": "for 1 year",
+    "lifetime": "lifetime"
   }
 }

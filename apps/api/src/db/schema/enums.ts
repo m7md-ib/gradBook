@@ -81,7 +81,7 @@ export const paymentStatusEnum = pgEnum('payment_status', [
   'cancelled',
   'refunded',
 ]);
-export const paymentProviderEnum = pgEnum('payment_provider', ['mock', 'stripe']);
+export const paymentProviderEnum = pgEnum('payment_provider', ['mock', 'stripe', 'manual']);
 
 export const analyticsEventTypeEnum = pgEnum('analytics_event_type', [
   'notebook_view',

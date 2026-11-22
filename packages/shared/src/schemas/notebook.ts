@@ -57,6 +57,14 @@ export const updateNotebookSlugSchema = z.object({
   slug: notebookSlugSchema,
 });
 
+export const updateNotebookDetailsSchema = z
+  .object({
+    title: z.string().trim().min(2).max(160).optional(),
+    themeSlug: z.string().min(1).optional(),
+  })
+  .refine((v) => v.title !== undefined || v.themeSlug !== undefined, { message: 'لا يوجد ما يتم تحديثه' });
+export type UpdateNotebookDetailsInput = z.infer<typeof updateNotebookDetailsSchema>;
+
 export const introPageSchema = z.object({
   welcomeMessage: z.string().max(600).optional(),
   showProfilePhoto: z.boolean().default(true),

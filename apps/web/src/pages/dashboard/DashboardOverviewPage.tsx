@@ -64,6 +64,12 @@ export default function DashboardOverviewPage() {
             <Link to="/dashboard/share">
               <Button className="w-full">{t('dashboard.shareAndQr')}</Button>
             </Link>
+            <Link to="/dashboard/edit" className="text-center text-sm font-medium text-maroon-600 hover:underline">
+              ✏️ {t('edit.openEditor')}
+            </Link>
+            <Link to="/dashboard/print" className="text-center text-sm font-medium text-maroon-600 hover:underline">
+              💾 {t('print.open')}
+            </Link>
           </div>
         </div>
 

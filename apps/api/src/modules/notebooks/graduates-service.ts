@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
-import { slugify, type GraduateInfoInput } from '@daftar/shared';
+import { slugify, type GraduateInfoInput, type UpdateGraduateInput } from '@daftar/shared';
 import { db } from '../../db/client.js';
-import { graduates } from '../../db/schema/index.js';
+import { graduates, notebooks } from '../../db/schema/index.js';
 import { ApiError } from '../../lib/errors.js';
 import { getNotebookForOwner } from './service.js';
 
@@ -50,7 +50,8 @@ export async function addGraduate(notebookId: string, userId: string, input: Gra
       major: input.major,
       graduationYear: input.graduationYear,
       graduationDate: input.graduationDate,
-      profilePhotoKey: input.profilePhotoUrl,
+      // Set only through the photo upload endpoint, never from client input.
+      profilePhotoKey: null,
       shortMessage: input.shortMessage,
       slug,
       sortOrder: currentCount,
@@ -64,9 +65,9 @@ export async function updateGraduate(
   notebookId: string,
   graduateId: string,
   userId: string,
-  input: Partial<GraduateInfoInput>,
+  input: UpdateGraduateInput,
 ) {
-  await getNotebookForOwner(notebookId, userId);
+  const notebook = await getNotebookForOwner(notebookId, userId);
   const existing = await db.query.graduates.findFirst({
     where: and(eq(graduates.id, graduateId), eq(graduates.notebookId, notebookId)),
   });
@@ -79,12 +80,19 @@ export async function updateGraduate(
       institution: input.institution ?? existing.institution,
       major: input.major ?? existing.major,
       graduationYear: input.graduationYear ?? existing.graduationYear,
-      graduationDate: input.graduationDate ?? existing.graduationDate,
-      shortMessage: input.shortMessage ?? existing.shortMessage,
+      // undefined = leave as is, null = clear
+      graduationDate: input.graduationDate === undefined ? existing.graduationDate : input.graduationDate,
+      shortMessage: input.shortMessage === undefined ? existing.shortMessage : input.shortMessage,
       updatedAt: new Date(),
     })
     .where(eq(graduates.id, graduateId))
     .returning();
+
+  // An individual notebook's title is its graduate's name (set at creation and
+  // used in share text), so keep it in step when the name is corrected.
+  if (notebook.type === 'individual' && input.fullName && input.fullName !== existing.fullName) {
+    await db.update(notebooks).set({ title: input.fullName, updatedAt: new Date() }).where(eq(notebooks.id, notebookId));
+  }
 
   return updated;
 }

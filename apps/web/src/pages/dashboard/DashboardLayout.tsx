@@ -1,7 +1,8 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { useMyNotebooks } from '@/hooks/useNotebook';
+import { useMyOrders } from '@/hooks/useCommerce';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/Button';
 import { PageSpinner } from '@/components/ui/Spinner';
@@ -9,6 +10,7 @@ import { cn } from '@/lib/cn';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'dashboard.myNotebook', icon: '📖', end: true },
+  { to: '/dashboard/edit', label: 'edit.title', icon: '✏️' },
   { to: '/dashboard/messages', label: 'dashboard.messagesTitle', icon: '💌' },
   { to: '/dashboard/gallery', label: 'dashboard.galleryTitle', icon: '🖼️' },
   { to: '/dashboard/timeline', label: 'dashboard.timelineTitle', icon: '🗺️' },
@@ -38,7 +40,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-paper">
-      <aside className="hidden w-64 shrink-0 flex-col border-e border-ink/10 bg-white/50 p-5 lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-e border-ink/10 bg-white/50 p-5 lg:flex print:!hidden">
         <div className="mb-6 font-heading-auto text-2xl font-bold text-maroon-700">📖 {t('common.appName')}</div>
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => (
@@ -71,28 +73,21 @@ export default function DashboardLayout() {
 
       <div className="flex-1">
         {notebook.status !== 'active' && (
-          <div
-            className={cn(
-              'px-4 py-2.5 text-center text-sm font-medium',
-              notebook.status === 'expired' ? 'bg-red-100 text-red-800' : 'bg-gold-100 text-ink',
-            )}
-          >
-            {notebook.status === 'draft' && 'لم يتم تفعيل دفترك بعد — أكمل عملية الشراء لتفعيله.'}
-            {notebook.status === 'pending_payment' && 'طلبك قيد المعالجة...'}
-            {notebook.status === 'expired' && t('dashboard.renewNotebook')}
+          <div className="print:hidden">
+            <PaymentBanner notebookId={notebook.id} status={notebook.status} />
           </div>
         )}
 
-        <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden">
+        <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden print:hidden">
           <span className="font-heading-auto text-xl font-bold text-maroon-700">📖 {t('common.appName')}</span>
           <LanguageSwitcher />
         </header>
 
-        <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 print:max-w-none print:p-0">
           <Outlet context={{ notebook }} />
         </main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-ink/10 bg-white/95 py-2 backdrop-blur lg:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-ink/10 bg-white/95 py-2 backdrop-blur lg:hidden print:hidden">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -104,8 +99,50 @@ export default function DashboardLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="h-16 lg:hidden" />
+        <div className="h-16 lg:hidden print:hidden" />
       </div>
+    </div>
+  );
+}
+
+function PaymentBanner({ notebookId, status }: { notebookId: string; status: string }) {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const { data: orders } = useMyOrders();
+
+  // Only a manual transfer has a real "awaiting confirmation" state; any other
+  // pending order is just an abandoned checkout, so offer a fresh one instead.
+  // (The API returns orders newest first.)
+  const pending = orders?.find(
+    (o) => o.notebookId === notebookId && o.status === 'pending' && o.payments?.[0]?.provider === 'manual',
+  );
+  const reference = pending?.payments?.[0]?.providerReference;
+  const expired = status === 'expired';
+
+  let message: string;
+  let action: { to: string; label: string } | null;
+  if (pending && reference) {
+    message = t('dashboard.bannerAwaitingPayment', { reference });
+    action = { to: `/checkout/${pending.id}`, label: t('dashboard.viewPaymentDetails') };
+  } else {
+    message = expired ? t('dashboard.bannerExpired') : t('dashboard.bannerDraft');
+    action = { to: '/dashboard/payment', label: expired ? t('dashboard.renewNow') : t('dashboard.completePayment') };
+  }
+  if (action.to === pathname) action = null;
+
+  return (
+    <div
+      className={cn(
+        'flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-2.5 text-center text-sm font-medium',
+        expired && !pending ? 'bg-red-100 text-red-800' : 'bg-gold-100 text-ink',
+      )}
+    >
+      <span>{message}</span>
+      {action && (
+        <Link to={action.to} className="rounded-full bg-maroon-600 px-3 py-1 text-xs font-semibold text-white hover:bg-maroon-700">
+          {action.label}
+        </Link>
+      )}
     </div>
   );
 }

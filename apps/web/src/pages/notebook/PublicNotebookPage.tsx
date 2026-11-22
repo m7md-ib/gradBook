@@ -156,6 +156,8 @@ export default function PublicNotebookPage() {
         <meta property="og:title" content={`${graduate?.fullName} — ${t('common.appName')}`} />
         <meta property="og:description" content={t('notebook.sharePreviewText', { name: graduate?.fullName ?? '' }) ?? ''} />
         {notebook.coverImageUrl && <meta property="og:image" content={notebook.coverImageUrl} />}
+        {/* Graduates' notebooks are shared by link, not meant to show up in search results. */}
+        <meta name="robots" content="noindex" />
       </Helmet>
 
       {notebook.musicEnabled && notebook.musicTrackId && <MusicControl trackUrl={notebook.musicTrackId} />}

@@ -6,14 +6,14 @@ test('graduate can log in and manage their notebook from the dashboard', async (
 
   await page.goto('/login');
   await page.getByLabel('البريد الإلكتروني').fill('demo@daftar.app');
-  await page.getByLabel('كلمة المرور').fill('Daftar2026!');
+  await page.locator('#password').fill('Daftar2026!');
   await page.getByRole('button', { name: 'دخول' }).click();
 
   await page.waitForURL('**/dashboard');
   await expect(page.getByRole('heading', { name: /أهلاً بعودتك/ })).toBeVisible();
   await page.screenshot({ path: 'test-results/dashboard-overview.png', fullPage: true });
 
-  await page.getByRole('link', { name: 'الرسائل' }).click();
+  await page.locator('aside').getByRole('link', { name: 'الرسائل' }).click();
   await page.waitForTimeout(500);
   await expect(page.getByRole('heading', { name: 'الرسائل' })).toBeVisible();
   await page.screenshot({ path: 'test-results/dashboard-messages.png', fullPage: true });
@@ -26,6 +26,14 @@ test('graduate can log in and manage their notebook from the dashboard', async (
   await page.getByRole('link', { name: 'إعدادات الدفتر' }).click();
   await page.waitForTimeout(500);
   await page.screenshot({ path: 'test-results/dashboard-settings.png', fullPage: true });
+
+  await page.locator('aside').getByRole('link', { name: 'تعديل الدفتر' }).click();
+  await expect(page.getByRole('heading', { name: 'معلومات الخريج' })).toBeVisible();
+  await expect(page.locator('input[name=fullName]')).toHaveValue(/سارة/);
+
+  await page.goto('/dashboard/print');
+  await expect(page.getByRole('heading', { name: /دفتر تخرج/ })).toBeVisible();
+  await expect(page.locator('figure').first()).toBeVisible();
 
   expect(errors).toEqual([]);
 });

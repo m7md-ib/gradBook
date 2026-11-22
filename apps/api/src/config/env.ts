@@ -33,7 +33,7 @@ const envSchema = z.object({
     .default('false')
     .transform((v) => v === 'true'),
 
-  PAYMENT_PROVIDER: z.enum(['mock', 'stripe']).default('mock'),
+  PAYMENT_PROVIDER: z.enum(['mock', 'stripe', 'manual']).default('mock'),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 
@@ -53,6 +53,17 @@ if (!parsed.success) {
   throw new Error('Invalid environment configuration');
 }
 
-export const env = parsed.data;
+const data = parsed.data;
+
+// The mock provider "succeeds" any payment the moment the buyer clicks Pay,
+// so leaving it on in production hands out every package for free. Fall back
+// to manual (admin-confirmed) payments instead of refusing to boot, so a
+// stale PAYMENT_PROVIDER=mock on the host can't take the whole site down.
+if (data.NODE_ENV === 'production' && data.PAYMENT_PROVIDER === 'mock') {
+  console.warn('⚠️  PAYMENT_PROVIDER=mock is not allowed in production — using "manual" instead.');
+  data.PAYMENT_PROVIDER = 'manual';
+}
+
+export const env = data;
 export const isProduction = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';

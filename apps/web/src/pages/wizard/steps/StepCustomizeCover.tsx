@@ -24,12 +24,15 @@ export function StepCustomizeCover({
   onNext,
   onBack,
   saving,
+  nextLabel,
 }: {
-  wizard: WizardState;
+  wizard: Pick<WizardState, 'themeSlug' | 'graduate' | 'cover'>;
   onUploadImage: (file: File) => Promise<string>;
   onNext: (cover: WizardState['cover']) => Promise<void>;
-  onBack: () => void;
+  /** Omitted outside the wizard (e.g. the dashboard's edit page). */
+  onBack?: () => void;
   saving: boolean;
+  nextLabel?: string;
 }) {
   const { t, i18n } = useTranslation();
   const { data: templates } = useCoverTemplates();
@@ -120,9 +123,13 @@ export function StepCustomizeCover({
         </div>
 
         <div className="flex justify-between">
-          <Button variant="outline" onClick={onBack}>
-            {t('common.back')}
-          </Button>
+          {onBack ? (
+            <Button variant="outline" onClick={onBack}>
+              {t('common.back')}
+            </Button>
+          ) : (
+            <span />
+          )}
           <Button
             loading={saving}
             onClick={() =>
@@ -132,7 +139,7 @@ export function StepCustomizeCover({
               })
             }
           >
-            {t('common.next')}
+            {nextLabel ?? t('common.next')}
           </Button>
         </div>
       </div>

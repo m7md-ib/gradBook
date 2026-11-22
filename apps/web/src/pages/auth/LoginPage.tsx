@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { getApiErrorMessage } from '@/api/client';
+import { CONTACT_EMAIL, CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -18,8 +19,10 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
+  const typedEmail = watch('email') ?? '';
 
   async function onSubmit(values: LoginInput) {
     try {
@@ -57,6 +60,16 @@ export default function LoginPage() {
             error={errors.password?.message}
             {...register('password')}
           />
+          {/* No outgoing email yet: recovery goes through the admin, who issues
+              a temporary password from Admin → Users. */}
+          <a
+            href={whatsappLink(t('auth.forgotPasswordMessage', { email: typedEmail }))}
+            target="_blank"
+            rel="noreferrer"
+            className="-mt-2 self-end text-xs font-medium text-maroon-600 hover:underline"
+          >
+            {t('auth.forgotPassword')}
+          </a>
           <Button type="submit" size="lg" loading={isLoggingIn} className="mt-2">
             {t('auth.loginButton')}
           </Button>
@@ -71,12 +84,12 @@ export default function LoginPage() {
 
         <p className="mt-4 text-center text-xs text-ink/40">
           {t('auth.contactHint')}{' '}
-          <a href="https://wa.me/962781630603" className="underline hover:text-ink/60" dir="ltr">
-            +962 78 163 0603
+          <a href={whatsappLink()} className="underline hover:text-ink/60" dir="ltr">
+            {CONTACT_WHATSAPP_DISPLAY}
           </a>
           {' · '}
-          <a href="mailto:m7mdayoubibdah@gmail.com" className="underline hover:text-ink/60">
-            m7mdayoubibdah@gmail.com
+          <a href={`mailto:${CONTACT_EMAIL}`} className="underline hover:text-ink/60">
+            {CONTACT_EMAIL}
           </a>
         </p>
       </div>

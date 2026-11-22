@@ -33,8 +33,31 @@ export function useForceNotebookStatus() {
   });
 }
 
+/** Counts behind the admin nav badges; refreshed every minute while the panel is open. */
+export function useAdminAttention() {
+  return useQuery({ queryKey: ['admin', 'attention'], queryFn: adminEndpoints.attention, refetchInterval: 60_000 });
+}
+
 export function useAdminOrders(page: number) {
   return useQuery({ queryKey: ['admin', 'orders', page], queryFn: () => adminEndpoints.orders(page) });
+}
+
+export function useReviewOrderPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, decision }: { id: string; decision: 'confirm' | 'reject' }) =>
+      decision === 'confirm' ? adminEndpoints.confirmOrderPayment(id) : adminEndpoints.rejectOrderPayment(id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'attention'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'notebooks'] });
+    },
+  });
+}
+
+export function useResetUserPassword() {
+  return useMutation({ mutationFn: (id: string) => adminEndpoints.resetUserPassword(id) });
 }
 
 export function useAdminReports(page: number) {
@@ -46,7 +69,10 @@ export function useResolveReport() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: 'dismissed' | 'actioned' }) =>
       adminEndpoints.resolveReport(id, status),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'reports'] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'reports'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'attention'] });
+    },
   });
 }
 

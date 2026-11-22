@@ -10,11 +10,16 @@ export function StepChooseTheme({
   onSelect,
   onNext,
   onBack,
+  nextLabel,
+  submitting,
 }: {
   selectedThemeSlug: string | null;
   onSelect: (slug: string) => void;
   onNext: () => void;
-  onBack: () => void;
+  /** Omitted outside the wizard (e.g. the dashboard's edit page). */
+  onBack?: () => void;
+  nextLabel?: string;
+  submitting?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const { data: themes, isLoading } = useThemes();
@@ -60,11 +65,15 @@ export function StepChooseTheme({
         ))}
       </div>
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
-          {t('common.back')}
-        </Button>
-        <Button onClick={onNext} disabled={!selectedThemeSlug}>
-          {t('common.next')}
+        {onBack ? (
+          <Button variant="outline" onClick={onBack}>
+            {t('common.back')}
+          </Button>
+        ) : (
+          <span />
+        )}
+        <Button onClick={onNext} disabled={!selectedThemeSlug} loading={submitting}>
+          {nextLabel ?? t('common.next')}
         </Button>
       </div>
     </div>

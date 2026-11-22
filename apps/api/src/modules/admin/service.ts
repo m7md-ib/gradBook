@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { and, count, desc, eq, gt, ilike, isNull, ne, or, sql, sum } from 'drizzle-orm';
 import type { PaginationQuery, ThemeCategory } from '@daftar/shared';
 import { paginate } from '@daftar/shared';
@@ -16,13 +17,34 @@ import {
   platformSettings,
   analyticsEvents,
   moderationActions,
+  refreshTokens,
+  auditLogs,
+  payments,
 } from '../../db/schema/index.js';
 import { ApiError } from '../../lib/errors.js';
+import { hashPassword } from '../../auth/password.js';
 
 // The seeded showcase notebook (see db/seed.ts seedDemoNotebook) is a fictional
 // graduate with a simulated paid order — it must never count toward the
 // owner's real platform metrics.
 const DEMO_NOTEBOOK_SLUG = 'sara-2026';
+
+/**
+ * What needs the admin's hands right now: manual transfers waiting to be
+ * confirmed (other providers' pending orders are just abandoned checkouts)
+ * and open abuse reports. Polled by the admin layout for its nav badges.
+ */
+export async function getAttentionCounts() {
+  const [[pending], [open]] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(orders)
+      .innerJoin(payments, eq(payments.orderId, orders.id))
+      .where(and(eq(orders.status, 'pending'), eq(payments.provider, 'manual'))),
+    db.select({ total: count() }).from(reports).where(eq(reports.status, 'open')),
+  ]);
+  return { pendingOrders: Number(pending?.total ?? 0), openReports: Number(open?.total ?? 0) };
+}
 
 export async function getPlatformStats() {
   const demoNotebook = await db.query.notebooks.findFirst({
@@ -94,6 +116,41 @@ export async function listUsers(pagination: PaginationQuery, search?: string) {
   return paginate(items, pagination.page, pagination.pageSize, Number(total));
 }
 
+// Lowercase + digits without look-alikes (0/o, 1/l/i): the admin reads this
+// out or pastes it into WhatsApp, and the user types it back in on a phone.
+const TEMP_PASSWORD_LETTERS = 'abcdefghjkmnpqrstuvwxyz';
+const TEMP_PASSWORD_DIGITS = '23456789';
+
+function generateTemporaryPassword(): string {
+  const pick = (alphabet: string) => alphabet[crypto.randomInt(alphabet.length)];
+  // 5 letter+digit pairs (10 chars), so it always satisfies passwordSchema
+  // (≥8 chars, at least one letter and one digit).
+  return [...Array(5)].map(() => pick(TEMP_PASSWORD_LETTERS) + pick(TEMP_PASSWORD_DIGITS)).join('');
+}
+
+/**
+ * Admin-assisted password recovery (there's no outgoing email): the user asks
+ * for help over WhatsApp/email, the admin issues a one-off temporary password
+ * here and passes it on, and the user changes it from their settings. Every
+ * existing session is signed out. Admin accounts are excluded on purpose —
+ * they change their own password from Admin → Settings.
+ */
+export async function resetUserPassword(userId: string, actorUserId: string) {
+  const user = await db.query.users.findFirst({ where: eq(users.id, userId), columns: { id: true, role: true } });
+  if (!user) throw ApiError.notFound('المستخدم غير موجود');
+  if (user.role === 'admin') throw ApiError.forbidden('لا يمكن إعادة تعيين كلمة مرور حساب أدمن من هنا');
+
+  const temporaryPassword = generateTemporaryPassword();
+  await db
+    .update(users)
+    .set({ passwordHash: await hashPassword(temporaryPassword), updatedAt: new Date() })
+    .where(eq(users.id, userId));
+  await db.update(refreshTokens).set({ revokedAt: new Date() }).where(eq(refreshTokens.userId, userId));
+  await db.insert(auditLogs).values({ actorUserId, action: 'user.reset_password', entityType: 'user', entityId: userId });
+
+  return { temporaryPassword };
+}
+
 export async function setUserBlocked(userId: string, blocked: boolean) {
   const [user] = await db
     .update(users)
@@ -155,7 +212,12 @@ export async function forceNotebookStatus(
 export async function listOrders(pagination: PaginationQuery) {
   const [{ total }] = await db.select({ total: count() }).from(orders);
   const items = await db.query.orders.findMany({
-    with: { package: true, payments: true, user: { columns: { email: true, fullName: true } } },
+    with: {
+      package: true,
+      payments: true,
+      user: { columns: { email: true, fullName: true } },
+      notebook: { columns: { slug: true, status: true } },
+    },
     orderBy: [desc(orders.createdAt)],
     limit: pagination.pageSize,
     offset: (pagination.page - 1) * pagination.pageSize,
