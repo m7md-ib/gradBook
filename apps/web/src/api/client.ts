@@ -1,7 +1,16 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 
+// In production the API is reached through this site's own origin: vercel.json
+// proxies /api/* to the API host. That makes the auth and CSRF cookies
+// first-party — as cross-site (third-party) cookies on the API's own domain
+// they're blocked by Safari/iOS always and by every browser's private mode,
+// which made sign-up and login fail (403) for those visitors. Local dev still
+// talks to VITE_API_URL directly (same-site on localhost). Set
+// VITE_API_DIRECT=true to call VITE_API_URL directly from a non-Vercel host.
+const useSameOrigin = import.meta.env.PROD && import.meta.env.VITE_API_DIRECT !== 'true';
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL as string,
+  baseURL: useSameOrigin ? '' : (import.meta.env.VITE_API_URL as string),
   withCredentials: true,
 });
 
