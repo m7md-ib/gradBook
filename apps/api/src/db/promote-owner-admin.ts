@@ -1,11 +1,13 @@
 import { pool } from './client.js';
+import { ensureCatalog } from './ensure-catalog.js';
 import { ensureAdmins, parseAdminEmails } from '../modules/admin/bootstrap.js';
 import { resetAllUserData } from '../modules/admin/reset.js';
 
 /**
  * Runs on every boot (render.yaml startCommand; the file name is kept so the
- * existing start command keeps working). Who is admin comes from env vars set
- * on the host, never from the repository:
+ * existing start command keeps working). First fills the catalog if the
+ * database is brand new (see ensure-catalog.ts). Who is admin comes from env
+ * vars set on the host, never from the repository:
  *
  *   ADMIN_EMAIL     comma-separated admin emails; any other admin is demoted
  *   ADMIN_PASSWORD  optional; creates a missing admin with it, or resets an
@@ -18,6 +20,8 @@ import { resetAllUserData } from '../modules/admin/reset.js';
  * fails the boot.
  */
 async function main() {
+  await ensureCatalog();
+
   const resetToken = process.env.RESET_ALL_DATA?.trim();
   if (resetToken) {
     const outcome = await resetAllUserData(resetToken);
