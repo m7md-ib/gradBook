@@ -14,6 +14,8 @@ A fully working demo notebook is included in the seed data:
 - **Graduate dashboard login:** `demo@daftar.app` / `Daftar2026!`
 - **Admin panel login:** `admin@daftar.app` / `AdminDaftar2026!`
 
+These are local seed accounts. In production the demo admin is blocked on every boot; the real admin comes from env vars on the host (see [Admin accounts](#admin-accounts)).
+
 ## Screenshots
 
 | Landing page | Notebook — a message page |
@@ -141,6 +143,19 @@ Open `http://localhost:5173/d/sara-2026` to see the demo notebook, or `http://lo
 - `mock` (default): simulates a successful checkout end-to-end without any external account, for local development and demos. The "payment" is still verified server-side (see `src/payments/mock-provider.ts` and `src/modules/commerce/service.ts`) — the frontend is never trusted to just report success. **Never used in production**: with `NODE_ENV=production`, `mock` is replaced by `manual` at boot.
 - `manual` (production default): CliQ / bank transfer. Checkout shows the amount, a short order reference (`DF-XXXXXX`) to write in the transfer note, the platform's transfer details, and a button to send the receipt on WhatsApp. An admin confirms (or rejects) the order in **Admin → Orders**, which activates the notebook. The transfer details are set in **Admin → Settings → Payment details**.
 - `stripe`: real Stripe Checkout. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`, and point a Stripe webhook at `POST /api/payments/webhook/stripe`. (Stripe doesn't onboard merchants in Jordan, which is why `manual` is the production default.)
+
+## Admin accounts
+
+No admin email is stored in the repository. On every boot, `src/db/promote-owner-admin.ts` reads two env vars:
+
+- `ADMIN_EMAIL`: comma-separated emails that should be admins. Each existing account is promoted (and unblocked); every *other* admin is demoted to a regular user. This only happens once at least one listed account exists, so a typo can't leave the platform without an admin.
+- `ADMIN_PASSWORD` (optional): if a listed account doesn't exist yet, it's created with this password; if it exists, its password is reset to it. Remove the variable after signing in. It's also the way back in if the admin password is forgotten.
+
+### Starting over (wipe all user data)
+
+`RESET_ALL_DATA=delete-all-users-1` (any value starting with `delete-all-users`) wipes every account and everything that belongs to users (notebooks, messages, orders and payments, QR codes, analytics, reports) plus their uploaded files on the next boot. Themes, packages, cover templates and platform settings are kept. It runs before the admin step, so `ADMIN_EMAIL` / `ADMIN_PASSWORD` then create the admin fresh. Each value runs only once, so leaving it set doesn't wipe again; still, remove it afterwards. To wipe again later, use a new value (`delete-all-users-2`).
+
+The public demo notebook is no longer recreated on boot unless `SEED_DEMO_NOTEBOOK=true`; the landing page shows a static example notebook instead.
 
 ## Password recovery
 

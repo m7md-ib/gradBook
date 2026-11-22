@@ -7,14 +7,17 @@ import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Notebook3D } from '@/components/notebook';
 import type { NotebookPageContent } from '@/components/notebook';
-import { usePublicNotebook, usePublicMessages } from '@/hooks/usePublicNotebook';
-import { isExpiredView } from '@/api/endpoints/public';
 import { usePackages } from '@/hooks/useCatalog';
 import { formatCurrency } from '@/lib/format';
 import { useAuth } from '@/context/AuthContext';
 import { whatsappLink } from '@/lib/contact';
 
-const DEMO_SLUG = 'sara-2026';
+interface SampleMessage {
+  author: string;
+  relationship: string;
+  body: string;
+  reaction: string;
+}
 
 const FEATURES = [
   { icon: '📖', titleKey: 'landing.featureNotebookTitle', descKey: 'landing.featureNotebookDesc' },
@@ -35,42 +38,48 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const { data: notebookData } = usePublicNotebook(DEMO_SLUG);
-  const notebook = notebookData && !isExpiredView(notebookData) ? notebookData : undefined;
-  const { data: messagesData } = usePublicMessages(notebook ? DEMO_SLUG : undefined, 1);
   const { data: packages } = usePackages();
 
-  const pages = useMemo<NotebookPageContent[]>(() => {
-    const graduate = notebook?.graduates[0];
-    const list: NotebookPageContent[] = [];
-    if (graduate) {
-      list.push({
-        kind: 'intro',
-        graduateName: graduate.fullName,
-        institution: graduate.institution,
-        major: graduate.major,
-        profilePhotoUrl: graduate.profilePhotoUrl,
-        welcomeMessage: notebook?.welcomeMessage ?? null,
-        showProfilePhoto: notebook?.showProfilePhoto ?? true,
-      });
-    }
-    for (const m of messagesData?.items.slice(0, 6) ?? []) {
-      list.push({
-        kind: 'message',
-        id: m.id,
-        authorName: m.authorName,
-        body: m.body,
-        relationship: m.relationship,
-        reaction: m.reaction,
-        photoUrl: m.photoUrl,
-        featured: m.featured,
-        pageNumber: m.pageNumber,
-      });
-    }
-    return list;
-  }, [notebook, messagesData]);
+  // A fixed, clearly-labelled example rather than a live demo notebook: it
+  // renders instantly (no wait on a sleeping API) and never puts a real
+  // person's notebook on the homepage.
+  const sample = {
+    graduateName: t('landing.sample.graduateName'),
+    institution: t('landing.sample.institution'),
+    major: t('landing.sample.major'),
+    quote: t('landing.sample.quote'),
+    welcome: t('landing.sample.welcome'),
+    messages: t('landing.sample.messages', { returnObjects: true }) as SampleMessage[],
+  };
 
-  const graduate = notebook?.graduates[0];
+  const pages = useMemo<NotebookPageContent[]>(
+    () => [
+      {
+        kind: 'intro',
+        graduateName: sample.graduateName,
+        institution: sample.institution,
+        major: sample.major,
+        profilePhotoUrl: null,
+        welcomeMessage: sample.welcome,
+        showProfilePhoto: false,
+      },
+      ...sample.messages.map(
+        (m, i): NotebookPageContent => ({
+          kind: 'message',
+          id: `sample-${i}`,
+          authorName: m.author,
+          body: m.body,
+          relationship: m.relationship as Extract<NotebookPageContent, { kind: 'message' }>['relationship'],
+          reaction: m.reaction,
+          photoUrl: null,
+          featured: i === 0,
+          pageNumber: i + 1,
+        }),
+      ),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [i18n.language],
+  );
 
   function goCreate() {
     navigate(isAuthenticated ? '/create' : '/signup');
@@ -104,23 +113,18 @@ export default function LandingPage() {
           </div>
 
           <div className="mx-auto w-full max-w-md">
-            {graduate ? (
-              <Notebook3D
-                cover={{
-                  coverImageUrl: notebook?.coverImageUrl,
-                  coverQuote: notebook?.coverQuote,
-                  elements: notebook?.coverElements,
-                  graduateName: graduate.fullName,
-                  major: graduate.major,
-                  institution: graduate.institution,
-                  graduationYear: graduate.graduationYear,
-                }}
-                book={{ pages, currentIndex: 0, onIndexChange: () => undefined }}
-                autoOpenLabel={t('landing.openNotebookHint') ?? undefined}
-              />
-            ) : (
-              <div className="aspect-[3/4] w-full animate-pulse rounded-[10px] bg-gold-200/50 shadow-book" />
-            )}
+            <p className="mb-3 text-center text-xs font-medium text-ink/50">{t('landing.sampleLabel')}</p>
+            <Notebook3D
+              cover={{
+                coverQuote: sample.quote,
+                graduateName: sample.graduateName,
+                major: sample.major,
+                institution: sample.institution,
+                graduationYear: new Date().getFullYear(),
+              }}
+              book={{ pages, currentIndex: 0, onIndexChange: () => undefined }}
+              autoOpenLabel={t('landing.openNotebookHint') ?? undefined}
+            />
           </div>
         </div>
       </section>

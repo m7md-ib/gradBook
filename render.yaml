@@ -35,10 +35,13 @@ services:
     # safe to run on every boot (they're one or two indexed SELECTs and a
     # no-op once already applied) — never remove them, each guards against
     # a real failure mode that can recur:
-    # - promote-owner-admin.js: promotes the owner's own account (signed up
-    #   normally, password never shared with anyone) to admin, and blocks
-    #   the public demo admin account whose password is in the README.
-    # - fix-demo-notebook.js: reseeds the public showcase notebook
+    # - promote-owner-admin.js: makes the accounts in ADMIN_EMAIL admins
+    #   (creating one from ADMIN_PASSWORD if missing), demotes every other
+    #   admin, and blocks the public demo admin account whose password is in
+    #   the README. No addresses live in the repo — only in these env vars.
+    # - fix-demo-notebook.js: does nothing unless SEED_DEMO_NOTEBOOK=true
+    #   (the landing page shows a static example now). When enabled, it
+    #   reseeds the public showcase notebook
     #   (sara-2026) only if it's missing or stuck mid-creation (status !=
     #   'active') — e.g. a storage upload failing partway through
     #   seedDemoNotebook, which a cold start's network warm-up makes more
@@ -98,6 +101,18 @@ services:
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      # Who is admin. Comma-separated; any other admin is demoted on boot.
+      - key: ADMIN_EMAIL
+        sync: false
+      # Optional: creates the admin account if it doesn't exist yet, or resets
+      # its password. Remove it once you've signed in.
+      - key: ADMIN_PASSWORD
+        sync: false
+      # One-off and destructive: a value starting with "delete-all-users"
+      # wipes every account and its data on the next boot (once per value).
+      # Remove it afterwards.
+      - key: RESET_ALL_DATA
         sync: false
       - key: EMAIL_PROVIDER
         value: console
