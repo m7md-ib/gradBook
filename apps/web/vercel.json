@@ -2,6 +2,7 @@
   "installCommand": "cd ../.. && corepack enable && NODE_ENV=development pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/web run build",
   "outputDirectory": "dist",
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/d/:slug",
@@ -31,7 +32,7 @@
     },
     {
       "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "destination": "/app.html"
     }
   ],
   "headers": [

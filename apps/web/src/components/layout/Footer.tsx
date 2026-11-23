@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
+import { FOOTER_LINKS } from '@/seo/pages';
 
 export function Footer() {
   const { t } = useTranslation();
@@ -14,6 +15,13 @@ export function Footer() {
             {CONTACT_WHATSAPP_DISPLAY}
           </a>
         </p>
+        <nav aria-label="دفتر" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-ink/60" dir="rtl">
+          {FOOTER_LINKS.map((l) => (
+            <Link key={l.path} to={l.path} className="hover:text-maroon-700 hover:underline">
+              {l.label}
+            </Link>
+          ))}
+        </nav>
         <nav className="flex gap-4 text-xs text-ink/50">
           <Link to="/terms" className="hover:text-ink/80 hover:underline">
             {t('legal.terms')}

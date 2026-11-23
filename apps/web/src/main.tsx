@@ -11,6 +11,11 @@ import { AuthProvider } from '@/context/AuthContext';
 import App from './App';
 import '@/styles/globals.css';
 
+// The built HTML carries the page's search tags for crawlers; once the app
+// runs, react-helmet manages them per route, so drop the static copies (they
+// would otherwise linger as duplicates after navigating to another page).
+document.querySelectorAll('[data-prerender]').forEach((el) => el.remove());
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>

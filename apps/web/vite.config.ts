@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
+import { prerenderSeo } from './seo-prerender';
+
+// The public address search engines should index (canonical links, sitemap).
+const SITE_URL = (process.env.VITE_SITE_URL || 'https://daftarjo.com').replace(/\/+$/, '');
 
 export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+  plugins: [react(), prerenderSeo(SITE_URL)],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
