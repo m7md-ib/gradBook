@@ -282,7 +282,8 @@
     "imagePosX": "Move left / right",
     "imagePosY": "Move up / down",
     "imageOverlay": "Darken photo (so text stands out)",
-    "resetCoverStyle": "Reset to default style"
+    "resetCoverStyle": "Reset to default style",
+    "stepOf": "Step {{current}} of {{total}}"
   },
   "notebook": {
     "openButton": "Open the notebook",
@@ -398,8 +399,43 @@
       "gallery": "Photos",
       "timeline": "Timeline",
       "share": "Share",
-      "settings": "Settings"
-    }
+      "settings": "Settings",
+      "more": "More",
+      "payment": "Plan & payment",
+      "print": "Save PDF"
+    },
+    "status": {
+      "draft": "Not active",
+      "pending_payment": "Awaiting payment",
+      "active": "Active",
+      "expired": "Expired"
+    },
+    "paymentTitle": "Plan & payment",
+    "moreTitle": "All tools",
+    "viewShort": "View",
+    "noNotebookYet": "You don't have a notebook yet",
+    "pendingCallout": "{{count}} messages are waiting for your approval",
+    "quickActions": "Shortcuts",
+    "actionEditTitle": "Edit your notebook",
+    "actionEditHint": "Cover, design and details",
+    "actionMessagesTitle": "Messages",
+    "actionMessagesHint": "Read, publish or feature a message",
+    "actionShareTitle": "Share & QR",
+    "actionShareHint": "Send the link or print the code",
+    "actionPrintTitle": "Save messages as PDF",
+    "actionPrintHint": "A copy to keep forever",
+    "classGraduatesCount": "{{count}} graduates",
+    "messagesCount": "{{count}} messages",
+    "noMessagesShareHint": "Share your link so people start writing →",
+    "messagePublished": "Message published",
+    "shareSubtitle": "The more people get the link, the richer your notebook",
+    "shareMore": "Share another way",
+    "qrTitle": "QR code",
+    "qrHint": "Let people open your notebook with their phone camera",
+    "qrPrintTip": "Print it on a card or display it at the graduation party",
+    "gallerySubtitle": "Memory photos shown at the end of the notebook",
+    "galleryEmpty": "No photos in the gallery yet",
+    "timelineSubtitle": "Milestones of your university journey, on their own page"
   },
   "admin": {
     "title": "Admin panel",
@@ -550,7 +586,8 @@
     "welcomeMessage": "Welcome message",
     "welcomePlaceholder": "e.g. Welcome to my notebook! Write me a memory we shared 💛",
     "showProfilePhoto": "Show the profile photo on the welcome page",
-    "saved": "Saved"
+    "saved": "Saved",
+    "subtitle": "Change anything you picked when creating the notebook"
   },
   "print": {
     "title": "Save notebook as PDF",

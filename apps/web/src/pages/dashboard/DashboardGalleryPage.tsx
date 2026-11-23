@@ -6,6 +6,7 @@ import { PageSpinner } from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
 import { getApiErrorMessage } from '@/api/client';
 import type { NotebookDto } from '@/types/api';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function DashboardGalleryPage() {
   const { notebook } = useOutletContext<{ notebook: NotebookDto }>();
@@ -25,14 +26,17 @@ export default function DashboardGalleryPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('dashboard.galleryTitle')}</h1>
+      <PageHeader icon="image" title={t('dashboard.galleryTitle')} subtitle={t('dashboard.gallerySubtitle')} />
 
       {data?.items.length === 0 ? (
-        <p className="py-10 text-center text-ink/50">{t('dashboard.noMessagesFound')}</p>
+        <div className="flex flex-col items-center gap-3 rounded-3xl bg-white/70 px-6 py-14 text-center shadow-page">
+          <span className="text-5xl">🖼️</span>
+          <p className="font-semibold text-ink/70">{t('dashboard.galleryEmpty')}</p>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {data?.items.map((item) => (
-            <div key={item.id} className="overflow-hidden rounded-xl bg-white/70 shadow-page">
+            <div key={item.id} className="overflow-hidden rounded-2xl bg-white/90 shadow-page ring-1 ring-ink/5">
               <img src={item.imageUrl} alt={item.caption ?? ''} className="aspect-square w-full object-cover" />
               <div className="p-2">
                 {item.caption && <p className="truncate text-xs text-ink/60">{item.caption}</p>}

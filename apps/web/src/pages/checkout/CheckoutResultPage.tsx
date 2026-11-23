@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/layout/Navbar';
+import { AuroraBackground } from '@/components/landing/AuroraBackground';
+import { useConfetti } from '@/components/landing/Confetti';
 import { Button } from '@/components/ui/Button';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { ShareBar } from '@/components/ShareBar';
@@ -21,6 +24,13 @@ export default function CheckoutResultPage({ variant }: { variant: 'success' | '
 
   const notebookUrl = notebook ? `${window.location.origin}/d/${notebook.slug}` : '';
 
+  // Celebrate once the order is confirmed paid.
+  const [confetti, fireConfetti] = useConfetti();
+  const celebrate = variant === 'success' && order?.status === 'paid';
+  useEffect(() => {
+    if (celebrate) fireConfetti(window.innerWidth / 2, window.innerHeight * 0.3, 90);
+  }, [celebrate, fireConfetti]);
+
   if (variant === 'success' && (orderLoading || order?.status === 'pending')) {
     return (
       <div className="min-h-screen bg-paper">
@@ -35,8 +45,13 @@ export default function CheckoutResultPage({ variant }: { variant: 'success' | '
 
   return (
     <div className="min-h-screen bg-paper">
-      <Navbar />
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+      {confetti}
+      <Navbar variant="overlay" />
+      <div className="relative isolate h-56 overflow-hidden sm:h-64">
+        <AuroraBackground particles={14} />
+      </div>
+      <div className="relative mx-auto -mt-32 max-w-lg px-4 pb-16 text-center sm:-mt-36">
+        <div className="rounded-[1.75rem] bg-white p-6 shadow-book ring-1 ring-ink/5 sm:p-8">
         {variant === 'success' ? (
           <>
             <h1 className="font-heading-auto text-3xl font-bold text-ink">{t('wizard.doneTitle')}</h1>
@@ -77,6 +92,7 @@ export default function CheckoutResultPage({ variant }: { variant: 'success' | '
             </Link>
           </>
         )}
+        </div>
       </div>
     </div>
   );

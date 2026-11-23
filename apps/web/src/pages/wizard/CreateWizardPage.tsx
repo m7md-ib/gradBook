@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AuroraBackground } from '@/components/landing/AuroraBackground';
 import type { GraduateInfoInput } from '@daftar/shared';
 import { Navbar } from '@/components/layout/Navbar';
 import { DEFAULT_COVER_ELEMENTS } from '@/components/notebook';
@@ -32,9 +34,12 @@ const INITIAL_STATE: WizardState = {
 const STEP_LABELS = ['stepInfo', 'stepCoverStyle', 'stepCoverCustomize', 'stepPreview', 'stepPackage'] as const;
 
 export default function CreateWizardPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.dir(i18n.language) === 'rtl';
   const navigate = useNavigate();
   const [stepIndex, setStepIndex] = useState(0);
+  // +1 moving forward, -1 going back: the next step slides in from that side.
+  const [direction, setDirection] = useState(1);
   const [wizard, setWizard] = useState<WizardState>(INITIAL_STATE);
 
   const createNotebook = useCreateNotebook();
@@ -45,7 +50,10 @@ export default function CreateWizardPage() {
   const step = WIZARD_STEPS[stepIndex];
 
   function goTo(index: number) {
-    setStepIndex(Math.max(0, Math.min(WIZARD_STEPS.length - 1, index)));
+    const next = Math.max(0, Math.min(WIZARD_STEPS.length - 1, index));
+    setDirection(next >= stepIndex ? 1 : -1);
+    setStepIndex(next);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleInfoSubmit(notebookType: 'individual' | 'class', info: GraduateInfoInput) {
@@ -108,31 +116,66 @@ export default function CreateWizardPage() {
           {t('wizard.title')} — {t('common.appName')}
         </title>
       </Helmet>
-      <Navbar />
+      <Navbar variant="overlay" />
 
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-center font-heading-auto text-3xl font-bold text-ink">{t('wizard.title')}</h1>
+      <div className="relative isolate overflow-hidden px-4 pb-24 pt-24 text-center sm:pt-28">
+        <AuroraBackground particles={10} />
+        <h1 className="relative font-heading-auto text-3xl font-bold text-white sm:text-4xl">{t('wizard.title')}</h1>
 
-        <ol className="mx-auto mt-8 flex max-w-2xl items-center justify-between">
-          {STEP_LABELS.map((label, i) => (
-            <li key={label} className="flex flex-1 items-center">
-              <div
-                className={cn(
-                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors',
-                  i <= stepIndex ? 'bg-maroon-600 text-white' : 'bg-ink/10 text-ink/40',
+        <ol className="relative mx-auto mt-8 flex max-w-md items-center">
+          {STEP_LABELS.map((label, i) => {
+            const done = i < stepIndex;
+            const current = i === stepIndex;
+            return (
+              <li key={label} className="flex flex-1 items-center last:flex-none">
+                <motion.span
+                  animate={{ scale: current ? 1.15 : 1 }}
+                  className={cn(
+                    'relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300',
+                    done && 'bg-gold-400 text-ink',
+                    current && 'bg-white text-maroon-700 shadow-lg ring-4 ring-white/25',
+                    !done && !current && 'bg-white/10 text-white/50 ring-1 ring-white/20',
+                  )}
+                >
+                  {done ? '✓' : i + 1}
+                </motion.span>
+                {i < STEP_LABELS.length - 1 && (
+                  <span className="mx-1 h-1 flex-1 overflow-hidden rounded-full bg-white/15">
+                    <motion.span
+                      className="block h-full rounded-full bg-gold-400"
+                      initial={false}
+                      animate={{ width: done ? '100%' : '0%' }}
+                      transition={{ duration: 0.4 }}
+                    />
+                  </span>
                 )}
-              >
-                {i + 1}
-              </div>
-              {i < STEP_LABELS.length - 1 && (
-                <div className={cn('mx-1 h-0.5 flex-1', i < stepIndex ? 'bg-maroon-600' : 'bg-ink/10')} />
-              )}
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ol>
-        <p className="mt-2 text-center text-sm font-medium text-ink/60">{t(`wizard.${STEP_LABELS[stepIndex]}`)}</p>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={stepIndex}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            className="relative mt-4 text-sm font-semibold text-gold-100"
+          >
+            {t('wizard.stepOf', { current: stepIndex + 1, total: STEP_LABELS.length })} · {t(`wizard.${STEP_LABELS[stepIndex]}`)}
+          </motion.p>
+        </AnimatePresence>
+      </div>
 
-        <div className="mt-8 rounded-2xl bg-white/70 p-6 shadow-page-lg sm:p-10">
+      <div className="relative mx-auto -mt-16 max-w-4xl px-4 pb-12 sm:px-6 lg:px-8">
+        <div className="rounded-[1.75rem] bg-white p-5 shadow-book ring-1 ring-ink/5 sm:p-10">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: direction * (isRtl ? -24 : 24) }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction * (isRtl ? 24 : -24) }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
           {step === 'info' && (
             <StepGraduateInfo value={wizard} onSubmit={handleInfoSubmit} submitting={false} />
           )}
@@ -164,6 +207,8 @@ export default function CreateWizardPage() {
               submitting={createOrder.isPending}
             />
           )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

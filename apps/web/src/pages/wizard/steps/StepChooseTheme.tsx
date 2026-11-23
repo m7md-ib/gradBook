@@ -64,7 +64,7 @@ export function StepChooseTheme({
           </button>
         ))}
       </div>
-      <div className="flex justify-between">
+      <div className="wizard-actions">
         {onBack ? (
           <Button variant="outline" onClick={onBack}>
             {t('common.back')}

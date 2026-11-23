@@ -10,10 +10,11 @@ import { Select } from '@/components/ui/Input';
 import { ChangePasswordCard } from '@/components/ChangePasswordCard';
 import { getApiErrorMessage } from '@/api/client';
 import type { NotebookDto } from '@/types/api';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 function ToggleRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between rounded-xl bg-white/70 px-4 py-3 shadow-page">
+    <label className="flex cursor-pointer items-center justify-between rounded-2xl bg-white/90 px-4 py-3.5 shadow-page ring-1 ring-ink/5">
       <span className="text-sm font-medium text-ink/80">{label}</span>
       <input type="checkbox" className="h-5 w-5 accent-maroon-600" checked={checked} onChange={(e) => onChange(e.target.checked)} />
     </label>
@@ -55,7 +56,7 @@ export default function DashboardSettingsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('dashboard.settingsTitle')}</h1>
+      <PageHeader icon="settings" title={t('dashboard.settingsTitle')} />
 
       <section className="flex flex-col gap-3">
         <label className="text-sm font-medium text-ink/70">{t('dashboard.settingsSlug')}</label>

@@ -20,6 +20,7 @@ import { Input, Textarea } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { getApiErrorMessage } from '@/api/client';
 import type { GraduateDto, NotebookDto } from '@/types/api';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 /** Everything picked in the creation wizard, editable after the fact. */
 export default function DashboardEditPage() {
@@ -29,7 +30,7 @@ export default function DashboardEditPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('edit.title')}</h1>
+      <PageHeader icon="edit" title={t('edit.title')} subtitle={t('edit.subtitle')} />
 
       {notebook.type === 'class' ? (
         <ClassGraduatesSection notebook={notebook} graduates={graduates} />
@@ -46,7 +47,7 @@ export default function DashboardEditPage() {
 
 function Card({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-2xl bg-white/70 p-5 shadow-page sm:p-6">
+    <section className="flex flex-col gap-4 rounded-3xl border border-ink/5 bg-white/85 p-5 shadow-page sm:p-6">
       <div>
         <h2 className="font-heading-auto text-lg font-bold text-ink">{title}</h2>
         {hint && <p className="mt-0.5 text-sm text-ink/60">{hint}</p>}

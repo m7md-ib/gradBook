@@ -37,10 +37,17 @@ export function StepPackage({
             key={pkg.id}
             onClick={() => onSelect(pkg.id)}
             className={cn(
-              'flex flex-col gap-3 rounded-2xl border-2 p-6 text-start transition-all',
-              selectedPackageId === pkg.id ? 'border-maroon-600 bg-maroon-50 shadow-page-lg' : 'border-ink/10 hover:border-ink/25',
+              'relative flex flex-col gap-3 rounded-3xl border-2 p-6 text-start transition-all active:scale-[0.99]',
+              selectedPackageId === pkg.id
+                ? 'border-maroon-600 bg-gradient-to-br from-maroon-50 to-white shadow-page-lg ring-4 ring-maroon-100'
+                : 'border-ink/10 bg-white hover:border-ink/25',
             )}
           >
+            {selectedPackageId === pkg.id && (
+              <span className="absolute top-4 flex h-7 w-7 items-center justify-center rounded-full bg-maroon-600 text-sm text-white shadow-md ltr:right-4 rtl:left-4">
+                ✓
+              </span>
+            )}
             <h4 className="font-heading-auto text-xl font-bold text-ink">
               {i18n.language === 'ar' ? pkg.nameAr : pkg.nameEn}
             </h4>
@@ -60,7 +67,7 @@ export function StepPackage({
           </button>
         ))}
       </div>
-      <div className="flex justify-between">
+      <div className="wizard-actions">
         <Button variant="outline" onClick={onBack}>
           {t('common.back')}
         </Button>

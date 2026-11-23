@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { loginSchema, type LoginInput } from '@daftar/shared';
 import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/Input';
+import { AuthShell } from '@/components/layout/AuthShell';
 import { Button } from '@/components/ui/Button';
 import { getApiErrorMessage } from '@/api/client';
 import { CONTACT_WHATSAPP_DISPLAY, whatsappLink } from '@/lib/contact';
@@ -35,15 +36,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-paper px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl bg-white/70 p-8 shadow-page-lg">
-        <Link to="/" className="mb-6 flex justify-center font-heading-auto text-3xl font-bold text-maroon-700">
-          📖 {t('common.appName')}
-        </Link>
-        <h1 className="text-center font-heading-auto text-2xl font-bold text-ink">{t('auth.loginTitle')}</h1>
-        <p className="mt-1 text-center text-sm text-ink/60">{t('auth.loginSubtitle')}</p>
-
-        <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <AuthShell title={t('auth.loginTitle')} subtitle={t('auth.loginSubtitle')}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <Input
             label={t('auth.email') ?? undefined}
             type="email"
@@ -88,7 +82,6 @@ export default function LoginPage() {
             {CONTACT_WHATSAPP_DISPLAY}
           </a>
         </p>
-      </div>
-    </div>
+    </AuthShell>
   );
 }
