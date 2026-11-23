@@ -22,6 +22,7 @@ import { ExpiredScreen } from './ExpiredScreen';
 import { WriteMessageModal } from './WriteMessageModal';
 import { MusicControl } from './MusicControl';
 import { ShareBar } from '@/components/ShareBar';
+import { useConfetti } from '@/components/landing/Confetti';
 
 export default function PublicNotebookPage() {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ export default function PublicNotebookPage() {
   const [pageIndex, setPageIndex] = useState(0);
   const [bookOpened, setBookOpened] = useState(false);
   const [writeOpen, setWriteOpen] = useState(false);
+  const [confetti, fireConfetti] = useConfetti();
   const [writeTarget, setWriteTarget] = useState<string | undefined>();
   const [accessError, setAccessError] = useState<string | undefined>();
 
@@ -142,6 +144,8 @@ export default function PublicNotebookPage() {
 
   async function handleWriteSubmit(values: Parameters<typeof submitMessage.mutateAsync>[0] & { photoFile?: File | null }) {
     const result = await submitMessage.mutateAsync(values);
+    // A little celebration once the message is in the book.
+    fireConfetti(window.innerWidth / 2, window.innerHeight * 0.45, 70);
     if (!result.requiresApproval) {
       toast.success(t('notebook.writeFormSuccess'));
     }
@@ -160,6 +164,7 @@ export default function PublicNotebookPage() {
         <meta name="robots" content="noindex" />
       </Helmet>
 
+      {confetti}
       {notebook.musicEnabled && notebook.musicTrackId && <MusicControl trackUrl={notebook.musicTrackId} />}
 
       {/* pb-28: the floating "write" button must not cover the share buttons at the end. */}
