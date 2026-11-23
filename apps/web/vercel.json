@@ -32,7 +32,7 @@
     },
     {
       "source": "/((?!api/).*)",
-      "destination": "/app.html"
+      "destination": "/app"
     }
   ],
   "headers": [
