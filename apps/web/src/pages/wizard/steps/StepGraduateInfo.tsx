@@ -116,9 +116,12 @@ export function StepGraduateInfo({
         {...register('shortMessage')}
       />
 
-      <Button type="submit" size="lg" loading={submitting} className="self-end">
-        {t('common.next')}
-      </Button>
+      <div className="wizard-actions">
+        <span />
+        <Button type="submit" size="lg" loading={submitting}>
+          {t('common.next')}
+        </Button>
+      </div>
     </form>
   );
 }

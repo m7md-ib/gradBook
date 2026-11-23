@@ -152,7 +152,7 @@ export default function PublicNotebookPage() {
   }
 
   return (
-    <div className="min-h-screen bg-paper pb-16">
+    <div className="min-h-screen bg-paper bg-[radial-gradient(ellipse_80%_45%_at_50%_0%,#EFDDBF_0%,transparent_70%)] pb-16">
       <Helmet>
         <title>
           {graduate?.fullName} — {t('common.appName')}

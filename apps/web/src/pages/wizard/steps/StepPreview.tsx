@@ -35,7 +35,7 @@ export function StepPreview({ wizard, onNext, onBack }: { wizard: WizardState; o
         />
       </div>
 
-      <div className="flex w-full justify-between">
+      <div className="wizard-actions w-full">
         <Button variant="outline" onClick={onBack}>
           {t('common.back')}
         </Button>

@@ -82,3 +82,17 @@ html[lang='en'] .font-heading-auto {
 html[dir='rtl'] .rtl-flip-x {
   transform: scaleX(-1);
 }
+
+/* Back / Next row of the wizard steps: pinned to the bottom of the screen on
+   phones so it's always within thumb reach, inline on wider screens.
+   --sticky-bottom lifts it above the dashboard's bottom bar. */
+.wizard-actions {
+  @apply sticky z-20 -mx-5 mt-2 flex items-center justify-between gap-3 border-t border-ink/5 bg-white/90 px-5 py-3 backdrop-blur-lg;
+  bottom: var(--sticky-bottom, 0px);
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 640px) {
+  .wizard-actions {
+    @apply static mx-0 border-0 bg-transparent p-0 backdrop-blur-none;
+  }
+}

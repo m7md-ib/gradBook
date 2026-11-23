@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Navbar } from '@/components/layout/Navbar';
+import { AuroraBackground } from '@/components/landing/AuroraBackground';
 import { Button } from '@/components/ui/Button';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { useCheckout, useConfirmMockPayment } from '@/hooks/useCommerce';
@@ -30,8 +31,11 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <Navbar />
-      <div className="mx-auto max-w-md px-4 py-12 sm:py-16">
+      <Navbar variant="overlay" />
+      <div className="relative isolate h-56 overflow-hidden sm:h-64">
+        <AuroraBackground particles={10} />
+      </div>
+      <div className="relative mx-auto -mt-32 max-w-md px-4 pb-16 sm:-mt-36">
         {stale ? (
           <StaleOrder />
         ) : provider === 'manual' ? (
@@ -47,7 +51,7 @@ export default function CheckoutPage() {
 function StaleOrder() {
   const { t } = useTranslation();
   return (
-    <div className="rounded-2xl bg-white/70 p-8 text-center shadow-page-lg">
+    <div className="rounded-[1.75rem] bg-white p-6 text-center shadow-book ring-1 ring-ink/5 sm:p-8">
       <span className="text-4xl">🔁</span>
       <h1 className="mt-3 font-heading-auto text-2xl font-bold text-ink">{t('checkout.staleTitle')}</h1>
       <p className="mt-2 text-sm leading-relaxed text-ink/60">{t('checkout.staleDesc')}</p>
@@ -73,7 +77,7 @@ function MockCheckout({ order }: { order: OrderDto }) {
   }
 
   return (
-    <div className="rounded-2xl bg-white/70 p-8 shadow-page-lg">
+    <div className="rounded-[1.75rem] bg-white p-6 shadow-book ring-1 ring-ink/5 sm:p-8">
       <h1 className="text-center font-heading-auto text-2xl font-bold text-ink">{t('wizard.paymentTitle')}</h1>
 
       <div className="mt-6 flex items-center justify-between border-y border-ink/10 py-4">
@@ -102,7 +106,7 @@ function ManualCheckout({ order, instructions }: { order: OrderDto; instructions
   if (order.status === 'failed' || order.status === 'cancelled') {
     const failed = order.status === 'failed';
     return (
-      <div className="rounded-2xl bg-white/70 p-8 text-center shadow-page-lg">
+      <div className="rounded-[1.75rem] bg-white p-6 text-center shadow-book ring-1 ring-ink/5 sm:p-8">
         <span className="text-4xl">{failed ? '⚠️' : '🔁'}</span>
         <h1 className="mt-3 font-heading-auto text-2xl font-bold text-ink">
           {failed ? t('checkout.failedTitle') : t('checkout.cancelledTitle')}
@@ -129,7 +133,7 @@ function ManualCheckout({ order, instructions }: { order: OrderDto; instructions
   const receiptText = t('checkout.receiptMessage', { amount, reference, email: user?.email ?? '' });
 
   return (
-    <div className="rounded-2xl bg-white/70 p-6 shadow-page-lg sm:p-8">
+    <div className="rounded-[1.75rem] bg-white p-6 shadow-book ring-1 ring-ink/5 sm:p-8">
       <h1 className="text-center font-heading-auto text-2xl font-bold text-ink">{t('checkout.manualTitle')}</h1>
       <p className="mt-2 text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-100 px-3 py-1 text-xs font-medium text-ink/80">

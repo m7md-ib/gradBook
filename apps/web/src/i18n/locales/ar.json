@@ -282,7 +282,8 @@
     "imagePosX": "تحريك يمين / يسار",
     "imagePosY": "تحريك فوق / تحت",
     "imageOverlay": "تعتيم الصورة (عشان تبيّن الكتابة)",
-    "resetCoverStyle": "إرجاع التنسيق الافتراضي"
+    "resetCoverStyle": "إرجاع التنسيق الافتراضي",
+    "stepOf": "الخطوة {{current}} من {{total}}"
   },
   "notebook": {
     "openButton": "افتح الدفتر",
@@ -398,8 +399,43 @@
       "gallery": "الذكريات",
       "timeline": "المحطات",
       "share": "مشاركة",
-      "settings": "إعدادات"
-    }
+      "settings": "إعدادات",
+      "more": "المزيد",
+      "payment": "الباقة والدفع",
+      "print": "حفظ PDF"
+    },
+    "status": {
+      "draft": "غير مفعّل",
+      "pending_payment": "بانتظار الدفع",
+      "active": "مفعّل",
+      "expired": "منتهي"
+    },
+    "paymentTitle": "الباقة والدفع",
+    "moreTitle": "كل الأدوات",
+    "viewShort": "شوف دفترك",
+    "noNotebookYet": "ما عندك دفتر لسا",
+    "pendingCallout": "عندك {{count}} رسائل بانتظار موافقتك",
+    "quickActions": "اختصارات",
+    "actionEditTitle": "عدّل دفترك",
+    "actionEditHint": "الغلاف، التصميم، والمعلومات",
+    "actionMessagesTitle": "الرسائل",
+    "actionMessagesHint": "اقرأ، انشر، أو ميّز رسالة",
+    "actionShareTitle": "المشاركة و QR",
+    "actionShareHint": "ابعت الرابط أو اطبع الرمز",
+    "actionPrintTitle": "احفظ الرسائل PDF",
+    "actionPrintHint": "نسخة تحتفظ فيها للأبد",
+    "classGraduatesCount": "{{count}} متخرج",
+    "messagesCount": "{{count}} رسالة",
+    "noMessagesShareHint": "شارك رابط دفترك ليبلّشوا يكتبولك ←",
+    "messagePublished": "انشرت الرسالة",
+    "shareSubtitle": "كل ما وصل الرابط لناس أكتر، صار دفترك أغنى",
+    "shareMore": "مشاركة بطريقة تانية",
+    "qrTitle": "رمز QR",
+    "qrHint": "خلّي الناس يفتحوا دفترك بكاميرا الموبايل",
+    "qrPrintTip": "اطبعه على كرت أو حطه بحفلة التخرج",
+    "gallerySubtitle": "صور الذكريات اللي بتظهر بآخر الدفتر",
+    "galleryEmpty": "لسا ما في صور بالمعرض",
+    "timelineSubtitle": "محطات رحلتك الجامعية، بتظهر بصفحة خاصة بالدفتر"
   },
   "admin": {
     "title": "لوحة الإدارة",
@@ -550,7 +586,8 @@
     "welcomeMessage": "رسالة الترحيب",
     "welcomePlaceholder": "مثال: أهلاً فيكم بدفتري! اكتبولي ذكرى حلوة جمعتنا 💛",
     "showProfilePhoto": "إظهار الصورة الشخصية في صفحة الترحيب",
-    "saved": "تم الحفظ"
+    "saved": "تم الحفظ",
+    "subtitle": "غيّر أي إشي اخترته وقت إنشاء الدفتر"
   },
   "print": {
     "title": "حفظ الدفتر PDF",

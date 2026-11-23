@@ -10,6 +10,7 @@ import { PageSpinner } from '@/components/ui/Spinner';
 import { formatDate } from '@/lib/format';
 import { getApiErrorMessage } from '@/api/client';
 import type { NotebookDto } from '@/types/api';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function DashboardTimelinePage() {
   const { notebook } = useOutletContext<{ notebook: NotebookDto }>();
@@ -42,15 +43,19 @@ export default function DashboardTimelinePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading-auto text-2xl font-bold text-ink">{t('dashboard.timelineTitle')}</h1>
-        <Button size="sm" onClick={() => setShowForm((v) => !v)}>
-          + {t('dashboard.addTimelineItem')}
-        </Button>
-      </div>
+      <PageHeader
+        icon="map"
+        title={t('dashboard.timelineTitle')}
+        subtitle={t('dashboard.timelineSubtitle')}
+        actions={
+          <Button size="sm" className="rounded-full" onClick={() => setShowForm((v) => !v)}>
+            + {t('dashboard.addTimelineItem')}
+          </Button>
+        }
+      />
 
       {showForm && (
-        <div className="flex flex-col gap-3 rounded-xl bg-white/70 p-4 shadow-page">
+        <div className="flex flex-col gap-3 rounded-3xl bg-white/90 p-4 shadow-page ring-1 ring-ink/5">
           <Select label="النوع" value={form.type} onChange={(v) => setForm((f) => ({ ...f, type: v }))} options={typeOptions} />
           <Input label="العنوان" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
           <Input type="date" label="التاريخ" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
@@ -68,7 +73,7 @@ export default function DashboardTimelinePage() {
 
       <div className="flex flex-col gap-3">
         {items?.map((item) => (
-          <div key={item.id} className="flex items-start justify-between gap-3 rounded-xl bg-white/70 p-4 shadow-page">
+          <div key={item.id} className="flex items-start justify-between gap-3 rounded-2xl bg-white/90 p-4 shadow-page ring-1 ring-ink/5">
             <div>
               {item.date && <div className="text-xs text-ink/50">{formatDate(item.date, i18n.language)}</div>}
               <div className="font-heading-auto font-bold text-ink">{item.title}</div>

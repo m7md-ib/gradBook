@@ -1,5 +1,6 @@
 import { forwardRef, useState, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
+import { Icon } from './Icon';
 
 interface FieldWrapperProps {
   label?: string;
@@ -29,8 +30,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={isPassword && revealed ? 'text' : type}
             className={cn(
-              'w-full rounded-xl border bg-white/80 px-4 py-2.5 text-ink placeholder:text-ink/40',
-              'focus:outline-none focus:ring-2 focus:ring-maroon-500/40 focus:border-maroon-500 transition-colors',
+              // 16px text: iPhones zoom into any field smaller than that.
+              'h-12 w-full rounded-2xl border bg-white px-4 text-base text-ink shadow-sm placeholder:text-ink/35',
+              'transition focus:border-maroon-400 focus:outline-none focus:ring-4 focus:ring-maroon-100',
               isPassword && 'pe-11',
               error ? 'border-red-400' : 'border-ink/15',
               className,
@@ -43,11 +45,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setRevealed((v) => !v)}
-              className="absolute inset-y-0 end-3 flex items-center text-ink/40 hover:text-ink/70"
+              className="absolute inset-y-0 end-1 flex w-10 items-center justify-center text-ink/40 hover:text-ink/70"
               aria-label={revealed ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
               tabIndex={-1}
             >
-              {revealed ? '🙈' : '👁️'}
+              <Icon name={revealed ? 'eyeOff' : 'eye'} />
             </button>
           )}
         </div>
@@ -84,8 +86,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'w-full rounded-xl border bg-white/80 px-4 py-2.5 text-ink placeholder:text-ink/40 resize-y',
-            'focus:outline-none focus:ring-2 focus:ring-maroon-500/40 focus:border-maroon-500 transition-colors',
+            'w-full resize-y rounded-2xl border bg-white px-4 py-3 text-base text-ink shadow-sm placeholder:text-ink/35',
+            'transition focus:border-maroon-400 focus:outline-none focus:ring-4 focus:ring-maroon-100',
             error ? 'border-red-400' : 'border-ink/15',
             className,
           )}
@@ -128,8 +130,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           className={cn(
-            'w-full rounded-xl border bg-white/80 px-4 py-2.5 text-ink',
-            'focus:outline-none focus:ring-2 focus:ring-maroon-500/40 focus:border-maroon-500 transition-colors',
+            'h-12 w-full rounded-2xl border bg-white px-4 text-base text-ink shadow-sm',
+            'transition focus:border-maroon-400 focus:outline-none focus:ring-4 focus:ring-maroon-100',
             error ? 'border-red-400' : 'border-ink/15',
             className,
           )}

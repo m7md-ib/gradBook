@@ -329,7 +329,7 @@ export function StepCustomizeCover({
           ↺ {t('wizard.resetCoverStyle')}
         </button>
 
-        <div className="flex justify-between">
+        <div className="wizard-actions">
           {onBack ? (
             <Button variant="outline" onClick={onBack}>
               {t('common.back')}

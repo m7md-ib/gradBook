@@ -6,6 +6,7 @@ import { StepPackage } from '@/pages/wizard/steps/StepPackage';
 import { useCreateOrder } from '@/hooks/useCommerce';
 import { getApiErrorMessage } from '@/api/client';
 import type { NotebookDto } from '@/types/api';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 /**
  * Picks a package and opens checkout for the dashboard's notebook — the way
@@ -31,10 +32,8 @@ export default function DashboardPaymentPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-heading-auto text-2xl font-bold text-ink">
-        {notebook.status === 'expired' ? t('checkout.renewTitle') : t('checkout.choosePackageTitle')}
-      </h1>
-      <div className="rounded-2xl bg-white/70 p-6 shadow-page">
+      <PageHeader icon="card" title={notebook.status === 'expired' ? t('checkout.renewTitle') : t('checkout.choosePackageTitle')} />
+      <div className="rounded-3xl border border-ink/5 bg-white/85 p-5 shadow-page sm:p-6">
         <StepPackage
           notebookType={notebook.type === 'class' ? 'class' : 'individual'}
           selectedPackageId={packageId}
