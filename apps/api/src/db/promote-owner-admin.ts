@@ -1,14 +1,21 @@
-import { pool } from './client.js';
+import { Pool } from 'pg';
+import { pool, poolConfig } from './client.js';
+import { copyDatabase } from './copy-database.js';
 import { ensureCatalog } from './ensure-catalog.js';
+import { lockDownDataApi } from './lock-down-data-api.js';
 import { ensureAdmins, parseAdminEmails } from '../modules/admin/bootstrap.js';
 import { resetAllUserData } from '../modules/admin/reset.js';
 
 /**
  * Runs on every boot (render.yaml startCommand; the file name is kept so the
- * existing start command keeps working). First fills the catalog if the
- * database is brand new (see ensure-catalog.ts). Who is admin comes from env
- * vars set on the host, never from the repository:
+ * existing start command keeps working), right after the migrations. Moves
+ * the data over when switching databases, locks Supabase's Data API out, fills
+ * the catalog if the database is brand new (see ensure-catalog.ts), then sets
+ * who is admin — from env vars set on the host, never from the repository:
  *
+ *   OLD_DATABASE_URL  optional, for a move: copies everything from that
+ *                   database into DATABASE_URL while the new one has no
+ *                   accounts (see copy-database.ts). Remove it afterwards.
  *   ADMIN_EMAIL     comma-separated admin emails; any other admin is demoted
  *   ADMIN_PASSWORD  optional; creates a missing admin with it, or resets an
  *                   existing admin's password to it. Remove it after signing in.
@@ -19,7 +26,46 @@ import { resetAllUserData } from '../modules/admin/reset.js';
  * Also blocks the seeded demo admin (its password is in the README). Never
  * fails the boot.
  */
+/** False when the copy failed, so nothing else touches the new database before the retry. */
+async function moveFromOldDatabase(url: string): Promise<boolean> {
+  const source = new Pool({ ...poolConfig(url), max: 1 });
+  try {
+    const outcome = await copyDatabase(source, pool);
+    if (outcome.copied) {
+      console.log(
+        `🚚 OLD_DATABASE_URL: copied ${outcome.users} account(s), ${outcome.notebooks} notebook(s) — ${outcome.rows} row(s) in ${outcome.tables} table(s) — remove OLD_DATABASE_URL now`,
+      );
+    } else if (outcome.reason === 'target-has-accounts') {
+      console.log('ℹ️  OLD_DATABASE_URL skipped: the database in DATABASE_URL already has accounts (you can remove OLD_DATABASE_URL)');
+    } else {
+      console.log('ℹ️  OLD_DATABASE_URL skipped: that database has no accounts to copy');
+    }
+    return true;
+  } catch (error) {
+    // The new database is left as it was (the copy is one transaction) and
+    // the next boot retries.
+    console.error('❌ OLD_DATABASE_URL: copy failed, nothing was changed — check the URL and redeploy', error);
+    return false;
+  } finally {
+    await source.end().catch(() => undefined);
+  }
+}
+
 async function main() {
+  const oldDatabaseUrl = process.env.OLD_DATABASE_URL?.trim();
+  if (oldDatabaseUrl && !(await moveFromOldDatabase(oldDatabaseUrl))) {
+    // Creating an admin now would make the retry see "accounts already there".
+    await pool.end();
+    return;
+  }
+
+  try {
+    const lockdown = await lockDownDataApi(pool);
+    if (lockdown.tablesSecured > 0) console.log(`🔒 Supabase Data API locked out of ${lockdown.tablesSecured} table(s)`);
+  } catch (error) {
+    console.error('❌ could not lock the Supabase Data API out', error);
+  }
+
   await ensureCatalog();
 
   const resetToken = process.env.RESET_ALL_DATA?.trim();
