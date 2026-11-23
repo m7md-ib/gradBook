@@ -133,7 +133,65 @@
           "reaction": "✨"
         }
       ]
-    }
+    },
+    "heroBadge": "Digital graduation books",
+    "heroTrust": [
+      "No app needed",
+      "Share by link & QR",
+      "Ready in 5 minutes"
+    ],
+    "floatingNotes": [
+      "From Mom 💛",
+      "From Sara 🎓",
+      "From Dr. Khaled ✨",
+      "From Grandpa 🤍"
+    ],
+    "scrollHint": "Scroll to explore",
+    "demoHint": "Try it: drag a page or tap its edge",
+    "wallTitle": "Words that stay with you forever",
+    "wallSubtitle": "This is what your pages look like when the people you love write in them",
+    "wallMessages": [
+      {
+        "author": "Mom",
+        "body": "From your first school day to today, I saw every effort. Congrats, my love.",
+        "emoji": "❤️"
+      },
+      {
+        "author": "Sara",
+        "body": "Four years of late nights, coffee and 8am lectures… the best is yet to come!",
+        "emoji": "🎓"
+      },
+      {
+        "author": "Dr. Khaled",
+        "body": "One of the most passionate students I had. Good luck with your next step.",
+        "emoji": "✨"
+      },
+      {
+        "author": "Ahmad",
+        "body": "Remember getting lost in our first week? Now look at you, an engineer 😂",
+        "emoji": "🤝"
+      },
+      {
+        "author": "Dad",
+        "body": "You made me proud. May you find good wherever you go.",
+        "emoji": "🤍"
+      },
+      {
+        "author": "Reem",
+        "body": "Thanks for being the friend who explained everything before every exam 🙏",
+        "emoji": "📚"
+      },
+      {
+        "author": "Grandma",
+        "body": "May you always be as happy as you made us today.",
+        "emoji": "🌷"
+      },
+      {
+        "author": "Yazan",
+        "body": "From the graduation project to the party… what a ride, my friend.",
+        "emoji": "🚀"
+      }
+    ]
   },
   "auth": {
     "loginTitle": "Log in",
@@ -269,7 +327,9 @@
     "endMessage": "This is the last page... for now. The memories keep coming, and this notebook stays open for every new word.",
     "tapToOpen": "Tap to open",
     "choosePhoto": "Choose a photo",
-    "removePhoto": "Remove"
+    "removePhoto": "Remove",
+    "dragHint": "Drag a page corner to turn it, or use the arrows",
+    "swipeHint": "Swipe the page to turn it 👆"
   },
   "dashboard": {
     "welcomeBack": "Welcome back",
