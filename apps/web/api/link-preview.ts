@@ -19,8 +19,9 @@ export const config = { runtime: 'edge' };
 declare const process: { env: Record<string, string | undefined> };
 
 const SITE_NAME = 'دفتر';
-const SITE_TITLE = 'دفتر — دفتر تخرجك الرقمي';
-const SITE_DESCRIPTION = 'دفتر تخرجك الرقمي، صفحة وراء صفحة، مليان كلمات وذكريات من الأشخاص اللي شاركوك رحلتك.';
+const SITE_TITLE = 'دفتر تخرج إلكتروني في الأردن | دفتر — رسائل وذكريات من حبايبك';
+const SITE_DESCRIPTION =
+  'اعمل دفتر تخرج إلكتروني بتصميم فاخر: شارك الرابط أو رمز QR وخلّي أهلك وأصحابك يكتبولك رسائل وذكريات بصفحات بتتقلب متل الدفتر الحقيقي. أحلى هدية تخرج لطلاب الجامعات في الأردن.';
 const DEFAULT_IMAGE_PATH = '/og-image.jpg';
 const SLUG_PATTERN = /^[a-z0-9-]{1,80}$/;
 

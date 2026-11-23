@@ -3,7 +3,10 @@ import { Route, Routes } from 'react-router-dom';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
-const LandingPage = lazy(() => import('@/pages/LandingPage'));
+// Eager: the pages people land on from search render at once, replacing the
+// prerendered HTML without a spinner in between.
+import LandingPage from '@/pages/LandingPage';
+import SeoPage from '@/pages/seo/SeoPage';
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignupPage'));
 const CreateWizardPage = lazy(() => import('@/pages/wizard/CreateWizardPage'));
@@ -101,6 +104,9 @@ export default function App() {
 
         <Route path="/d/:slug" element={<PublicNotebookPage />} />
 
+        {['/daftar-takharoj', '/hadiyat-takharoj', '/daftar-dofaa', '/daftar-tahani', '/universities', '/universities/:slug'].map((path) => (
+          <Route key={path} path={path} element={<SeoPage />} />
+        ))}
         <Route path="/privacy" element={<LegalPage kind="privacy" />} />
         <Route path="/terms" element={<LegalPage kind="terms" />} />
 

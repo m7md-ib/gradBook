@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, MotionConfig, motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -15,7 +14,10 @@ import { useConfetti } from '@/components/landing/Confetti';
 import { usePackages } from '@/hooks/useCatalog';
 import { formatCurrency } from '@/lib/format';
 import { useAuth } from '@/context/AuthContext';
-import { whatsappLink } from '@/lib/contact';
+import { CONTACT_WHATSAPP, whatsappLink } from '@/lib/contact';
+import { Seo } from '@/components/Seo';
+import { HOME_META, homeJsonLd } from '@/seo/pages';
+import { SITE_URL } from '@/seo/site';
 import { cn } from '@/lib/cn';
 
 interface SampleMessage {
@@ -289,12 +291,12 @@ export default function LandingPage() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="min-h-screen bg-paper">
-        <Helmet>
-          <title>
-            {t('common.appName')} — {t('landing.heroTitle')}
-          </title>
-          <meta name="description" content={t('landing.heroSubtitle') ?? ''} />
-        </Helmet>
+        <Seo
+          title={isAr ? HOME_META.title : `${t('common.appName')} — ${t('landing.heroTitle')}`}
+          description={isAr ? HOME_META.description : t('landing.heroSubtitle') ?? ''}
+          path="/"
+          jsonLd={homeJsonLd(SITE_URL, t('landing.faq', { returnObjects: true }) as Array<{ q: string; a: string }>, `+${CONTACT_WHATSAPP}`)}
+        />
         <Navbar variant="overlay" />
         {confetti}
 
