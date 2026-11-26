@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { useAdminOrders, useReviewOrderPayment } from '@/hooks/useAdmin';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { getApiErrorMessage } from '@/api/client';
@@ -62,77 +63,100 @@ export default function AdminOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <p className="rounded-xl bg-white/70 p-8 text-center text-ink/50 shadow-page">{t('admin.ordersEmpty')}</p>
+        <p className="rounded-3xl bg-white/80 p-8 text-center text-ink/50 shadow-page">{t('admin.ordersEmpty')}</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl bg-white/70 shadow-page">
-          <table className="w-full text-start text-sm">
-            <thead className="border-b border-ink/10 text-ink/50">
-              <tr>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderDate')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderCustomer')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderPackage')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderAmount')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderReference')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderStatus')}</th>
-                <th className="px-4 py-3 text-start font-medium">{t('admin.orderActions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const reference = order.payments?.[0]?.providerReference;
-                const canConfirm = order.status === 'pending' || order.status === 'failed' || order.status === 'cancelled';
-                return (
-                  <tr key={order.id} className={cn('border-b border-ink/5', order.status === 'pending' && 'bg-gold-50/60')}>
-                    <td className="whitespace-nowrap px-4 py-3">{formatDate(order.createdAt, i18n.language)}</td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-ink">{order.user?.fullName}</div>
-                      <div className="text-xs text-ink/50" dir="ltr">
+        <ul className="grid gap-3 lg:grid-cols-2">
+          {/* Waiting for confirmation first: that's what the admin opens this page for. */}
+          {[...orders]
+            .sort((a, b) => Number(b.status === 'pending') - Number(a.status === 'pending'))
+            .map((order) => {
+              const reference = order.payments?.[0]?.providerReference;
+              const canConfirm = order.status === 'pending' || order.status === 'failed' || order.status === 'cancelled';
+              return (
+                <li
+                  key={order.id}
+                  className={cn(
+                    'flex flex-col gap-3 rounded-3xl bg-white/90 p-4 shadow-page ring-1 sm:p-5',
+                    order.status === 'pending' ? 'ring-gold-300' : 'ring-ink/5',
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate font-bold text-ink">{order.user?.fullName}</div>
+                      <div className="truncate text-xs text-ink/50" dir="ltr">
                         {order.user?.email}
                       </div>
-                      {order.notebook && (
-                        <a
-                          href={`/d/${order.notebook.slug}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-block text-xs text-maroon-600 hover:underline"
+                    </div>
+                    <span className={cn('shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold', STATUS_STYLES[order.status])}>
+                      {t(STATUS_LABELS[order.status] ?? order.status)}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 rounded-2xl bg-paper p-3 text-sm">
+                    <div>
+                      <div className="text-[11px] text-ink/45">{t('admin.orderAmount')}</div>
+                      <div className="text-lg font-bold text-maroon-700">{formatCurrency(order.amountCents, order.currency, i18n.language)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] text-ink/45">{t('admin.orderPackage')}</div>
+                      <div className="font-semibold text-ink">
+                        {order.package ? (i18n.language === 'en' ? order.package.nameEn : order.package.nameAr) : '—'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] text-ink/45">{t('admin.orderReference')}</div>
+                      {reference ? (
+                        <button
+                          type="button"
+                          onClick={() => void navigator.clipboard.writeText(reference).then(() => toast.success(t('common.copied')))}
+                          className="flex max-w-full items-center gap-1 font-mono text-sm font-bold text-ink"
                           dir="ltr"
                         >
-                          /d/{order.notebook.slug}
-                        </a>
+                          <span className="truncate">{reference}</span>
+                          <Icon name="copy" className="h-3.5 w-3.5 text-ink/40" />
+                        </button>
+                      ) : (
+                        <div className="text-ink/40">—</div>
                       )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {order.package ? (i18n.language === 'en' ? order.package.nameEn : order.package.nameAr) : '—'}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">{formatCurrency(order.amountCents, order.currency, i18n.language)}</td>
-                    <td className="whitespace-nowrap px-4 py-3 font-mono text-xs" dir="ltr">
-                      {reference ?? '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn('whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium', STATUS_STYLES[order.status])}>
-                        {t(STATUS_LABELS[order.status] ?? order.status)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 whitespace-nowrap">
-                        {canConfirm && (
-                          <Button size="sm" disabled={review.isPending} onClick={() => decide(order, 'confirm')}>
-                            {t('admin.confirmPayment')}
-                          </Button>
-                        )}
-                        {order.status === 'pending' && (
-                          <Button size="sm" variant="outline" disabled={review.isPending} onClick={() => decide(order, 'reject')}>
-                            {t('admin.rejectPayment')}
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] text-ink/45">{t('admin.orderDate')}</div>
+                      <div className="text-ink/80">{formatDate(order.createdAt, i18n.language)}</div>
+                    </div>
+                  </div>
+
+                  {order.notebook && (
+                    <a
+                      href={`/d/${order.notebook.slug}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 self-start text-xs font-semibold text-maroon-600 hover:underline"
+                      dir="ltr"
+                    >
+                      <Icon name="external" className="h-3.5 w-3.5" />
+                      /d/{order.notebook.slug}
+                    </a>
+                  )}
+
+                  {(canConfirm || order.status === 'pending') && (
+                    <div className="flex gap-2">
+                      {canConfirm && (
+                        <Button className="flex-1" disabled={review.isPending} onClick={() => decide(order, 'confirm')}>
+                          <Icon name="check" className="h-4 w-4" />
+                          {t('admin.confirmPayment')}
+                        </Button>
+                      )}
+                      {order.status === 'pending' && (
+                        <Button variant="outline" disabled={review.isPending} onClick={() => decide(order, 'reject')}>
+                          {t('admin.rejectPayment')}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+        </ul>
       )}
     </div>
   );

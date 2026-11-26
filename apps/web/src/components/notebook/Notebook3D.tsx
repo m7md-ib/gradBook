@@ -26,6 +26,8 @@ export interface Notebook3DProps {
   autoplay?: boolean;
   /** Light text for the controls under the book, when it sits on a dark background. */
   onDark?: boolean;
+  /** Screen height kept free around the book on phones (header, controls, a pinned button…). */
+  reservedHeight?: string;
 }
 
 /*
@@ -69,7 +71,7 @@ function ChevronIcon({ className }: { className?: string }) {
   );
 }
 
-export function Notebook3D({ cover, book, onOpen, className, autoOpenLabel, autoplay, onDark }: Notebook3DProps) {
+export function Notebook3D({ cover, book, onOpen, className, autoOpenLabel, autoplay, onDark, reservedHeight = '12rem' }: Notebook3DProps) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.dir(i18n.language) === 'rtl';
   const wide = useMediaQuery('(min-width: 768px)');
@@ -217,7 +219,7 @@ export function Notebook3D({ cover, book, onOpen, className, autoOpenLabel, auto
 
   const sizeStyle = wide
     ? { width: 'min(100%, 60rem, calc((100svh - 9rem) * 1.5))', aspectRatio: '3 / 2' }
-    : { width: 'min(100%, 27rem, calc((100svh - 12rem) * 0.75))', aspectRatio: '3 / 4' };
+    : { width: `min(100%, 27rem, calc((100svh - ${reservedHeight}) * 0.75))`, aspectRatio: '3 / 4' };
 
   const openLabel = autoOpenLabel ?? t('notebook.openButton');
   const pageNumber = pageForSpread(wide, spread, pages.length) + 1;

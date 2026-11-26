@@ -59,7 +59,39 @@ export default function AdminUsersPage() {
       {isLoading ? (
         <PageSpinner />
       ) : (
-        <div className="overflow-x-auto rounded-xl bg-white/70 shadow-page">
+        <>
+        {/* Phones: one card per account, so the actions stay on screen. */}
+        <ul className="flex flex-col gap-3 md:hidden">
+          {data?.items.map((u) => (
+            <li key={u.id} className="flex flex-col gap-3 rounded-3xl bg-white/90 p-4 shadow-page ring-1 ring-ink/5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate font-bold text-ink">{u.fullName}</div>
+                  <div className="truncate text-xs text-ink/50" dir="ltr">
+                    {u.email}
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className={u.blockedAt ? 'rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-700' : 'rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800'}>
+                    {u.blockedAt ? t('admin.blocked') : t('admin.active')}
+                  </span>
+                  <span className="text-[11px] text-ink/45">{u.role}</span>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {u.role !== 'admin' && (
+                  <Button size="sm" variant="outline" className="flex-1" disabled={resetPassword.isPending} onClick={() => issueTemporaryPassword(u.id, u.email)}>
+                    {t('admin.resetPassword')}
+                  </Button>
+                )}
+                <Button size="sm" variant={u.blockedAt ? 'outline' : 'danger'} className="flex-1" onClick={() => toggle(u.id, !u.blockedAt)}>
+                  {u.blockedAt ? t('admin.unblock') : t('admin.block')}
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto rounded-xl bg-white/70 shadow-page md:block">
           <table className="w-full text-start text-sm">
             <thead className="border-b border-ink/10 text-ink/50">
               <tr>
@@ -100,6 +132,7 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

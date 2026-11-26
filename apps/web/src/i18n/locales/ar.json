@@ -330,7 +330,19 @@
     "choosePhoto": "اختر صورة من جهازك",
     "removePhoto": "إزالة",
     "dragHint": "اسحب طرف الصفحة لتقلبها، أو اضغط على الأسهم",
-    "swipeHint": "اسحب الصفحة بإصبعك لتقلبها 👆"
+    "swipeHint": "اسحب الصفحة بإصبعك لتقلبها 👆",
+    "writeTo": "اكتب لـ{{name}}",
+    "writeSubtitle": "كلمتك رح تنضاف كصفحة بالدفتر وتضل معه للعمر",
+    "writeNamePlaceholder": "اسمك زي ما بدك يطلع بالدفتر",
+    "writeBodyPlaceholder": "اكتب لـ{{name}} كلمة من القلب، ذكرى حلوة، أو تهنئة…",
+    "writeReaction": "اختار إيموجي (اختياري)",
+    "writeThanksHint": "رسالتك صارت صفحة بالدفتر. شكراً إنك كنت جزء من هالذكرى 💛",
+    "writePendingHint": "صاحب الدفتر رح يشوفها ويوافق عليها قريباً.",
+    "backToNotebook": "ارجع للدفتر",
+    "shareWithOthers": "خلّي غيرك يكتب كمان",
+    "makeYourOwn": "اعمل دفتر تخرجك إنت كمان",
+    "makeYourOwnShort": "اعمل دفترك",
+    "makeYourOwnHint": "خمس دقايق وبتصير عندك صفحات من كل حبايبك"
   },
   "dashboard": {
     "welcomeBack": "أهلاً بعودتك",
