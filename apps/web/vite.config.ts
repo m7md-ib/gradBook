@@ -4,7 +4,7 @@ import path from 'node:path';
 import { prerenderSeo } from './seo-prerender';
 
 // The public address search engines should index (canonical links, sitemap).
-const SITE_URL = (process.env.VITE_SITE_URL || 'https://daftarjo.com').replace(/\/+$/, '');
+const SITE_URL = (process.env.VITE_SITE_URL || 'https://daftarjo.vercel.app').replace(/\/+$/, '');
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), prerenderSeo(SITE_URL)],
