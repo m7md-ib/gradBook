@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Icon } from '@/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
 import { Notebook3D, type NotebookPageContent } from '@/components/notebook';
 import { PageSpinner } from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
 import {
   usePublicNotebook,
   usePublicMessages,
@@ -142,13 +143,33 @@ export default function PublicNotebookPage() {
   const graduate = notebook.graduates[0];
   const notebookUrl = `${window.location.origin}/d/${notebook.slug}`;
 
+  const firstName = notebook.type === 'class' ? undefined : graduate?.fullName.split(/\s+/)[0];
+  const shareText = t('notebook.sharePreviewText', { name: graduate?.fullName ?? '' }) ?? '';
+
   async function handleWriteSubmit(values: Parameters<typeof submitMessage.mutateAsync>[0] & { photoFile?: File | null }) {
     const result = await submitMessage.mutateAsync(values);
     // A little celebration once the message is in the book.
-    fireConfetti(window.innerWidth / 2, window.innerHeight * 0.45, 70);
-    if (!result.requiresApproval) {
-      toast.success(t('notebook.writeFormSuccess'));
+    fireConfetti(window.innerWidth / 2, window.innerHeight * 0.35, 80);
+    return { requiresApproval: result.requiresApproval };
+  }
+
+  async function shareNotebook() {
+    if (navigator.share) {
+      try {
+        await navigator.share({ url: notebookUrl, text: shareText, title: shareText });
+      } catch {
+        // cancelled
+      }
+    } else {
+      await navigator.clipboard.writeText(notebookUrl);
+      toast.success(t('common.copied'));
     }
+  }
+
+  function openWrite() {
+    setWriteTarget(undefined);
+    setWriteOpen(true);
+    void publicEndpoints.trackEvent(slug!, 'write_start');
   }
 
   return (
@@ -167,8 +188,20 @@ export default function PublicNotebookPage() {
       {confetti}
       {notebook.musicEnabled && notebook.musicTrackId && <MusicControl trackUrl={notebook.musicTrackId} />}
 
-      {/* pb-28: the floating "write" button must not cover the share buttons at the end. */}
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 pb-28 pt-10">
+      <header className="mx-auto flex max-w-5xl items-center justify-between px-4 pt-4">
+        <Link to="/" className="font-heading-auto text-xl font-bold text-maroon-700">
+          📖 {t('common.appName')}
+        </Link>
+        <Link
+          to="/"
+          className="rounded-full bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-maroon-700 shadow-page ring-1 ring-ink/5 backdrop-blur"
+        >
+          🎓 {t('notebook.makeYourOwnShort')}
+        </Link>
+      </header>
+
+      {/* pb-32: the floating "write" button must not cover the share card at the end. */}
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 pb-32 pt-4">
         <Notebook3D
           cover={{
             theme,
@@ -189,12 +222,10 @@ export default function PublicNotebookPage() {
             pages,
             currentIndex: pageIndex,
             onIndexChange: setPageIndex,
-            onWriteClick: () => {
-              setWriteTarget(undefined);
-              setWriteOpen(true);
-              void publicEndpoints.trackEvent(slug!, 'write_start');
-            },
+            onWriteClick: openWrite,
           }}
+          // Header on top, page controls and the pinned "write" button below.
+          reservedHeight="17.5rem"
           onOpen={() => {
             setBookOpened(true);
             void publicEndpoints.trackEvent(slug!, 'notebook_open');
@@ -202,29 +233,56 @@ export default function PublicNotebookPage() {
         />
 
         {bookOpened && (
-          <div className="fixed bottom-5 z-30 ltr:left-5 rtl:right-5">
-            <Button
-              size="lg"
-              className="shadow-book"
-              onClick={() => {
-                setWriteTarget(undefined);
-                setWriteOpen(true);
-              }}
-            >
-              ✍️ {t('notebook.writeButton')}
-            </Button>
-          </div>
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="w-full max-w-md rounded-3xl bg-white/80 p-5 shadow-page ring-1 ring-ink/5"
+          >
+            <h2 className="mb-3 text-center font-heading-auto text-lg font-bold text-ink">{t('notebook.shareWithOthers')}</h2>
+            <ShareBar url={notebookUrl} text={shareText} />
+          </motion.section>
         )}
 
         {bookOpened && (
-          <div className="w-full max-w-sm">
-            <ShareBar
-              url={notebookUrl}
-              text={t('notebook.sharePreviewText', { name: graduate?.fullName ?? '' }) ?? ''}
-            />
-          </div>
+          <Link
+            to="/"
+            className="group flex w-full max-w-md items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-br from-night-800 via-maroon-700 to-maroon-600 p-5 text-white shadow-book"
+          >
+            <span className="text-4xl transition-transform group-hover:-rotate-6">🎓</span>
+            <span className="flex-1">
+              <span className="block font-heading-auto text-lg font-bold text-gold-100">{t('notebook.makeYourOwn')}</span>
+              <span className="block text-sm text-white/70">{t('notebook.makeYourOwnHint')}</span>
+            </span>
+            <Icon name="chevron" className="h-5 w-5 text-white/60 rtl:rotate-180" />
+          </Link>
         )}
       </div>
+
+      <AnimatePresence>
+        {bookOpened && !writeOpen && (
+          <motion.div
+            initial={{ y: 120, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 120, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 26, delay: 0.4 }}
+            className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-4"
+            style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
+          >
+            <button
+              type="button"
+              onClick={openWrite}
+              className="relative flex w-full max-w-sm items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-l from-maroon-600 to-maroon-500 py-4 text-lg font-bold text-white shadow-book active:scale-[0.98]"
+            >
+              <span
+                className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent_35%,rgba(255,255,255,0.22)_50%,transparent_65%)] bg-[length:200%_100%]"
+                aria-hidden
+              />
+              <span className="relative">✍️ {firstName ? t('notebook.writeTo', { name: firstName }) : t('notebook.writeButton')}</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <WriteMessageModal
         open={writeOpen}
@@ -232,6 +290,8 @@ export default function PublicNotebookPage() {
         onSubmit={handleWriteSubmit}
         graduates={notebook.graduates}
         defaultTargetGraduateId={writeTarget}
+        recipientName={firstName}
+        onShare={shareNotebook}
       />
     </div>
   );

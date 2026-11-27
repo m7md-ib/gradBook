@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 import { useAdminAttention } from '@/hooks/useAdmin';
@@ -71,19 +72,31 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <div className="flex-1 overflow-x-auto">
-        <header className="flex items-center justify-between border-b border-ink/10 bg-white/50 px-4 py-3 lg:hidden">
+      <div className="min-w-0 flex-1">
+        <div className="sticky top-0 z-30 bg-paper/90 backdrop-blur-lg lg:hidden">
+        <header className="flex items-center justify-between gap-3 border-b border-ink/10 px-4 py-3">
           <span className="font-heading-auto text-lg font-bold text-maroon-700">🛠️ {t('admin.title')}</span>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            {/* Phones had no way to sign out of the admin panel. */}
+            <button
+              type="button"
+              onClick={() => void logout().then(() => navigate('/'))}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-600 shadow-page ring-1 ring-ink/5"
+              aria-label={t('common.logout')}
+            >
+              <Icon name="logout" className="h-[18px] w-[18px] rtl:rotate-180" />
+            </button>
+          </div>
         </header>
-        <div className="flex gap-1 overflow-x-auto border-b border-ink/10 bg-white/30 px-2 py-2 lg:hidden">
+        <div className="flex gap-1 overflow-x-auto border-b border-ink/10 px-2 py-2 [scrollbar-width:none]">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={'end' in item ? item.end : false}
               className={({ isActive }) =>
-                cn('shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium', isActive ? 'bg-maroon-600 text-white' : 'bg-white/70 text-ink/60')
+                cn('shrink-0 rounded-full px-3.5 py-2 text-xs font-semibold', isActive ? 'bg-maroon-600 text-white shadow-sm' : 'bg-white/80 text-ink/60 ring-1 ring-ink/5')
               }
             >
               <span className="inline-flex items-center gap-1.5">
@@ -93,7 +106,8 @@ export default function AdminLayout() {
             </NavLink>
           ))}
         </div>
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        </div>
+        <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           <Outlet />
         </main>
       </div>

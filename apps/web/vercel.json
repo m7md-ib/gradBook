@@ -3,6 +3,19 @@
   "buildCommand": "cd ../.. && pnpm --filter @daftar/shared run build && pnpm --filter @daftar/web run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "grad-book-web.vercel.app"
+        }
+      ],
+      "destination": "https://daftarjo.vercel.app/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/d/:slug",

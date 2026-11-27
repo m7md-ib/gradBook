@@ -330,7 +330,19 @@
     "choosePhoto": "Choose a photo",
     "removePhoto": "Remove",
     "dragHint": "Drag a page corner to turn it, or use the arrows",
-    "swipeHint": "Swipe the page to turn it 👆"
+    "swipeHint": "Swipe the page to turn it 👆",
+    "writeTo": "Write to {{name}}",
+    "writeSubtitle": "Your words become a page in the notebook, kept forever",
+    "writeNamePlaceholder": "Your name as it should appear",
+    "writeBodyPlaceholder": "Write {{name}} something from the heart, a memory, or congratulations…",
+    "writeReaction": "Pick an emoji (optional)",
+    "writeThanksHint": "Your message is now a page in the notebook. Thank you for being part of this memory 💛",
+    "writePendingHint": "The owner will see and approve it soon.",
+    "backToNotebook": "Back to the notebook",
+    "shareWithOthers": "Invite others to write too",
+    "makeYourOwn": "Make your own graduation notebook",
+    "makeYourOwnShort": "Make yours",
+    "makeYourOwnHint": "Five minutes, and pages from everyone you love"
   },
   "dashboard": {
     "welcomeBack": "Welcome back",

@@ -22,13 +22,14 @@ test('visitor can open the demo notebook, browse pages, and write a message', as
   await page.screenshot({ path: 'test-results/notebook-message-page.png' });
 
   // Open the write modal via the floating button and submit a message.
-  await page.getByRole('button', { name: /اكتب للمتخرج/ }).first().click();
+  await page.getByRole('button', { name: /اكتب لـ/ }).last().click();
   await page.waitForTimeout(300);
   await page.getByLabel('اسمك').fill('زائر تجريبي');
   await page.getByLabel('رسالتك').fill('مبروك التخرج! فخورين فيك جداً ونتمناك التوفيق دائماً.');
   await page.screenshot({ path: 'test-results/notebook-write-modal.png' });
-  await page.getByRole('button', { name: 'إرسال الرسالة' }).click();
+  await page.getByRole('button', { name: /إرسال الرسالة/ }).click();
   await page.waitForTimeout(1000);
+  await expect(page.getByText(/تم إرسال رسالتك|بعد مراجعتها/)).toBeVisible();
   await page.screenshot({ path: 'test-results/notebook-write-success.png' });
 
   expect(errors).toEqual([]);
