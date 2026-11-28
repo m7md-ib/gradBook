@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ServerWakeBanner } from '@/components/ServerWakeBanner';
 
 // Eager: the pages people land on from search render at once, replacing the
 // prerendered HTML without a spinner in between.
@@ -39,6 +40,7 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 export default function App() {
   return (
     <Suspense fallback={<PageSpinner />}>
+      <ServerWakeBanner />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

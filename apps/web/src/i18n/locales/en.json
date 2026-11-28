@@ -27,7 +27,8 @@
     "success": "Success",
     "yes": "Yes",
     "no": "No",
-    "page": "Page"
+    "page": "Page",
+    "serverWaking": "One moment, getting things ready…"
   },
   "account": {
     "changePasswordTitle": "Change password",
