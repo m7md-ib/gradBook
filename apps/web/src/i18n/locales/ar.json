@@ -27,7 +27,8 @@
     "success": "تم بنجاح",
     "yes": "نعم",
     "no": "لا",
-    "page": "صفحة"
+    "page": "صفحة",
+    "serverWaking": "لحظات، عم نجهّز الموقع…"
   },
   "account": {
     "changePasswordTitle": "تغيير كلمة المرور",

@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from 'axios';
+import { trackServerWake, warmUp } from '@/lib/serverWake';
 
 // In production the API is reached through this site's own origin: vercel.json
 // proxies /api/* to the API host. That makes the auth and CSRF cookies
@@ -13,6 +14,11 @@ export const apiClient = axios.create({
   baseURL: useSameOrigin ? '' : (import.meta.env.VITE_API_URL as string),
   withCredentials: true,
 });
+
+// Free hosting sleeps when idle: show a notice while it wakes, and start
+// waking it the moment the site opens.
+trackServerWake(apiClient);
+warmUp(apiClient);
 
 // The API and the frontend can be on different origins in production, and
 // page JS can only read cookies set for its own origin — so the CSRF token

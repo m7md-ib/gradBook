@@ -1,14 +1,5 @@
-# daftar-db is Render's free Postgres, which expires 30 days after creation.
-# The data now lives in Supabase (DATABASE_URL below); this entry only keeps
-# the old database around for the one-off copy (OLD_DATABASE_URL). Delete it
-# here and in the Render dashboard once the copy is done.
-databases:
-  - name: daftar-db
-    databaseName: daftar
-    user: daftar
-    plan: free
-    region: oregon
-    postgresMajorVersion: "16"
+# The database lives in Supabase (DATABASE_URL below). Render's free
+# Postgres expired after 30 days, so it's no longer declared here.
 
 services:
   - type: web
@@ -62,11 +53,6 @@ services:
       # pooler). Not the "Direct connection": that one is IPv6-only, which
       # Render can't reach. Not the "Transaction pooler" either.
       - key: DATABASE_URL
-        sync: false
-      # One-off move: the old database's URL. On the next boot everything in
-      # it is copied into DATABASE_URL, as long as that one has no accounts
-      # yet (see apps/api/src/db/copy-database.ts). Remove it afterwards.
-      - key: OLD_DATABASE_URL
         sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
